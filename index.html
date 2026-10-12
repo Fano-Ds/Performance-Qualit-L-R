@@ -7,15 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #1e293b; 
-            --bg-card: #334155;
-            --border-color: #475569;
-            --text-main: #f8fafc;
-            --text-muted: #cbd5e1;
-            --primary: #38bdf8;
-            --danger: #f87171;
-            --warning: #fbbf24;
-            --success: #34d399;
+            --bg-main: #f1f5f9; /* Gris très clair et lumineux */
+            --bg-card: #ffffff; /* Blanc pur pour les cartes */
+            --border-color: #e2e8f0; /* Bordure douce et discrète */
+            --text-main: #0f172a; /* Texte principal foncé et ultra-lisible */
+            --text-muted: #64748b; /* Texte secondaire gris pro */
+            --primary: #0284c7; /* Bleu électrique corporate */
+            --danger: #dc2626; /* Rouge vif alertes */
+            --warning: #d97706; /* Ambre chaleureux */
+            --success: #059669; /* Vert succès élégant */
         }
 
         * {
@@ -43,15 +43,17 @@
         header h1 {
             font-size: 20px;
             font-weight: 700;
+            color: #1e293b;
         }
 
         header h1 span {
-            color: #38bdf8;
+            color: var(--primary);
         }
 
         .datetime {
             color: var(--text-muted);
             font-size: 14px;
+            font-weight: 500;
         }
 
         /* FILTERS BAR */
@@ -70,11 +72,14 @@
             padding: 10px 14px;
             border-radius: 8px;
             font-size: 13px;
+            font-weight: 500;
             outline: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .filter-group select:focus, .filter-group input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
         }
 
         /* KPI CARDS */
@@ -90,7 +95,7 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }
 
         .kpi-card h3 {
@@ -98,12 +103,14 @@
             text-transform: uppercase;
             color: var(--text-muted);
             margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .kpi-card .value {
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
+            color: #0f172a;
         }
 
         .kpi-card .subtitle {
@@ -112,7 +119,7 @@
         }
 
         .kpi-input {
-            background: var(--bg-main);
+            background: #f8fafc;
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 6px 10px;
@@ -122,19 +129,6 @@
             width: 100%;
             margin-bottom: 8px;
         }
-
-        .badge-pill {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        .badge-success { background: rgba(52, 211, 153, 0.2); color: #34d399; }
-        .badge-warning { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
-        .badge-danger { background: rgba(248, 113, 113, 0.2); color: #f87171; }
 
         /* GRID SECTIONS */
         .grid-2col {
@@ -153,15 +147,16 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }
 
         .card-section h2 {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             margin-bottom: 16px;
-            color: #f1f5f9;
+            color: #1e293b;
+            letter-spacing: 0.5px;
         }
 
         /* TABLES */
@@ -174,26 +169,27 @@
 
         th {
             color: var(--text-muted);
-            font-weight: 500;
+            font-weight: 600;
             padding: 8px 12px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
         }
 
         td {
             padding: 12px;
             border-bottom: 1px solid var(--border-color);
+            color: #334155;
         }
 
         /* STATUS BADGES */
         .status-badge {
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 6px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
         }
-        .status-tenu { background: rgba(52, 211, 153, 0.2); color: #34d399; }
-        .status-surveiller { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
-        .status-depasse { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+        .status-tenu { background: #d1fae5; color: #065f46; }
+        .status-surveiller { background: #fef3c7; color: #b45309; }
+        .status-depasse { background: #fee2e2; color: #991b1b; }
 
         /* PROGRESS BARS */
         .progress-item {
@@ -203,10 +199,12 @@
             display: flex;
             justify-content: space-between;
             font-size: 13px;
+            font-weight: 600;
             margin-bottom: 6px;
+            color: #334155;
         }
         .progress-bar-bg {
-            background: var(--border-color);
+            background: #e2e8f0;
             border-radius: 4px;
             height: 8px;
             overflow: hidden;
@@ -238,11 +236,11 @@
             font-size: 9px;
             color: var(--primary);
             margin-bottom: 4px;
-            font-weight: 600;
+            font-weight: 700;
         }
         .chart-bar {
             width: 100%;
-            background: linear-gradient(to top, #38bdf8, #7dd3fc);
+            background: linear-gradient(to top, #0ea5e9, #38bdf8);
             border-radius: 4px 4px 0 0;
             min-height: 4px;
         }
@@ -250,6 +248,7 @@
             font-size: 10px;
             color: var(--text-muted);
             margin-top: 8px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -327,7 +326,7 @@
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES & PLAN D'ACTION (3 NIVEAUX) -->
+    <!-- SECTION CATÉGORIES & PLAN D'ACTION -->
     <div class="grid-2col">
         <div class="card-section">
             <h2>Non-qualité par catégories (OK & Contestations)</h2>
@@ -451,7 +450,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT STABILISÉ ET MIS À JOUR -->
+    <!-- SCRIPT FONCTIONNEL -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -508,7 +507,6 @@
                     if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
                         const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
                         
-                        // Exclusion du trigramme XXX et des lignes vides
                         if (trigramme === 'XXX' || trigramme === '') continue;
 
                         const dateLecture = cols[idxDate] || '';
@@ -516,10 +514,8 @@
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
                         const statutValidée = cols[idxValidee] !== undefined && cols[idxValidee] !== null ? cols[idxValidee].toUpperCase() : '';
                         
-                        // Exclusion des KO
                         if (statutValidée.includes('KO')) continue;
 
-                        // Gestion souple de la validation (OK, contestation ou vide)
                         const estOkOuContestation = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
                         const estVide = (statutValidée === '');
 
@@ -589,11 +585,9 @@
                     }
                 }
 
-                // 1. KPI NQ et Non Débriefées
                 document.getElementById('kpi-nq').innerText = totalMois + " NQ";
                 document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
 
-                // 2. Calculs et statuts (3 niveaux)
                 const objMauvaise = 0.25;
                 const objLoupe = 0.0095;
                 const objNC = 0.035;
@@ -616,25 +610,21 @@
                 const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
                 const stNC = getStatutInfo(valTauxNC, objNC);
 
-                // MAUVAISE
                 document.getElementById('val-mauvaise').innerText = mauvTotal;
                 document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
                 document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
                 document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
 
-                // LOUPÉ
                 document.getElementById('val-loupe').innerText = loupeTotal;
                 document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
                 document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
                 document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
 
-                // NON CONFORME
                 document.getElementById('val-nc').innerText = ncTotal;
                 document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // --- 3 BLOCS DE PLAN D'ACTION (TEXTES PERSONNALISÉS) ---
                 let htmlPA = '';
                 const categoriesBilan = [
                     { 
@@ -661,49 +651,48 @@
                 ];
 
                 categoriesBilan.forEach(cat => {
-                    let borderColor = '#34d399';
-                    let badgeBg = 'rgba(52, 211, 153, 0.2)';
-                    let badgeColor = '#34d399';
+                    let borderColor = '#059669';
+                    let badgeBg = '#d1fae5';
+                    let badgeColor = '#065f46';
                     let messagePA = cat.paVert;
 
                     if (cat.st.niveau === 'rouge') {
-                        borderColor = '#f87171';
-                        badgeBg = 'rgba(248, 113, 113, 0.2)';
-                        badgeColor = '#f87171';
+                        borderColor = '#dc2626';
+                        badgeBg = '#fee2e2';
+                        badgeColor = '#991b1b';
                         messagePA = cat.paRouge;
                     } else if (cat.st.niveau === 'orange') {
-                        borderColor = '#fbbf24';
-                        badgeBg = 'rgba(251, 191, 36, 0.2)';
-                        badgeColor = '#fbbf24';
+                        borderColor = '#d97706';
+                        badgeBg = '#fef3c7';
+                        badgeColor = '#b45309';
                         messagePA = cat.paOrange;
                     }
 
                     htmlPA += `
-                        <div style="background: var(--bg-main); border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px;">
+                        <div style="background: #f8fafc; border-left: 4px solid ${borderColor}; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); border-left-width: 4px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase;">${cat.nom}</strong>
-                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${cat.st.texte}</span>
+                                <strong style="font-size: 12px; text-transform: uppercase; color: #1e293b;">${cat.nom}</strong>
+                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${cat.st.texte}</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 12px;">${messagePA}</div>
+                            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">${messagePA}</div>
                         </div>
                     `;
                 });
 
                 if (nonDebriefesMois > 0) {
                     htmlPA += `
-                        <div style="background: var(--bg-main); border-left: 4px solid #f87171; padding: 10px; border-radius: 6px;">
+                        <div style="background: #f8fafc; border-left: 4px solid #dc2626; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); border-left-width: 4px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #f87171;">Lignes non débriefées</strong>
-                                <span style="background: rgba(248, 113, 113, 0.2); color: #f87171; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${nonDebriefesMois} à traiter</span>
+                                <strong style="font-size: 12px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
+                                <span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 12px;">Action requise : Compléter le suivi ou planifier les entretiens de débriefing en suspens.</div>
+                            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">Action requise : Compléter le suivi ou planifier les entretiens de débriefing en suspens.</div>
                         </div>
                     `;
                 }
 
                 document.getElementById('pa-container').innerHTML = htmlPA;
 
-                // Barres LIRIS / RUBIS
                 const totalAct = (countLiris + countRubis) || 1;
                 const pctLiris = Math.round((countLiris / totalAct) * 100);
                 const pctRubis = Math.round((countRubis / totalAct) * 100);
@@ -714,7 +703,6 @@
                 document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
-                // 3. Graphique Annuel
                 const chartContainer = document.getElementById('chart-months-container');
                 chartContainer.innerHTML = '';
                 const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
@@ -736,7 +724,6 @@
                     chartContainer.appendChild(grp);
                 });
 
-                // 4. Flop 5 des agents
                 const agentsTries = Object.keys(agentsCumul).map(t => {
                     return { trigramme: t, total: agentsCumul[t] };
                 }).sort((a, b) => b.total - a.total).slice(0, 5);
@@ -759,7 +746,6 @@
                     });
                 }
 
-                // 5. Liste des agents
                 const selectAgent = document.getElementById('filter-agent');
                 const valSelectionnee = selectAgent.value;
                 selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
