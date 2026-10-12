@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quality Performance Dashboard</title>
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #112038;
+      --panel-light: #172a45;
+      --border: rgba(130, 180, 230, 0.18);
+      --text: #edf7ff;
+      --muted: #91a9c1;
+      --cyan: #2bc8ef;
+      --blue: #4c8dff;
+      --green: #38d99a;
+      --orange: #ffae46;
+      --red: #ff6070;
+      --web: #2bc8ef;
+      --presse: #ffae46;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(43, 200, 239, 0.12), transparent 27%),
+        radial-gradient(circle at 88% 0%, rgba(76, 141, 255, 0.12), transparent 25%),
+        var(--bg);
+    }
+
+    .dashboard {
+      width: min(1450px, calc(100% - 40px));
+      min-width: 1100px;
+      margin: 25px auto;
+    }
+
+    .panel {
+      background: rgba(17, 32, 56, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 25px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.4px;
+    }
+
+    h1 span,
+    .accent {
+      color: var(--cyan);
+    }
+
+    .subtitle,
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+    }
+
+    .update {
+      text-align: right;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.6px;
+    }
+
+    .update strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .filter {
+      padding: 12px 14px;
+    }
+
+    .filter label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    select {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    option {
+      color: #111;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .kpi {
+      min-height: 145px;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .kpi::after {
+      content: "";
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      position: absolute;
+      right: -45px;
+      top: -55px;
+      background: radial-gradient(circle, rgba(43, 200, 239, 0.17), transparent 67%);
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+    }
+
+    .value {
+      margin: 14px 0 8px;
+      font-size: 34px;
+      font-weight: 800;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 5px 9px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .ok {
+      color: var(--green);
+      background: rgba(56, 217, 154, 0.12);
+    }
+
+    .warn {
+      color: var(--orange);
+      background: rgba(255, 174, 70, 0.13);
+    }
+
+    .bad {
+      color: var(--red);
+      background: rgba(255, 96, 112, 0.13);
+    }
+
+    .info {
+      color: var(--cyan);
+      background: rgba(43, 200, 239, 0.13);
+    }
+
+    .grid-main {
+      display: grid;
+      grid-template-columns: 1.45fr 0.55fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section {
+      padding: 19px;
+    }
+
+    .section h2 {
+      margin: 0 0 5px;
+      font-size: 15px;
+    }
+
+    .section h2 span {
+      color: var(--cyan);
+    }
+
+    table {
+      width: 100%;
+      margin-top: 14px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      padding: 9px 7px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 10px;
+      text-align: left;
+      letter-spacing: 0.7px;
+    }
+
+    td {
+      padding: 12px 7px;
+      border-bottom: 1px solid rgba(130, 180, 230, 0.09);
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .strong {
+      font-weight: bold;
+    }
+
+    .media-bar {
+      display: flex;
+      width: 150px;
+      height: 9px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #263a51;
+      margin-bottom: 5px;
+    }
+
+    .web {
+      background: var(--web);
+    }
+
+    .presse {
+      background: var(--presse);
+    }
+
+    .media-text {
+      color: var(--muted);
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .alert {
+      display: flex;
+      gap: 10px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(130, 180, 230, 0.09);
+    }
+
+    .alert:last-child {
+      border-bottom: 0;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      margin-top: 4px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .alert b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .alert small {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .chart {
+      height: 205px;
+      display: flex;
+      align-items: flex-end;
+      gap: 13px;
+      margin-top: 17px;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .month-bar {
+      flex: 1;
+      min-width: 25px;
+      position: relative;
+      border-radius: 6px 6px 0 0;
+      background: linear-gradient(180deg, var(--cyan), var(--blue));
+    }
+
+    .month-bar::after {
+      content: attr(data-month);
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      color: var(--muted);
+      font-size: 10px;
+      transform: translateX(-50%);
+    }
+
+    .progress {
+      margin: 18px 0;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      font-size: 13px;
+    }
+
+    .track {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #263a51;
+    }
+
+    .fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--cyan), var(--blue));
+    }
+
+    .footer {
+      margin: 12px 2px;
+      color: var(--muted);
+      text-align: right;
+      font-size: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="dashboard">
+
+    <header class="panel header">
+      <div>
+        <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
+        <p class="subtitle">Pilotage des alertes, non-qualités et actions d’amélioration</p>
+      </div>
+
+      <div class="update">
+        DERNIÈRE MISE À JOUR
+        <strong>12/10/2026 — 09:10</strong>
+      </div>
+    </header>
+
+    <section class="filters">
+      <div class="panel filter">
+        <label for="periode">PÉRIODE</label>
+        <select id="periode">
+          <option>Octobre 2026</option>
+          <option>Septembre 2026</option>
+          <option>Année 2026</option>
+        </select>
+      </div>
+
+      <div class="panel filter">
+        <label for="activite">ACTIVITÉ</label>
+        <select id="activite">
+          <option>Toutes</option>
+          <option>LIRIS</option>
+          <option>RUBIS</option>
+        </select>
+      </div>
+
+      <div class="panel filter">
+        <label for="production">PRODUCTION</label>
+        <select id="production">
+          <option>Toutes</option>
+          <option>TANA</option>
+          <option>DIEGO</option>
+        </select>
+      </div>
+
+      <div class="panel filter">
+        <label for="media">MÉDIA</label>
+        <select id="media">
+          <option>Tous</option>
+          <option>WEB</option>
+          <option>PRESSE</option>
+        </select>
+      </div>
+
+      <div class="panel filter">
+        <label for="agent">AGENT</label>
+        <select id="agent">
+          <option>Tous les agents</option>
+          <option>ABC</option>
+          <option>DEF</option>
+          <option>GHI</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="kpis">
+      <article class="panel kpi">
+        <div class="label">Alertes traitées</div>
+        <div class="value">12 540</div>
+        <div class="note">Sur la période sélectionnée</div>
+        <span class="badge info">● ACTIVITÉ SUIVIE</span>
+      </article>
+
+      <article class="panel kpi">
+        <div class="label">RM / Retombées média</div>
+        <div class="value">8 936</div>
+        <div class="note">WEB et PRESSE confondus</div>
+        <span class="badge ok">↗ +4,2 % VS PÉRIODE PRÉCÉDENTE</span>
+      </article>
+
+      <article class="panel kpi">
+        <div class="label">NQ Global</div>
+        <div class="value">480 | 0,18 %</div>
+        <div class="note">Erreurs validées / volume traité</div>
+        <span class="badge warn">● SOUS SURVEILLANCE</span>
+      </article>
+    </section>
+
+    <section class="grid-main">
+      <article class="panel section">
+        <h2><span>▣</span> NON-QUALITÉ PAR CATÉGORIES</h2>
+        <div class="small">Objectif, atteinte réelle et répartition WEB / PRESSE</div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>CATÉGORIE</th>
+              <th class="right">VOLUME NQ</th>
+              <th class="right">OBJECTIF</th>
+              <th class="right">ATTEINTE RÉELLE</th>
+              <th>STATUT</th>
+              <th>RÉPARTITION WEB / PRESSE</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td class="strong">MAUVAISE</td>
+              <td class="right">210</td>
+              <td class="right">0,25 %</td>
+              <td class="right">0,12 %</td>
+              <td><span class="badge ok">● OBJECTIF TENU</span></td>
+              <td>
+                <div class="media-bar">
+                  <div class="web" style="width: 62%"></div>
+                  <div class="presse" style="width: 38%"></div>
+                </div>
+                <div class="media-text">WEB 62 % | PRESSE 38 %</div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="strong">LOUPÉ</td>
+              <td class="right">140</td>
+              <td class="right">0,0095 %</td>
+              <td class="right">0,021 %</td>
+              <td><span class="badge bad">● DÉPASSÉ</span></td>
+              <td>
+                <div class="media-bar">
+                  <div class="web" style="width: 29%"></div>
+                  <div class="presse" style="width: 71%"></div>
+                </div>
+                <div class="media-text">WEB 29 % | PRESSE 71 %</div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="strong">NON CONFORME</td>
+              <td class="right">130</td>
+              <td class="right">0,035 %</td>
+              <td class="right">0,039 %</td>
+              <td><span class="badge bad">● DÉPASSÉ</span></td>
+              <td>
+                <div class="media-bar">
+                  <div class="web" style="width: 57%"></div>
+                  <div class="presse" style="width: 43%"></div>
+                </div>
+                <div class="media-text">WEB 57 % | PRESSE 43 %</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="panel section">
+        <h2><span>⚠</span> POINTS D’ATTENTION</h2>
+        <div class="small">Alertes automatiques</div>
+
+        <div class="alert">
+          <span class="dot" style="background: var(--red)"></span>
+          <div>
+            <b>Non conforme au-dessus de l’objectif</b>
+            <small>0,039 % réalisé pour un objectif de 0,035 %.</small>
+          </div>
+        </div>
+
+        <div class="alert">
+          <span class="dot" style="background: var(--orange)"></span>
+          <div>
+            <b>Loupé à analyser</b>
+            <small>Le taux réalisé dépasse l’objectif fixé.</small>
+          </div>
+        </div>
+
+        <div class="alert">
+          <span class="dot" style="background: var(--green)"></span>
+          <div>
+            <b>Mauvaise sous objectif</b>
+            <small>Maintenir la vigilance et les débriefings.</small>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid-two">
+      <article class="panel section">
+        <h2><span>↗</span> ÉVOLUTION NQ GLOBAL</h2>
+        <div class="small">Taux mensuel de non-qualité</div>
+
+        <div class="chart">
+          <div class="month-bar" data-month="Jan" style="height: 42%"></div>
+          <div class="month-bar" data-month="Fév" style="height: 54%"></div>
+          <div class="month-bar" data-month="Mars" style="height: 46%"></div>
+          <div class="month-bar" data-month="Avr" style="height: 64%"></div>
+          <div class="month-bar" data-month="Mai" style="height: 52%"></div>
+          <div class="month-bar" data-month="Juin" style="height: 71%"></div>
+          <div class="month-bar" data-month="Juil" style="height: 65%"></div>
+          <div class="month-bar" data-month="Août" style="height: 48%"></div>
+          <div class="month-bar" data-month="Sept" style="height: 57%"></div>
+          <div class="month-bar" data-month="Oct" style="height: 60%"></div>
+        </div>
+      </article>
+
+      <article class="panel section">
+        <h2><span>◉</span> AVANCEMENT DES DÉBRIEFINGS</h2>
+        <div class="small">NQ débriefées / NQ validées</div>
+
+        <div class="progress">
+          <div class="progress-head"><span>MAUVAISE</span><strong>89 %</strong></div>
+          <div class="track"><div class="fill" style="width: 89%"></div></div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-head"><span>LOUPÉ</span><strong>71 %</strong></div>
+          <div class="track"><div class="fill" style="width: 71%; background: linear-gradient(90deg, #ffae46, #ff7d45)"></div></div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-head"><span>NON CONFORME</span><strong>62 %</strong></div>
+          <div class="track"><div class="fill" style="width: 62%; background: linear-gradient(90deg, #ff6070, #d9509a)"></div></div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-head"><span>GLOBAL</span><strong>76 %</strong></div>
+          <div class="track"><div class="fill" style="width: 76%; background: linear-gradient(90deg, #a487ff, #4c8dff)"></div></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid-main">
+      <article class="panel section">
+        <h2><span>👥</span> AGENTS À SUIVRE DE TRÈS PRÈS</h2>
+        <div class="small">Priorisation basée sur les erreurs validées et les récurrences</div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>AGENT</th>
+              <th>ERREUR PRINCIPALE</th>
+              <th>STATUT</th>
+              <th class="right">PRIORITÉ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="strong">ABC</td>
+              <td>Vérification des titres</td>
+              <td><span class="badge bad">🔴 LOW PERF</span></td>
+              <td class="right">92</td>
+            </tr>
+            <tr>
+              <td class="strong">DEF</td>
+              <td>Bornage</td>
+              <td><span class="badge warn">🟠 À SURVEILLER</span></td>
+              <td class="right">74</td>
+            </tr>
+            <tr>
+              <td class="strong">GHI</td>
+              <td>Montage</td>
+              <td><span class="badge info">🟡 ACTION EN COURS</span></td>
+              <td class="right">63</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="panel section">
+        <h2><span>▤</span> NQ PAR ACTIVITÉ / PRODUCTION</h2>
+        <div class="small">Taux calculés selon le périmètre sélectionné</div>
+
+        <div class="progress">
+          <div class="progress-head"><span>LIRIS</span><strong>0,17 %</strong></div>
+          <div class="track"><div class="fill" style="width: 68%"></div></div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-head"><span>RUBIS</span><strong>0,21 %</strong></div>
+          <div class="track"><div class="fill" style="width: 84%"></div></div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-head"><span>TANA</span><strong>0,19 %</strong></div>
+          <div class="track"><div class="fill" style="width: 76%; background: linear-gradient(90deg, #a487ff, #4c8dff)"></div></div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-head"><span>DIEGO</span><strong>0,16 %</strong></div>
+          <div class="track"><div class="fill" style="width: 64%; background: linear-gradient(90deg, #a487ff, #4c8dff)"></div></div>
+        </div>
+      </article>
+    </section>
+
+    <div class="footer">
+      Maquette avec données de démonstration — à connecter à vos données Google Sheets.
+    </div>
+
+  </main>
+</body>
+</html>
