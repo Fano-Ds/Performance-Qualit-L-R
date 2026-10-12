@@ -453,7 +453,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE PILOTAGE MULTI-CRITÈRES (PÉRIODE + ACTIVITÉ + MÉDIA) -->
+    <!-- SCRIPT DE LECTURE INTELLIGENTE PAR EN-TÊTES -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -466,6 +466,21 @@
                 
                 const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 if (lignes.length <= 1) return;
+
+                // Lecture intelligente des en-têtes (Ligne 1)
+                const enTetes = lignes[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+                
+                // Repérage automatique des colonnes clés peu importe leur position
+                let idxTrigramme = enTetes.findIndex(h => h.includes('trigramme'));
+                let idxDate = enTetes.findIndex(h => h.includes('date de lecture'));
+                let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
+                let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
+
+                // Valeurs de secours si les en-têtes diffèrent
+                if (idxTrigramme === -1) idxTrigramme = 0;
+                if (idxDate === -1) idxDate = 1;
+                if (idxMedia === -1) idxMedia = 4;
+                if (idxCategorie === -1) idxCategorie = 6;
 
                 const moisSelectionne = document.getElementById('filter-periode').value;
                 const activiteSelectionnee = document.getElementById('filter-activite').value;
@@ -484,24 +499,22 @@
                 for (let i = 1; i < lignes.length; i++) {
                     const cols = lignes[i].split(',').map(c => c.replace(/"/g, '').trim());
                     
-                    if (cols.length >= 6) {
-                        const trigramme = cols[0] ? cols[0].toUpperCase() : '';
-                        const dateLecture = cols[1] || '';
-                        const mediaLigneCol = cols[4] ? cols[4].toUpperCase() : '';
-                        const categorie = cols[5] ? cols[5].toUpperCase() : '';
+                    if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
+                        const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
+                        const dateLecture = cols[idxDate] || '';
+                        const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
+                        const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
                         
-                        // Détection de l'activité
                         const ligneTexte = cols.join(' ').toLowerCase();
                         let activiteLigne = 'autre';
                         if (ligneTexte.includes('liris')) activiteLigne = 'liris';
                         if (ligneTexte.includes('rubis')) activiteLigne = 'rubis';
 
-                        // Détection du média (web ou presse)
                         let mediaLigne = 'autre';
                         if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
                         if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
 
-                        // Extraction du mois depuis la date de lecture
+                        // Extraction du mois
                         let moisLigne = '';
                         if (dateLecture.includes('/')) {
                             const p = dateLecture.split('/');
@@ -517,6 +530,129 @@
                             if (activiteLigne === 'liris') countLiris++;
                             if (activiteLigne === 'rubis') countRubis++;
 
-                            // Vérification des 3 filtres : Période, Activité, Média
                             const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
                             const matchActivite = (activiteSelectionnee === 'toutes' || activiteLigne === activiteSelectionnee);
+                            const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
+
+                            if (matchActivite && matchMedia) {
+                                volumesParMois[moisLigne]++;
+                            }
+
+                            if (matchPeriode && matchActivite && matchMedia) {
+                                totalMois++;
+
+                                if (!agentsCumul[trigramme]) agentsCumul[trigramme] = 0;
+                                agentsCumul[trigramme]++;
+
+                                if (categorie.includes('MAUVAISE')) {
+                                    mauvTotal++;
+                                    if (mediaLigne === 'web') mauvWeb++;
+                                    if (mediaLigne === 'presse') mauvPresse++;
+                                } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
+                                    loupeTotal++;
+                                    if (mediaLigne === 'web') loupeWeb++;
+                                    if (mediaLigne === 'presse') loupePresse++;
+                                } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
+                                    ncTotal++;
+                                    if (mediaLigne === 'web') ncWeb++;
+                                    if (mediaLigne === 'presse') ncPresse++;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 1. Mise à jour KPI & Catégories
+                document.getElementById('kpi-nq').innerText = totalMois + " NQ";
+                
+                document.getElementById('val-mauvaise').innerText = mauvTotal;
+                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
+
+                document.getElementById('val-loupe').innerText = loupeTotal;
+                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
+
+                document.getElementById('val-nc').innerText = ncTotal;
+                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
+
+                const totalAct = (countLiris + countRubis) || 1;
+                const pctLiris = Math.round((countLiris / totalAct) * 100);
+                const pctRubis = Math.round((countRubis / totalAct) * 100);
+
+                document.getElementById('stat-liris').innerText = countLiris + " NQ (" + pctLiris + "%)";
+                document.getElementById('bar-liris').style.width = pctLiris + "%";
+
+                document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
+                document.getElementById('bar-rubis').style.width = pctRubis + "%";
+
+                // 2. Graphique Annuel
+                const chartContainer = document.getElementById('chart-months-container');
+                chartContainer.innerHTML = '';
+                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                const maxVol = Math.max(...Object.values(volumesParMois), 1);
+
+                clesMois.forEach((cle, idx) => {
+                    const vol = volumesParMois[cle];
+                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 4);
+
+                    const grp = document.createElement('div');
+                    grp.className = 'chart-bar-group';
+                    grp.innerHTML = `
+                        <div class="chart-value-label">${vol > 0 ? vol : ''}</div>
+                        <div class="chart-bar" style="height: ${hauteur}%;"></div>
+                        <div class="chart-label">${nomsMois[idx]}</div>
+                    `;
+                    chartContainer.appendChild(grp);
+                });
+
+                // 3. Flop 5 des agents
+                const agentsTries = Object.keys(agentsCumul).map(t => {
+                    return { trigramme: t, total: agentsCumul[t] };
+                }).sort((a, b) => b.total - a.total).slice(0, 5);
+
+                const tbody = document.getElementById('agents-table-body');
+                tbody.innerHTML = '';
+
+                if (agentsTries.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucune erreur pour ces critères</td></tr>';
+                } else {
+                    agentsTries.forEach((item, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><strong>${item.trigramme}</strong></td>
+                            <td>${item.total} erreur(s) cumulée(s)</td>
+                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
+                            <td>À débriefer</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                // 4. Liste des agents dans le menu déroulant
+                const selectAgent = document.getElementById('filter-agent');
+                const valSelectionnee = selectAgent.value;
+                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
+                Array.from(tousLesAgents).sort().forEach(agent => {
+                    const opt = document.createElement('option');
+                    opt.value = agent.toLowerCase();
+                    opt.textContent = agent;
+                    selectAgent.appendChild(opt);
+                });
+                selectAgent.value = valSelectionnee;
+
+                console.log("Synchronisation réussie !");
+
+            } catch (err) {
+                console.error("Erreur de synchronisation :", err);
+            }
+        }
+
+        document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
+        document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
+        document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
+
+        rafraichirTableauDeBord();
+    </script>
+
+</body>
+</html>
