@@ -419,22 +419,19 @@
     <!-- AGENTS À SUIVRE & NQ PAR ACTIVITÉ / PRODUCTION -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Agents à suivre de très près</h2>
+            <h2>Agents à suivre de très près (Flop 5 NQ)</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Agent (Trigramme)</th>
-                        <th>Erreur principale</th>
+                        <th>Cumul Erreurs NQ</th>
                         <th>Statut</th>
-                        <th>Priorité</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="agents-table-body">
                     <tr>
-                        <td><strong>ABC</strong></td>
-                        <td>Vérification des titres</td>
-                        <td><span class="status-badge status-low">Low Perf</span></td>
-                        <td>92</td>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Calcul du Flop 5 en cours...</td>
                     </tr>
                 </tbody>
             </table>
@@ -461,13 +458,13 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE SYNCHRONISATION AUTOMATIQUE GOOGLE SHEETS -->
+    <!-- SCRIPT DE CALCUL AUTOMATIQUE DU FLOP 5 -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
         document.getElementById('current-datetime').innerText = new Date().toLocaleDateString('fr-FR') + ' — ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
 
-        async function chargerDonneesGoogleSheets() {
+        async function chargerEtCalculerFlop5() {
             try {
                 const response = await fetch(csvUrl);
                 const data = await response.text();
@@ -475,50 +472,74 @@
                 const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 if (lignes.length <= 1) return;
 
+                let agentsCumul = {};
                 const agentsSet = new Set();
-                const tbody = document.getElementById('agents-table-body');
-                tbody.innerHTML = ''; 
 
+                // Analyse des lignes (à partir de la 2ème ligne)
                 for (let i = 1; i < lignes.length; i++) {
                     const colonnes = lignes[i].split(',').map(c => c.replace(/"/g, '').trim());
                     
-                    if (colonnes.length > 0 && colonnes[0] !== '') {
-                        const trigramme = colonnes[0] || '---';
-                        const erreur = colonnes[9] || colonnes[1] || 'Vérification';
-                        const statut = 'À surveiller';
-                        const priorite = '75';
+                    if (colonnes.length > 0 && colonnes[0] !== '' && colonnes[0].toLowerCase() !== 'trigramme') {
+                        const trigramme = colonnes[0].toUpperCase();
 
-                        agentsSet.add(trigramme);
+                        // Ignorer si ce n'est pas un trigramme valide (par sécurité)
+                        if (trigramme.length >= 2 && trigramme.length <= 5) {
+                            agentsSet.add(trigramme);
 
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td><strong>${trigramme}</strong></td>
-                            <td>${erreur}</td>
-                            <td><span class="status-badge status-surveiller">${statut}</span></td>
-                            <td>${priorite}</td>
-                        `;
-                        tbody.appendChild(tr);
+                            // Additionner / cumuler les erreurs par agent
+                            if (!agentsCumul[trigramme]) {
+                                agentsCumul[trigramme] = 0;
+                            }
+                            agentsCumul[trigramme]++;
+                        }
                     }
                 }
 
-                // Remplir dynamiquement le menu déroulant des agents
+                // Transformer en tableau pour trier du plus grand au plus petit (Flop 5)
+                const agentsClasses = Object.keys(agentsCumul).map(trigramme => {
+                    return { trigramme: trigramme, total: agentsCumul[trigramme] };
+                }).sort((a, b) => b.total - a.total);
+
+                // Ne garder que les 5 pires (Flop 5)
+                const flop5 = agentsClasses.slice(0, 5);
+
+                // Remplir le tableau HTML
+                const tbody = document.getElementById('agents-table-body');
+                tbody.innerHTML = '';
+
+                if (flop5.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucun agent trouvé</td></tr>';
+                } else {
+                    flop5.forEach((item, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><strong>${item.trigramme}</strong></td>
+                            <td>${item.total} erreur(s) cumulée(s)</td>
+                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
+                            <td>À débriefer</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                // Remplir dynamiquement le menu déroulant des filtres d'agents
                 const selectAgent = document.getElementById('filter-agent');
                 selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
-                agentsSet.forEach(agent => {
+                Array.from(agentsSet).sort().forEach(agent => {
                     const option = document.createElement('option');
                     option.value = agent.toLowerCase();
                     option.textContent = agent;
                     selectAgent.appendChild(option);
                 });
 
-                console.log("Synchronisation réussie : " + agentsSet.size + " agents chargés.");
+                console.log("Calcul du Flop 5 réussi : " + agentsSet.size + " agents analysés.");
 
             } catch (error) {
-                console.error("Erreur lors de la lecture du Google Sheets :", error);
+                console.error("Erreur lors de la lecture des agents :", error);
             }
         }
 
-        chargerDonneesGoogleSheets();
+        chargerEtCalculerFlop5();
     </script>
 
 </body>
