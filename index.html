@@ -308,7 +308,7 @@
         </div>
     </div>
 
-    <!-- KPI CARDS AVEC SUIVI DES NON DÉBRIEFÉS -->
+    <!-- KPI CARDS -->
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées (Saisie)</h3>
@@ -321,16 +321,16 @@
             <div class="subtitle">Pour calculs taux Mauvaise & NC</div>
         </div>
         <div class="kpi-card">
-            <h3>NQ Global / Non débriefées</h3>
+            <h3>NQ Global (OK + Vides)</h3>
             <div class="value" id="kpi-nq">0 NQ</div>
-            <div class="subtitle"><span id="kpi-non-debriefes" style="color: var(--danger); font-weight:700;">0 ligne(s)</span> non débriefée(s)</div>
+            <div class="subtitle"><span id="kpi-non-debriefes" style="color: var(--danger); font-weight:700;">0 ligne(s)</span> vide(s) / non débriefée(s)</div>
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES & 3 BLOCS DE PLAN D'ACTION (ROUGE / ORANGE / VERT) -->
+    <!-- SECTION CATÉGORIES & PLAN D'ACTION (3 NIVEAUX) -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Non-qualité par catégories</h2>
+            <h2>Non-qualité par catégories (OK & Vides)</h2>
             <table>
                 <thead>
                     <tr>
@@ -374,7 +374,6 @@
         <div class="card-section">
             <h2>Plan d'Action (3 Niveaux d'Alerte)</h2>
             <div id="pa-container" style="font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
-                <!-- Injecté dynamiquement -->
                 <div style="color: var(--text-muted);">Analyse des seuils en cours...</div>
             </div>
         </div>
@@ -383,7 +382,7 @@
     <!-- GRAPHIQUE ÉVOLUTION GLOBALE -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Volumes par mois)</h2>
+            <h2>Évolution NQ Global (Volumes OK & Vides par mois)</h2>
             <div class="chart-container" id="chart-months-container">
                 <!-- Rempli dynamiquement -->
             </div>
@@ -418,7 +417,7 @@
                 <thead>
                     <tr>
                         <th>Agent (Trigramme)</th>
-                        <th>Cumul Erreurs NQ</th>
+                        <th>Cumul Erreurs NQ (OK + Vides)</th>
                         <th>Statut</th>
                         <th>Action</th>
                     </tr>
@@ -452,7 +451,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT AVEC GESTION DES 3 BLOCS ET DÉTECTION DES LIGNES NON DÉBRIEFÉES -->
+    <!-- SCRIPT AVEC PRISE EN COMPTE DES STATUTS OK ET DES LIGNES VIDES -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -490,7 +489,7 @@
                 let volumesParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 
                 let totalMois = 0;
-                let nonDebriefesMois = 0; // Compteur des lignes vides / non débriefées
+                let nonDebriefesMois = 0;
                 let mauvTotal = 0, mauvWeb = 0, mauvPresse = 0;
                 let loupeTotal = 0, loupeWeb = 0, loupePresse = 0;
                 let ncTotal = 0, ncWeb = 0, ncPresse = 0;
@@ -509,6 +508,26 @@
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
                         
                         const ligneTexte = cols.join(' ').toLowerCase();
+
+                        // --- RÈGLE MÉTIER : Exclusion des KO, conservation des OK et des lignes vides (à débriefer) ---
+                        let estExcluKO = false;
+                        let estVideOuPasEncoreTraite = false;
+                        
+                        // On vérifie s'il y a un KO explicite
+                        for (let colVal of cols) {
+                            if (colVal.toUpperCase() === 'KO') {
+                                estExcluKO = true;
+                                break;
+                            }
+                        }
+                        if (estExcluKO) continue; // On ignore les KO
+
+                        // On vérifie si la ligne comporte des cellules vides (non débriefées / en attente)
+                        if (cols.some(c => c === '')) {
+                            estVideOuPasEncoreTraite = true;
+                            nonDebriefesMois++;
+                        }
+
                         let activiteLigne = 'autre';
                         if (ligneTexte.includes('liris')) activiteLigne = 'liris';
                         if (ligneTexte.includes('rubis')) activiteLigne = 'rubis';
@@ -542,12 +561,6 @@
                             if (matchPeriode && matchActivite && matchMedia) {
                                 totalMois++;
 
-                                // Détection des lignes non débriefées (cellules vides ou absence de commentaire de débrief)
-                                // On vérifie si la ligne contient des valeurs vides sur les colonnes de fin ou de statut
-                                if (cols.some(c => c === '') || !ligneTexte.includes('ok')) {
-                                    nonDebriefesMois++;
-                                }
-
                                 if (activiteLigne === 'liris') countLiris++;
                                 if (activiteLigne === 'rubis') countRubis++;
 
@@ -576,7 +589,7 @@
                 document.getElementById('kpi-nq').innerText = totalMois + " NQ";
                 document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
 
-                // 2. Calculs et statuts (3 niveaux : Vert, Orange, Rouge)
+                // 2. Calculs et statuts (3 niveaux)
                 const objMauvaise = 0.25;
                 const objLoupe = 0.0095;
                 const objNC = 0.035;
@@ -585,11 +598,10 @@
                 const valTauxLoupe = (loupeTotal / alertesTraitees) * 100;
                 const valTauxNC = (ncTotal / totalRM) * 100;
 
-                // Fonction d'attribution de statut à 3 niveaux
                 function getStatutInfo(val, obj) {
                     if (val <= obj) {
                         return { classe: 'status-tenu', texte: 'Objectif tenu', niveau: 'vert' };
-                    } else if (val <= obj * 1.15) { // Si ça frôle (dépasse de moins de 15%)
+                    } else if (val <= obj * 1.15) {
                         return { classe: 'status-surveiller', texte: 'À surveiller (Frôle)', niveau: 'orange' };
                     } else {
                         return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
@@ -600,30 +612,25 @@
                 const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
                 const stNC = getStatutInfo(valTauxNC, objNC);
 
-                // MAUVAISE
                 document.getElementById('val-mauvaise').innerText = mauvTotal;
                 document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
                 document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
                 document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
 
-                // LOUPÉ
                 document.getElementById('val-loupe').innerText = loupeTotal;
                 document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
                 document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
                 document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
 
-                // NON CONFORME
                 document.getElementById('val-nc').innerText = ncTotal;
                 document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // --- GÉNÉRATION DES 3 BLOCS DE PLAN D'ACTION ---
+                // --- 3 BLOCS DE PLAN D'ACTION ---
                 let htmlPA = '';
-                
-                // Tableau combinant les catégories pour le tri dynamique
                 const categoriesBilan = [
-                    { nom: 'Non Conforme', st: stNC, paRouge: "PA Correctif : Lancer un rappel immédiat sur les consignes de formatage et de saisie.", paOrange: "Attention : Le taux frôle la limite. Vérifier les dernières fiches de saisie.", paVert: "Objectif tenu : Maintenir la rigueur actuelle." },
+                    { nom: 'Non Conforme', st: stNC, paRouge: "PA Correctif : Lancer un rappel immédiat sur les consignes de formatage et de saisie.", paOrange: "Attention : Le taux frôle la limite. Vérifier les dernières fiches.", paVert: "Objectif tenu : Maintenir la rigueur actuelle." },
                     { nom: 'Loupé', st: stLoupe, paRouge: "PA Correctif : Auditer le Flop 5 des agents et planifier des debriefings individuels.", paOrange: "Attention : Surveillance requise sur les flux média en retard.", paVert: "Objectif tenu : Couverture des flux média maîtrisée." },
                     { nom: 'Mauvaise', st: stMauv, paRouge: "PA Correctif : Revoir les critères de pertinence (homonymies/passages significatifs).", paOrange: "Attention : Risque de dépassement sur les critères de sélection.", paVert: "Sous objectif : Capitaliser sur les bonnes pratiques." }
                 ];
@@ -641,118 +648,4 @@
                         messagePA = cat.paRouge;
                     } else if (cat.st.niveau === 'orange') {
                         borderColor = '#fbbf24';
-                        badgeBg = 'rgba(251, 191, 36, 0.2)';
-                        badgeColor = '#fbbf24';
-                        messagePA = cat.paOrange;
-                    }
-
-                    htmlPA += `
-                        <div style="background: var(--bg-main); border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase;">${cat.nom}</strong>
-                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${cat.st.texte}</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 12px;">${messagePA}</div>
-                        </div>
-                    `;
-                });
-
-                // Ajout du bloc spécial pour les lignes non débriefées
-                if (nonDebriefesMois > 0) {
-                    htmlPA += `
-                        <div style="background: var(--bg-main); border-left: 4px solid #f87171; padding: 10px; border-radius: 6px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #f87171;">Lignes non débriefées</strong>
-                                <span style="background: rgba(248, 113, 113, 0.2); color: #f87171; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${nonDebriefesMois} à traiter</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 12px;">Action requise : Compléter le suivi ou planifier les entretiens de débriefing en suspens.</div>
-                        </div>
-                    `;
-                }
-
-                document.getElementById('pa-container').innerHTML = htmlPA;
-
-                // Barres LIRIS / RUBIS
-                const totalAct = (countLiris + countRubis) || 1;
-                const pctLiris = Math.round((countLiris / totalAct) * 100);
-                const pctRubis = Math.round((countRubis / totalAct) * 100);
-
-                document.getElementById('stat-liris').innerText = countLiris + " NQ (" + pctLiris + "%)";
-                document.getElementById('bar-liris').style.width = pctLiris + "%";
-
-                document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
-                document.getElementById('bar-rubis').style.width = pctRubis + "%";
-
-                // 3. Graphique Annuel
-                const chartContainer = document.getElementById('chart-months-container');
-                chartContainer.innerHTML = '';
-                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
-                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-                const maxVol = Math.max(...Object.values(volumesParMois), 1);
-
-                clesMois.forEach((cle, idx) => {
-                    const moisNum = parseInt(cle, 10);
-                    const vol = moisNum > moisActuelMax ? 0 : volumesParMois[cle];
-                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 4);
-
-                    const grp = document.createElement('div');
-                    grp.className = 'chart-bar-group';
-                    grp.innerHTML = `
-                        <div class="chart-value-label">${vol > 0 ? vol : ''}</div>
-                        <div class="chart-bar" style="height: ${hauteur}%;"></div>
-                        <div class="chart-label">${nomsMois[idx]}</div>
-                    `;
-                    chartContainer.appendChild(grp);
-                });
-
-                // 4. Flop 5 des agents
-                const agentsTries = Object.keys(agentsCumul).map(t => {
-                    return { trigramme: t, total: agentsCumul[t] };
-                }).sort((a, b) => b.total - a.total).slice(0, 5);
-
-                const tbody = document.getElementById('agents-table-body');
-                tbody.innerHTML = '';
-
-                if (agentsTries.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucune erreur pour cette période</td></tr>';
-                } else {
-                    agentsTries.forEach((item, index) => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td><strong>${item.trigramme}</strong></td>
-                            <td>${item.total} erreur(s) cumulée(s)</td>
-                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
-                            <td>À débriefer</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-
-                // 5. Liste des agents
-                const selectAgent = document.getElementById('filter-agent');
-                const valSelectionnee = selectAgent.value;
-                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
-                Array.from(tousLesAgents).sort().forEach(agent => {
-                    const opt = document.createElement('option');
-                    opt.value = agent.toLowerCase();
-                    opt.textContent = agent;
-                    selectAgent.appendChild(opt);
-                });
-                selectAgent.value = valSelectionnee;
-
-            } catch (err) {
-                console.error("Erreur :", err);
-            }
-        }
-
-        document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
-
-        rafraichirTableauDeBord();
-    </script>
-
-</body>
-</html>
+                        badgeBg = 'rgba(251, 191, 36, 0
