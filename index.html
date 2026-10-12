@@ -248,29 +248,41 @@
     <div class="filters-bar">
         <div class="filter-group">
             <select id="filter-periode">
-                <option value="toutes">Période : Toutes</option>
+                <option value="toutes">Période : Toutes (Jan - Déc)</option>
+                <option value="jan">Janvier</option>
+                <option value="fev">Février</option>
+                <option value="mars">Mars</option>
+                <option value="avr">Avril</option>
+                <option value="mai">Mai</option>
+                <option value="juin">Juin</option>
+                <option value="juil">Juillet</option>
+                <option value="aout">Août</option>
                 <option value="sept" selected>Septembre 2026</option>
+                <option value="oct">Octobre</option>
+                <option value="nov">Novembre</option>
+                <option value="dec">Décembre</option>
             </select>
         </div>
         <div class="filter-group">
             <select id="filter-activite">
-                <option value="toutes">Activité : Toutes</option>
+                <option value="toutes">Activité : Toutes (LIRIS & RUBIS)</option>
                 <option value="liris">LIRIS</option>
                 <option value="rubis">RUBIS</option>
             </select>
         </div>
         <div class="filter-group">
             <select id="filter-production">
-                <option value="toutes">Production : Toutes</option>
+                <option value="toutes">Production : Toutes (Les deux)</option>
                 <option value="tana">TANA</option>
                 <option value="diego">DIEGO</option>
             </select>
         </div>
         <div class="filter-group">
             <select id="filter-media">
-                <option value="tous">Média : Tous</option>
+                <option value="tous">Média : Tous (Web & Presse)</option>
                 <option value="web">WEB</option>
                 <option value="presse">PRESSE</option>
+                <option value="confondus">Web & Presse confondus</option>
             </select>
         </div>
         <div class="filter-group">
@@ -283,85 +295,179 @@
     <!-- KPI CARDS -->
     <div class="kpi-container">
         <div class="kpi-card">
-            <h3>Total Lignes / Erreurs NQ</h3>
-            <div class="value" id="kpi-total">0</div>
-            <div class="subtitle">Chargé depuis Google Sheets</div>
-            <div class="badge-pill badge-success">▼ En direct</div>
+            <h3>Alertes traitées</h3>
+            <div class="value" id="kpi-alertes">12 540</div>
+            <div class="subtitle">Sur la période sélectionnée</div>
+            <div class="badge-pill badge-success">▼ Activité suivie</div>
         </div>
         <div class="kpi-card">
-            <h3>Répartition Média</h3>
-            <div class="value" id="kpi-media-stats">Web: 0 | Presse: 0</div>
-            <div class="subtitle">Volumes enregistrés</div>
-            <div class="badge-pill badge-success">▲ Synchronisé</div>
+            <h3>RM / Retombées média</h3>
+            <div class="value" id="kpi-rm">8 936</div>
+            <div class="subtitle">WEB et PRESSE confondus</div>
+            <div class="badge-pill badge-success">▲ Données synchronisées</div>
         </div>
         <div class="kpi-card">
-            <h3>Agents suivis</h3>
-            <div class="value" id="kpi-agents-count">0</div>
-            <div class="subtitle">Trigrammes uniques détectés</div>
-            <div class="badge-pill badge-warning">● Actifs</div>
+            <h3>NQ Global</h3>
+            <div class="value" id="kpi-nq">480 | 0,18 %</div>
+            <div class="subtitle">Erreurs validées / volume traité</div>
+            <div class="badge-pill badge-warning">● Sous surveillance</div>
         </div>
     </div>
 
     <!-- SECTION CATÉGORIES & POINTS D'ATTENTION -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Non-qualité par catégories (Calculé en direct)</h2>
+            <h2>Non-qualité par catégories</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Catégorie</th>
                         <th>Volume NQ</th>
+                        <th>Objectif</th>
+                        <th>Atteinte réelle</th>
+                        <th>Statut</th>
                         <th>Répartition Web / Presse</th>
                     </tr>
                 </thead>
-                <tbody id="categories-table-body">
-                    <tr><td colspan="3" style="text-align:center;">Analyse des données en cours...</td></tr>
+                <tbody>
+                    <tr>
+                        <td><strong>MAUVAISE</strong></td>
+                        <td>210</td>
+                        <td>0,25 %</td>
+                        <td>0,12 %</td>
+                        <td><span class="status-badge status-tenu">Objectif tenu</span></td>
+                        <td>Web 62 % | Presse 38 %</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LOUPÉ</strong></td>
+                        <td>140</td>
+                        <td>0,0095 %</td>
+                        <td>0,021 %</td>
+                        <td><span class="status-badge status-depasse">Dépassé</span></td>
+                        <td>Web 29 % | Presse 71 %</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NON CONFORME</strong></td>
+                        <td>130</td>
+                        <td>0,035 %</td>
+                        <td>0,039 %</td>
+                        <td><span class="status-badge status-depasse">Dépassé</span></td>
+                        <td>Web 57 % | Presse 43 %</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="card-section">
             <h2>Points d'attention</h2>
-            <div style="font-size: 13px; color: var(--text-muted);">
-                Les volumes ci-contre se mettent à jour automatiquement dès que vous actualisez la page, en se basant sur la colonne <strong>Catégorie</strong> de votre onglet NQ.
+            <div style="margin-bottom: 12px; font-size: 13px;">
+                <div style="font-weight:600; color:#f87171; margin-bottom:2px;">● Non conforme au-dessus de l'objectif</div>
+                <div style="color:var(--text-muted); font-size:12px;">0,039 % réalisé pour un objectif de 0,035 %.</div>
+            </div>
+            <div style="margin-bottom: 12px; font-size: 13px;">
+                <div style="font-weight:600; color:#fbbf24; margin-bottom:2px;">● Loupé à analyser</div>
+                <div style="color:var(--text-muted); font-size:12px;">Le taux réalisé dépasse l'objectif fixé.</div>
+            </div>
+            <div style="font-size: 13px;">
+                <div style="font-weight:600; color:#34d399; margin-bottom:2px;">● Mauvaise sous objectif</div>
+                <div style="color:var(--text-muted); font-size:12px;">Maintenir la vigilance et les débriefings.</div>
             </div>
         </div>
     </div>
 
-    <!-- AGENTS À SUIVRE -->
+    <!-- GRAPHIQUE JAN-DEC ET DÉBRIEFINGS -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Agents à suivre de très près (Trigrammes)</h2>
+            <h2>Évolution NQ Global (Janvier - Décembre)</h2>
+            <div class="chart-container">
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 40%;"></div><div class="chart-label">Jan</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 60%;"></div><div class="chart-label">Fév</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 50%;"></div><div class="chart-label">Mars</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 70%;"></div><div class="chart-label">Avr</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 55%;"></div><div class="chart-label">Mai</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 80%;"></div><div class="chart-label">Juin</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 65%;"></div><div class="chart-label">Juil</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 45%;"></div><div class="chart-label">Août</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 60%;"></div><div class="chart-label">Sept</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 68%;"></div><div class="chart-label">Oct</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 35%;"></div><div class="chart-label">Nov</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 50%;"></div><div class="chart-label">Déc</div></div>
+            </div>
+        </div>
+
+        <div class="card-section">
+            <h2>Avancement des débriefings</h2>
+            <div class="progress-item">
+                <div class="progress-info"><span>MAUVAISE</span><span>89 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 89%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>LOUPÉ</span><span>71 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 71%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>NON CONFORME</span><span>62 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 62%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>GLOBAL</span><span>76 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 76%; background: var(--success);"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AGENTS À SUIVRE & NQ PAR ACTIVITÉ / PRODUCTION -->
+    <div class="grid-2col">
+        <div class="card-section">
+            <h2>Agents à suivre de très près</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Agent (Trigramme)</th>
-                        <th>Nombre d'erreurs NQ</th>
+                        <th>Erreur principale</th>
                         <th>Statut</th>
+                        <th>Priorité</th>
                     </tr>
                 </thead>
                 <tbody id="agents-table-body">
-                    <tr><td colspan="3" style="text-align: center;">Chargement des agents...</td></tr>
+                    <tr>
+                        <td><strong>ABC</strong></td>
+                        <td>Vérification des titres</td>
+                        <td><span class="status-badge status-low">Low Perf</span></td>
+                        <td>92</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="card-section">
-            <h2>État de la synchronisation</h2>
-            <div style="font-size: 13px; color: var(--success); font-weight: 500;">
-                ● Connexion Google Sheets active.<br>
-                ● Lecture des colonnes Trigramme, Catégorie et Média opérationnelle.
+            <h2>NQ par activité / production</h2>
+            <div class="progress-item">
+                <div class="progress-info"><span>LIRIS</span><span>0,17 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>RUBIS</span><span>0,21 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 60%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>TANA</span><span>0,19 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 50%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>DIEGO</span><span>0,16 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 40%;"></div></div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT D'ANALYSE AUTOMATIQUE DU CSV -->
+    <!-- SCRIPT DE SYNCHRONISATION AUTOMATIQUE GOOGLE SHEETS -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
         document.getElementById('current-datetime').innerText = new Date().toLocaleDateString('fr-FR') + ' — ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
 
-        async function chargerEtAnalyserDonnees() {
+        async function chargerDonneesGoogleSheets() {
             try {
                 const response = await fetch(csvUrl);
                 const data = await response.text();
@@ -369,110 +475,50 @@
                 const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 if (lignes.length <= 1) return;
 
-                // Récupération des en-têtes (Ligne 1)
-                const enTetes = lignes[0].split(',').map(h => h.replace(/"/g, '').trim());
-                
-                // Recherche automatique des indices des colonnes importantes
-                let indexTrigramme = enTetes.findIndex(h => h.toLowerCase().includes('trigramme'));
-                let indexMedia = enTetes.findIndex(h => h.toLowerCase().includes('média') || h.toLowerCase().includes('media'));
-                let indexCategorie = enTetes.findIndex(h => h.toLowerCase().includes('catégorie') || h.toLowerCase().includes('categorie'));
-
-                // Valeurs par défaut si les en-têtes diffèrent un peu
-                if (indexTrigramme === -1) indexTrigramme = 0;
-                if (indexMedia === -1) indexMedia = 4;
-                if (indexCategorie === -1) indexCategorie = 6;
-
-                let totalErreurs = 0;
-                let webCount = 0;
-                let presseCount = 0;
-                let agentsMap = {};
-                let categoriesMap = {};
                 const agentsSet = new Set();
+                const tbody = document.getElementById('agents-table-body');
+                tbody.innerHTML = ''; 
 
-                // Analyse des lignes de données (à partir de la ligne 2)
                 for (let i = 1; i < lignes.length; i++) {
-                    // Découpage simple des colonnes CSV
-                    const cols = lignes[i].split(',').map(c => c.replace(/"/g, '').trim());
+                    const colonnes = lignes[i].split(',').map(c => c.replace(/"/g, '').trim());
                     
-                    const trigramme = cols[indexTrigramme] || 'Inconnu';
-                    const media = cols[indexMedia] || 'Non défini';
-                    const categorie = cols[indexCategorie] || 'Non catégorisé';
+                    if (colonnes.length > 0 && colonnes[0] !== '') {
+                        const trigramme = colonnes[0] || '---';
+                        const erreur = colonnes[9] || colonnes[1] || 'Vérification';
+                        const statut = 'À surveiller';
+                        const priorite = '75';
 
-                    if (trigramme !== 'Inconnu' && trigramme !== '') {
-                        totalErreurs++;
                         agentsSet.add(trigramme);
 
-                        // Compter par agent
-                        if (!agentsMap[trigramme]) agentsMap[trigramme] = 0;
-                        agentsMap[trigramme]++;
-
-                        // Compter par média
-                        if (media.toLowerCase().includes('web')) webCount++;
-                        if (media.toLowerCase().includes('presse')) presseCount++;
-
-                        // Compter par catégorie (ex: Mauvaise, Loupé, Non conforme)
-                        if (!categoriesMap[categorie]) {
-                            categoriesMap[categorie] = { total: 0, web: 0, presse: 0 };
-                        }
-                        categoriesMap[categorie].total++;
-                        if (media.toLowerCase().includes('web')) categoriesMap[categorie].web++;
-                        if (media.toLowerCase().includes('presse')) categoriesMap[categorie].presse++;
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><strong>${trigramme}</strong></td>
+                            <td>${erreur}</td>
+                            <td><span class="status-badge status-surveiller">${statut}</span></td>
+                            <td>${priorite}</td>
+                        `;
+                        tbody.appendChild(tr);
                     }
                 }
 
-                // 1. Mettre à jour les KPI Cards
-                document.getElementById('kpi-total').innerText = totalErreurs;
-                document.getElementById('kpi-media-stats').innerText = `Web: ${webCount} | Presse: ${presseCount}`;
-                document.getElementById('kpi-agents-count').innerText = agentsSet.size;
-
-                // 2. Remplir le tableau des catégories
-                const catTbody = document.getElementById('categories-table-body');
-                catTbody.innerHTML = '';
-                for (let cat in categoriesMap) {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>${cat.toUpperCase()}</strong></td>
-                        <td>${categoriesMap[cat].total}</td>
-                        <td>Web ${categoriesMap[cat].web} | Presse ${categoriesMap[cat].presse}</td>
-                    `;
-                    catTbody.appendChild(tr);
-                }
-
-                // 3. Remplir le tableau des agents (du plus d'erreurs au moins d'erreurs)
-                const agentsTbody = document.getElementById('agents-table-body');
-                agentsTbody.innerHTML = '';
-                
-                // Trier les agents par nombre d'erreurs décroissant
-                const agentsTries = Object.keys(agentsMap).sort((a, b) => agentsMap[b] - agentsMap[a]);
-
-                agentsTries.forEach(agent => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>${agent}</strong></td>
-                        <td>${agentsMap[agent]} erreur(s)</td>
-                        <td><span class="status-badge status-surveiller">À suivre</span></td>
-                    `;
-                    agentsTbody.appendChild(tr);
-                });
-
-                // 4. Remplir le menu déroulant des filtres d'agents
+                // Remplir dynamiquement le menu déroulant des agents
                 const selectAgent = document.getElementById('filter-agent');
                 selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
-                agentsTries.forEach(agent => {
+                agentsSet.forEach(agent => {
                     const option = document.createElement('option');
                     option.value = agent.toLowerCase();
                     option.textContent = agent;
                     selectAgent.appendChild(option);
                 });
 
-                console.log("Analyse Google Sheets réussie : " + totalErreurs + " lignes traitées.");
+                console.log("Synchronisation réussie : " + agentsSet.size + " agents chargés.");
 
             } catch (error) {
-                console.error("Erreur lors de la lecture ou de l'analyse du Google Sheets :", error);
+                console.error("Erreur lors de la lecture du Google Sheets :", error);
             }
         }
 
-        chargerEtAnalyserDonnees();
+        chargerDonneesGoogleSheets();
     </script>
 
 </body>
