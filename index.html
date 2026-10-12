@@ -351,9 +351,8 @@
         </div>
         <div class="filter-group">
             <select id="filter-activite">
-                <option value="toutes">Activité : Toutes (LIRIS & RUBIS)</option>
-                <option value="liris">LIRIS</option>
-                <option value="rubis">RUBIS</option>
+                <option value="liris" selected>Activité : LIRIS</option>
+                <option value="rubis">Activité : RUBIS</option>
             </select>
         </div>
         <div class="filter-group">
@@ -531,7 +530,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FONCTIONNEL SÉCURISÉ -->
+    <!-- SCRIPT FONCTIONNEL -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -562,7 +561,7 @@
                 if (idxCategorie === -1) idxCategorie = 6;
 
                 const moisSelectionne = document.getElementById('filter-periode').value;
-                const activiteSelectionnee = document.getElementById('filter-activite').value;
+                const activiteSelectionnee = document.getElementById('filter-activite').value; // 'liris' ou 'rubis'
                 const mediaSelectionne = document.getElementById('filter-media').value;
 
                 const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
@@ -630,8 +629,8 @@
                             if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
                             if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
 
-                            const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
-                            const matchActivite = (activiteSelectionnee === 'toutes' || activiteLigne === activiteSelectionnee);
+                            // Application stricte du filtre Activité (LIRIS ou RUBIS)
+                            const matchActivite = (activiteLigne === activiteSelectionnee);
                             const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
 
                             if (matchActivite && matchMedia) {
@@ -647,6 +646,8 @@
                                     }
                                 }
                             }
+
+                            const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
 
                             if (matchPeriode && matchActivite && matchMedia) {
                                 if (estVide) nonDebriefesMois++;
@@ -856,7 +857,7 @@
                     chartContainer.appendChild(grp);
                 });
 
-                // Génération du graphique intégré par catégorie (barres côte à côte par mois)
+                // Génération du graphique intégré par catégorie
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
 
