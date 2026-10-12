@@ -7,15 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #243044; /* Gris-bleu intermédiaire, ni trop sombre ni trop clair */
-            --bg-card: #2e3c54; /* Cartes légèrement plus claires pour le relief */
-            --border-color: #3f526d; /* Bordures douces */
-            --text-main: #f8fafc; /* Texte blanc cassé très lisible */
-            --text-muted: #94a3b8; /* Texte secondaire gris clair */
-            --primary: #38bdf8; /* Bleu électrique lumineux */
-            --danger: #f87171; /* Rouge alerte */
-            --warning: #fbbf24; /* Ambre chaleureux */
-            --success: #34d399; /* Vert succès */
+            --bg-main: #cbd5e1; /* Gris perle / acier clair (le juste milieu parfait) */
+            --bg-card: #f8fafc; /* Blanc cassé lumineux pour les cartes */
+            --border-color: #94a3b8; /* Bordure contrastée et propre */
+            --text-main: #0f172a; /* Texte foncé ultra-lisible */
+            --text-muted: #475569; /* Texte secondaire gris pro */
+            --primary: #0284c7; /* Bleu corporate vif */
+            --danger: #dc2626; /* Rouge alerte */
+            --warning: #d97706; /* Ambre chaleureux */
+            --success: #059669; /* Vert succès */
         }
 
         * {
@@ -43,7 +43,7 @@
         header h1 {
             font-size: 20px;
             font-weight: 700;
-            color: #ffffff;
+            color: #0f172a;
         }
 
         header h1 span {
@@ -53,7 +53,7 @@
         .datetime {
             color: var(--text-muted);
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         /* FILTERS BAR */
@@ -72,13 +72,14 @@
             padding: 10px 14px;
             border-radius: 8px;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             outline: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .filter-group select:focus, .filter-group input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
         }
 
         /* KPI CARDS */
@@ -94,7 +95,7 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .kpi-card h3 {
@@ -102,23 +103,24 @@
             text-transform: uppercase;
             color: var(--text-muted);
             margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .kpi-card .value {
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
-            color: #ffffff;
+            color: #0f172a;
         }
 
         .kpi-card .subtitle {
             font-size: 13px;
             color: var(--text-muted);
+            font-weight: 500;
         }
 
         .kpi-input {
-            background: #1e293b;
+            background: #ffffff;
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 6px 10px;
@@ -146,7 +148,7 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .card-section h2 {
@@ -154,7 +156,7 @@
             font-weight: 700;
             text-transform: uppercase;
             margin-bottom: 16px;
-            color: #ffffff;
+            color: #0f172a;
             letter-spacing: 0.5px;
         }
 
@@ -168,15 +170,16 @@
 
         th {
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
             padding: 8px 12px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
         }
 
         td {
             padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-main);
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e293b;
+            font-weight: 500;
         }
 
         /* STATUS BADGES */
@@ -186,9 +189,9 @@
             font-size: 11px;
             font-weight: 700;
         }
-        .status-tenu { background: rgba(52, 211, 153, 0.2); color: #34d399; }
-        .status-surveiller { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
-        .status-depasse { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+        .status-tenu { background: #d1fae5; color: #065f46; }
+        .status-surveiller { background: #fef3c7; color: #b45309; }
+        .status-depasse { background: #fee2e2; color: #991b1b; }
 
         /* PROGRESS BARS */
         .progress-item {
@@ -198,12 +201,12 @@
             display: flex;
             justify-content: space-between;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 6px;
-            color: var(--text-main);
+            color: #1e293b;
         }
         .progress-bar-bg {
-            background: #1e293b;
+            background: #cbd5e1;
             border-radius: 4px;
             height: 8px;
             overflow: hidden;
@@ -239,7 +242,7 @@
         }
         .chart-bar {
             width: 100%;
-            background: linear-gradient(to top, #38bdf8, #7dd3fc);
+            background: linear-gradient(to top, #0284c7, #38bdf8);
             border-radius: 4px 4px 0 0;
             min-height: 4px;
         }
@@ -247,7 +250,7 @@
             font-size: 10px;
             color: var(--text-muted);
             margin-top: 8px;
-            font-weight: 600;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -650,27 +653,27 @@
                 ];
 
                 categoriesBilan.forEach(cat => {
-                    let borderColor = '#34d399';
-                    let badgeBg = 'rgba(52, 211, 153, 0.2)';
-                    let badgeColor = '#34d399';
+                    let borderColor = '#059669';
+                    let badgeBg = '#d1fae5';
+                    let badgeColor = '#065f46';
                     let messagePA = cat.paVert;
 
                     if (cat.st.niveau === 'rouge') {
-                        borderColor = '#f87171';
-                        badgeBg = 'rgba(248, 113, 113, 0.2)';
-                        badgeColor = '#f87171';
+                        borderColor = '#dc2626';
+                        badgeBg = '#fee2e2';
+                        badgeColor = '#991b1b';
                         messagePA = cat.paRouge;
                     } else if (cat.st.niveau === 'orange') {
-                        borderColor = '#fbbf24';
-                        badgeBg = 'rgba(251, 191, 36, 0.2)';
-                        badgeColor = '#fbbf24';
+                        borderColor = '#d97706';
+                        badgeBg = '#fef3c7';
+                        badgeColor = '#b45309';
                         messagePA = cat.paOrange;
                     }
 
                     htmlPA += `
-                        <div style="background: #1e293b; border-left: 4px solid ${borderColor}; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); border-left-width: 4px;">
+                        <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #ffffff;">${cat.nom}</strong>
+                                <strong style="font-size: 12px; text-transform: uppercase; color: #0f172a;">${cat.nom}</strong>
                                 <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${cat.st.texte}</span>
                             </div>
                             <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">${messagePA}</div>
@@ -680,10 +683,10 @@
 
                 if (nonDebriefesMois > 0) {
                     htmlPA += `
-                        <div style="background: #1e293b; border-left: 4px solid #f87171; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); border-left-width: 4px;">
+                        <div style="background: #ffffff; border-left: 4px solid #dc2626; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #f87171;">Lignes non débriefées</strong>
-                                <span style="background: rgba(248, 113, 113, 0.2); color: #f87171; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
+                                <strong style="font-size: 12px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
+                                <span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
                             </div>
                             <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">Action requise : Compléter le suivi ou planifier les entretiens de débriefing en suspens.</div>
                         </div>
