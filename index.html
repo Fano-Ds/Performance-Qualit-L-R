@@ -472,6 +472,44 @@
             </div>
         </div>
     </div>
+    <div class="card-section">
+            <h2>NQ par activité / production</h2>
+            <div class="progress-item">
+                <div class="progress-info"><span>LIRIS</span><span>0,17 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>RUBIS</span><span>0,21 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 60%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>TANA</span><span>0,19 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 50%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>DIEGO</span><span>0,16 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 40%;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE SYNCHRONISATION GOOGLE SHEETS (À AJOUTER ICI, JUSTE AVANT LA FIN) -->
+    <script>
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
+
+        async function chargerDonneesNQ() {
+            try {
+                const response = await fetch(csvUrl);
+                const data = await response.text();
+                const lignes = data.split('\n');
+                console.log("Données Google Sheets chargées avec succès :", lignes.length, "lignes.");
+            } catch (error) {
+                console.error("Erreur de synchronisation :", error);
+            }
+        }
+
+        chargerDonneesNQ();
+    </script>
 
 </body>
 </html>
