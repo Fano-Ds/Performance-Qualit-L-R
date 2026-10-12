@@ -212,8 +212,8 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 150px;
-            padding-top: 20px;
+            height: 160px;
+            padding-top: 25px;
             gap: 6px;
         }
         .chart-bar-group {
@@ -224,10 +224,17 @@
             height: 100%;
             justify-content: flex-end;
         }
+        .chart-value-label {
+            font-size: 9px;
+            color: var(--primary);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
         .chart-bar {
             width: 100%;
             background: linear-gradient(to top, #38bdf8, #7dd3fc);
             border-radius: 4px 4px 0 0;
+            min-height: 4px;
         }
         .chart-label {
             font-size: 10px;
@@ -249,18 +256,18 @@
         <div class="filter-group">
             <select id="filter-periode">
                 <option value="toutes">Période : Toutes (Jan - Déc)</option>
-                <option value="jan">Janvier</option>
-                <option value="fev">Février</option>
-                <option value="mars">Mars</option>
-                <option value="avr">Avril</option>
-                <option value="mai">Mai</option>
-                <option value="juin">Juin</option>
-                <option value="juil">Juillet</option>
-                <option value="aout">Août</option>
-                <option value="sept" selected>Septembre 2026</option>
-                <option value="oct">Octobre</option>
-                <option value="nov">Novembre</option>
-                <option value="dec">Décembre</option>
+                <option value="01">Janvier</option>
+                <option value="02">Février</option>
+                <option value="03">Mars</option>
+                <option value="04">Avril</option>
+                <option value="05">Mai</option>
+                <option value="06">Juin</option>
+                <option value="07">Juillet</option>
+                <option value="08">Août</option>
+                <option value="09" selected>Septembre</option>
+                <option value="10">Octobre</option>
+                <option value="11">Novembre</option>
+                <option value="12">Décembre</option>
             </select>
         </div>
         <div class="filter-group">
@@ -279,10 +286,9 @@
         </div>
         <div class="filter-group">
             <select id="filter-media">
-                <option value="tous">Média : Tous (Web & Presse)</option>
+                <option value="tous" selected>Média : Tous (Web & Presse)</option>
                 <option value="web">WEB</option>
                 <option value="presse">PRESSE</option>
-                <option value="confondus">Web & Presse confondus</option>
             </select>
         </div>
         <div class="filter-group">
@@ -308,9 +314,9 @@
         </div>
         <div class="kpi-card">
             <h3>NQ Global</h3>
-            <div class="value" id="kpi-nq">480 | 0,18 %</div>
-            <div class="subtitle">Erreurs validées / volume traité</div>
-            <div class="badge-pill badge-warning">● Sous surveillance</div>
+            <div class="value" id="kpi-nq">0 NQ</div>
+            <div class="subtitle">Total erreurs validées</div>
+            <div class="badge-pill badge-warning">● Multi-filtré en direct</div>
         </div>
     </div>
 
@@ -332,27 +338,27 @@
                 <tbody>
                     <tr>
                         <td><strong>MAUVAISE</strong></td>
-                        <td>210</td>
+                        <td id="val-mauvaise">0</td>
                         <td>0,25 %</td>
                         <td>0,12 %</td>
                         <td><span class="status-badge status-tenu">Objectif tenu</span></td>
-                        <td>Web 62 % | Presse 38 %</td>
+                        <td id="rep-mauvaise">Web 0 | Presse 0</td>
                     </tr>
                     <tr>
                         <td><strong>LOUPÉ</strong></td>
-                        <td>140</td>
+                        <td id="val-loupe">0</td>
                         <td>0,0095 %</td>
                         <td>0,021 %</td>
                         <td><span class="status-badge status-depasse">Dépassé</span></td>
-                        <td>Web 29 % | Presse 71 %</td>
+                        <td id="rep-loupe">Web 0 | Presse 0</td>
                     </tr>
                     <tr>
                         <td><strong>NON CONFORME</strong></td>
-                        <td>130</td>
+                        <td id="val-nc">0</td>
                         <td>0,035 %</td>
                         <td>0,039 %</td>
                         <td><span class="status-badge status-depasse">Dépassé</span></td>
-                        <td>Web 57 % | Presse 43 %</td>
+                        <td id="rep-nc">Web 0 | Presse 0</td>
                     </tr>
                 </tbody>
             </table>
@@ -362,15 +368,15 @@
             <h2>Points d'attention</h2>
             <div style="margin-bottom: 12px; font-size: 13px;">
                 <div style="font-weight:600; color:#f87171; margin-bottom:2px;">● Non conforme au-dessus de l'objectif</div>
-                <div style="color:var(--text-muted); font-size:12px;">0,039 % réalisé pour un objectif de 0,035 %.</div>
+                <div style="color:var(--text-muted); font-size:12px;">Filtré selon le mois, l'activité et le média.</div>
             </div>
             <div style="margin-bottom: 12px; font-size: 13px;">
                 <div style="font-weight:600; color:#fbbf24; margin-bottom:2px;">● Loupé à analyser</div>
-                <div style="color:var(--text-muted); font-size:12px;">Le taux réalisé dépasse l'objectif fixé.</div>
+                <div style="color:var(--text-muted); font-size:12px;">Suivi des volumes et des débriefings.</div>
             </div>
             <div style="font-size: 13px;">
                 <div style="font-weight:600; color:#34d399; margin-bottom:2px;">● Mauvaise sous objectif</div>
-                <div style="color:var(--text-muted); font-size:12px;">Maintenir la vigilance et les débriefings.</div>
+                <div style="color:var(--text-muted); font-size:12px;">Maintenir la vigilance sur les opérateurs.</div>
             </div>
         </div>
     </div>
@@ -378,20 +384,9 @@
     <!-- GRAPHIQUE JAN-DEC ET DÉBRIEFINGS -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Janvier - Décembre)</h2>
-            <div class="chart-container">
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 40%;"></div><div class="chart-label">Jan</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 60%;"></div><div class="chart-label">Fév</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 50%;"></div><div class="chart-label">Mars</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 70%;"></div><div class="chart-label">Avr</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 55%;"></div><div class="chart-label">Mai</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 80%;"></div><div class="chart-label">Juin</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 65%;"></div><div class="chart-label">Juil</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 45%;"></div><div class="chart-label">Août</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 60%;"></div><div class="chart-label">Sept</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 68%;"></div><div class="chart-label">Oct</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 35%;"></div><div class="chart-label">Nov</div></div>
-                <div class="chart-bar-group"><div class="chart-bar" style="height: 50%;"></div><div class="chart-label">Déc</div></div>
+            <h2>Évolution NQ Global (Volumes par mois)</h2>
+            <div class="chart-container" id="chart-months-container">
+                <!-- Rempli dynamiquement -->
             </div>
         </div>
 
@@ -431,7 +426,7 @@
                 </thead>
                 <tbody id="agents-table-body">
                     <tr>
-                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Calcul du Flop 5 en cours...</td>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement du Flop 5...</td>
                     </tr>
                 </tbody>
             </table>
@@ -440,31 +435,31 @@
         <div class="card-section">
             <h2>NQ par activité / production</h2>
             <div class="progress-item">
-                <div class="progress-info"><span>LIRIS</span><span>0,17 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%;"></div></div>
+                <div class="progress-info"><span>LIRIS</span><span id="stat-liris">0 NQ</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-liris" style="width: 0%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>RUBIS</span><span>0,21 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 60%;"></div></div>
+                <div class="progress-info"><span>RUBIS</span><span id="stat-rubis">0 NQ</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-rubis" style="width: 0%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>TANA</span><span>0,19 %</span></div>
+                <div class="progress-info"><span>TANA</span><span>---</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 50%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>DIEGO</span><span>0,16 %</span></div>
+                <div class="progress-info"><span>DIEGO</span><span>---</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 40%;"></div></div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT DE CALCUL AUTOMATIQUE DU FLOP 5 -->
+    <!-- SCRIPT DE PILOTAGE MULTI-CRITÈRES (PÉRIODE + ACTIVITÉ + MÉDIA) -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
         document.getElementById('current-datetime').innerText = new Date().toLocaleDateString('fr-FR') + ' — ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
 
-        async function chargerEtCalculerFlop5() {
+        async function rafraichirTableauDeBord() {
             try {
                 const response = await fetch(csvUrl);
                 const data = await response.text();
@@ -472,75 +467,56 @@
                 const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 if (lignes.length <= 1) return;
 
+                const moisSelectionne = document.getElementById('filter-periode').value;
+                const activiteSelectionnee = document.getElementById('filter-activite').value;
+                const mediaSelectionne = document.getElementById('filter-media').value;
+
                 let agentsCumul = {};
-                const agentsSet = new Set();
+                let tousLesAgents = new Set();
+                let volumesParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                
+                let totalMois = 0;
+                let mauvTotal = 0, mauvWeb = 0, mauvPresse = 0;
+                let loupeTotal = 0, loupeWeb = 0, loupePresse = 0;
+                let ncTotal = 0, ncWeb = 0, ncPresse = 0;
+                let countLiris = 0, countRubis = 0;
 
-                // Analyse des lignes (à partir de la 2ème ligne)
                 for (let i = 1; i < lignes.length; i++) {
-                    const colonnes = lignes[i].split(',').map(c => c.replace(/"/g, '').trim());
+                    const cols = lignes[i].split(',').map(c => c.replace(/"/g, '').trim());
                     
-                    if (colonnes.length > 0 && colonnes[0] !== '' && colonnes[0].toLowerCase() !== 'trigramme') {
-                        const trigramme = colonnes[0].toUpperCase();
+                    if (cols.length >= 6) {
+                        const trigramme = cols[0] ? cols[0].toUpperCase() : '';
+                        const dateLecture = cols[1] || '';
+                        const mediaLigneCol = cols[4] ? cols[4].toUpperCase() : '';
+                        const categorie = cols[5] ? cols[5].toUpperCase() : '';
+                        
+                        // Détection de l'activité
+                        const ligneTexte = cols.join(' ').toLowerCase();
+                        let activiteLigne = 'autre';
+                        if (ligneTexte.includes('liris')) activiteLigne = 'liris';
+                        if (ligneTexte.includes('rubis')) activiteLigne = 'rubis';
 
-                        // Ignorer si ce n'est pas un trigramme valide (par sécurité)
-                        if (trigramme.length >= 2 && trigramme.length <= 5) {
-                            agentsSet.add(trigramme);
+                        // Détection du média (web ou presse)
+                        let mediaLigne = 'autre';
+                        if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
+                        if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
 
-                            // Additionner / cumuler les erreurs par agent
-                            if (!agentsCumul[trigramme]) {
-                                agentsCumul[trigramme] = 0;
-                            }
-                            agentsCumul[trigramme]++;
+                        // Extraction du mois depuis la date de lecture
+                        let moisLigne = '';
+                        if (dateLecture.includes('/')) {
+                            const p = dateLecture.split('/');
+                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
+                        } else if (dateLecture.includes('-')) {
+                            const p = dateLecture.split('-');
+                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
                         }
-                    }
-                }
 
-                // Transformer en tableau pour trier du plus grand au plus petit (Flop 5)
-                const agentsClasses = Object.keys(agentsCumul).map(trigramme => {
-                    return { trigramme: trigramme, total: agentsCumul[trigramme] };
-                }).sort((a, b) => b.total - a.total);
+                        if (trigramme.length >= 2 && trigramme.length <= 5 && moisLigne >= '01' && moisLigne <= '12') {
+                            tousLesAgents.add(trigramme);
 
-                // Ne garder que les 5 pires (Flop 5)
-                const flop5 = agentsClasses.slice(0, 5);
+                            if (activiteLigne === 'liris') countLiris++;
+                            if (activiteLigne === 'rubis') countRubis++;
 
-                // Remplir le tableau HTML
-                const tbody = document.getElementById('agents-table-body');
-                tbody.innerHTML = '';
-
-                if (flop5.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucun agent trouvé</td></tr>';
-                } else {
-                    flop5.forEach((item, index) => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td><strong>${item.trigramme}</strong></td>
-                            <td>${item.total} erreur(s) cumulée(s)</td>
-                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
-                            <td>À débriefer</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-
-                // Remplir dynamiquement le menu déroulant des filtres d'agents
-                const selectAgent = document.getElementById('filter-agent');
-                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
-                Array.from(agentsSet).sort().forEach(agent => {
-                    const option = document.createElement('option');
-                    option.value = agent.toLowerCase();
-                    option.textContent = agent;
-                    selectAgent.appendChild(option);
-                });
-
-                console.log("Calcul du Flop 5 réussi : " + agentsSet.size + " agents analysés.");
-
-            } catch (error) {
-                console.error("Erreur lors de la lecture des agents :", error);
-            }
-        }
-
-        chargerEtCalculerFlop5();
-    </script>
-
-</body>
-</html>
+                            // Vérification des 3 filtres : Période, Activité, Média
+                            const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
+                            const matchActivite = (activiteSelectionnee === 'toutes' || activiteLigne === activiteSelectionnee);
