@@ -9,7 +9,6 @@
         :root {
             --bg-main: #0b0f19;
             --bg-card: #131b2e;
-            --bg-card-hover: #1a243f;
             --border-color: #1e293b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
@@ -32,7 +31,6 @@
             padding: 24px;
         }
 
-        /* HEADER */
         header {
             display: flex;
             justify-content: space-between;
@@ -45,7 +43,6 @@
         header h1 {
             font-size: 20px;
             font-weight: 700;
-            letter-spacing: 0.5px;
         }
 
         header h1 span {
@@ -60,7 +57,7 @@
         /* FILTERS BAR */
         .filters-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 12px;
             margin-bottom: 24px;
         }
@@ -72,7 +69,7 @@
             color: var(--text-main);
             padding: 10px 14px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
             cursor: pointer;
         }
@@ -81,7 +78,7 @@
             border-color: var(--primary);
         }
 
-        /* KPI CARDS CONTAINER */
+        /* KPI CARDS */
         .kpi-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -94,14 +91,12 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
-            position: relative;
         }
 
         .kpi-card h3 {
             font-size: 12px;
             text-transform: uppercase;
             color: var(--text-muted);
-            letter-spacing: 0.5px;
             margin-bottom: 8px;
         }
 
@@ -151,11 +146,7 @@
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         /* TABLES */
@@ -177,8 +168,6 @@
             padding: 12px;
             border-bottom: 1px solid var(--border-color);
         }
-
-        tr:last-child td { border-bottom: none; }
 
         /* STATUS BADGES */
         .status-badge {
@@ -215,32 +204,14 @@
             border-radius: 4px;
         }
 
-        /* ALERTS LIST */
-        .alert-item {
-            margin-bottom: 14px;
-            font-size: 13px;
-        }
-        .alert-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 3px;
-        }
-        .alert-desc {
-            color: var(--text-muted);
-            font-size: 12px;
-            padding-left: 16px;
-        }
-
-        /* MINI CHART SIMULATION */
+        /* CHART */
         .chart-container {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
             height: 150px;
             padding-top: 20px;
-            gap: 10px;
+            gap: 6px;
         }
         .chart-bar-group {
             flex: 1;
@@ -254,10 +225,9 @@
             width: 100%;
             background: linear-gradient(to top, #2563eb, #60a5fa);
             border-radius: 4px 4px 0 0;
-            transition: height 0.3s;
         }
         .chart-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             margin-top: 8px;
         }
@@ -268,28 +238,57 @@
     <!-- HEADER -->
     <header>
         <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
-        <div class="datetime" id="current-time">12/10/2026 — 09:10</div>
+        <div class="datetime">12/10/2026 — 09:10</div>
     </header>
 
-    <!-- FILTERS -->
+    <!-- FILTERS BAR CORRIGÉE -->
     <div class="filters-bar">
         <div class="filter-group">
-            <select>
-                <option>Septembre 2026</option>
-                <option>Octobre 2026</option>
+            <select id="filter-periode">
+                <option value="toutes">Période : Toutes (Jan - Déc)</option>
+                <option value="jan">Janvier</option>
+                <option value="fev">Février</option>
+                <option value="mars">Mars</option>
+                <option value="avr">Avril</option>
+                <option value="mai">Mai</option>
+                <option value="juin">Juin</option>
+                <option value="juil">Juillet</option>
+                <option value="aout">Août</option>
+                <option value="sept" selected>Septembre 2026</option>
+                <option value="oct">Octobre</option>
+                <option value="nov">Novembre</option>
+                <option value="dec">Décembre</option>
             </select>
         </div>
         <div class="filter-group">
-            <select><option>Activités : Toutes</option></select>
+            <select id="filter-activite">
+                <option value="toutes">Activité : Toutes (LIRIS & RUBIS)</option>
+                <option value="liris">LIRIS</option>
+                <option value="rubis">RUBIS</option>
+            </select>
         </div>
         <div class="filter-group">
-            <select><option>Production : Toutes</option></select>
+            <select id="filter-production">
+                <option value="toutes">Production : Toutes (Les deux)</option>
+                <option value="tana">TANA</option>
+                <option value="diego">DIEGO</option>
+            </select>
         </div>
         <div class="filter-group">
-            <select><option>Média : Tous</option></select>
+            <select id="filter-media">
+                <option value="tous">Média : Tous (Web & Presse)</option>
+                <option value="web">WEB</option>
+                <option value="presse">PRESSE</option>
+                <option value="confondus">Web & Presse confondus</option>
+            </select>
         </div>
         <div class="filter-group">
-            <select><option>Agent : Tous les agents</option></select>
+            <select id="filter-agent">
+                <option value="tous">Agent : Tous les agents</option>
+                <option value="abc">ABC</option>
+                <option value="def">DEF</option>
+                <option value="ghi">GHI</option>
+            </select>
         </div>
     </div>
 
@@ -317,7 +316,6 @@
 
     <!-- SECTION CATÉGORIES & POINTS D'ATTENTION -->
     <div class="grid-2col">
-        <!-- TABLEAU NON-QUALITÉ -->
         <div class="card-section">
             <h2>Non-qualité par catégories</h2>
             <table>
@@ -333,7 +331,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Mauvaise</strong></td>
+                        <td><strong>MAUVAISE</strong></td>
                         <td>210</td>
                         <td>0,25 %</td>
                         <td>0,12 %</td>
@@ -341,7 +339,7 @@
                         <td>Web 62 % | Presse 38 %</td>
                     </tr>
                     <tr>
-                        <td><strong>Loupé</strong></td>
+                        <td><strong>LOUPÉ</strong></td>
                         <td>140</td>
                         <td>0,0095 %</td>
                         <td>0,021 %</td>
@@ -349,7 +347,7 @@
                         <td>Web 29 % | Presse 71 %</td>
                     </tr>
                     <tr>
-                        <td><strong>Non conforme</strong></td>
+                        <td><strong>NON CONFORME</strong></td>
                         <td>130</td>
                         <td>0,035 %</td>
                         <td>0,039 %</td>
@@ -360,29 +358,27 @@
             </table>
         </div>
 
-        <!-- POINTS D'ATTENTION -->
         <div class="card-section">
             <h2>Points d'attention</h2>
-            <div class="alert-item">
-                <div class="alert-title" style="color: var(--danger);">● Non conforme au-dessus de l'objectif</div>
-                <div class="alert-desc">0,039 % réalisé pour un objectif de 0,035 %.</div>
+            <div style="margin-bottom: 12px; font-size: 13px;">
+                <div style="font-weight:600; color:var(--danger); margin-bottom:2px;">● Non conforme au-dessus de l'objectif</div>
+                <div style="color:var(--text-muted); font-size:12px;">0,039 % réalisé pour un objectif de 0,035 %.</div>
             </div>
-            <div class="alert-item">
-                <div class="alert-title" style="color: var(--warning);">● Loupé à analyser</div>
-                <div class="alert-desc">Le taux réalisé dépasse l'objectif fixé.</div>
+            <div style="margin-bottom: 12px; font-size: 13px;">
+                <div style="font-weight:600; color:var(--warning); margin-bottom:2px;">● Loupé à analyser</div>
+                <div style="color:var(--text-muted); font-size:12px;">Le taux réalisé dépasse l'objectif fixé.</div>
             </div>
-            <div class="alert-item">
-                <div class="alert-title" style="color: var(--success);">● Mauvaise sous objectif</div>
-                <div class="alert-desc">Maintenir la vigilance et les débriefings.</div>
+            <div style="font-size: 13px;">
+                <div style="font-weight:600; color:var(--success); margin-bottom:2px;">● Mauvaise sous objectif</div>
+                <div style="color:var(--text-muted); font-size:12px;">Maintenir la vigilance et les débriefings.</div>
             </div>
         </div>
     </div>
 
-    <!-- GRAPHIQUE ET DÉBRIEFINGS -->
+    <!-- GRAPHIQUE JAN-DEC ET DÉBRIEFINGS -->
     <div class="grid-2col">
-        <!-- GRAPHIQUE ÉVOLUTION -->
         <div class="card-section">
-            <h2>Évolution NQ Global</h2>
+            <h2>Évolution NQ Global (Janvier - Décembre)</h2>
             <div class="chart-container">
                 <div class="chart-bar-group"><div class="chart-bar" style="height: 40%;"></div><div class="chart-label">Jan</div></div>
                 <div class="chart-bar-group"><div class="chart-bar" style="height: 60%;"></div><div class="chart-label">Fév</div></div>
@@ -394,32 +390,33 @@
                 <div class="chart-bar-group"><div class="chart-bar" style="height: 45%;"></div><div class="chart-label">Août</div></div>
                 <div class="chart-bar-group"><div class="chart-bar" style="height: 60%;"></div><div class="chart-label">Sept</div></div>
                 <div class="chart-bar-group"><div class="chart-bar" style="height: 68%;"></div><div class="chart-label">Oct</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 35%;"></div><div class="chart-label">Nov</div></div>
+                <div class="chart-bar-group"><div class="chart-bar" style="height: 50%;"></div><div class="chart-label">Déc</div></div>
             </div>
         </div>
 
-        <!-- AVANCEMENT DÉBRIEFINGS -->
         <div class="card-section">
             <h2>Avancement des débriefings</h2>
             <div class="progress-item">
-                <div class="progress-info"><span>Mauvaise</span><span>89 %</span></div>
+                <div class="progress-info"><span>MAUVAISE</span><span>89 %</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 89%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>Loupé</span><span>71 %</span></div>
+                <div class="progress-info"><span>LOUPÉ</span><span>71 %</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 71%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>Non conforme</span><span>62 %</span></div>
+                <div class="progress-info"><span>NON CONFORME</span><span>62 %</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 62%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>Global</span><span>76 %</span></div>
+                <div class="progress-info"><span>GLOBAL</span><span>76 %</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 76%; background: var(--success);"></div></div>
             </div>
         </div>
     </div>
 
-    <!-- AGENTS À SUIVRE & ACTIVITÉS -->
+    <!-- AGENTS À SUIVRE & NQ PAR ACTIVITÉ / PRODUCTION -->
     <div class="grid-2col">
         <div class="card-section">
             <h2>Agents à suivre de très près</h2>
