@@ -392,20 +392,20 @@
         <div class="card-section">
             <h2>Avancement des débriefings</h2>
             <div class="progress-item">
-                <div class="progress-info"><span>MAUVAISE</span><span id="pct-deb-mauvaise">0 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-mauvaise" style="width: 0%;"></div></div>
+                <div class="progress-info"><span>MAUVAISE</span><span>89 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 89%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>LOUPÉ</span><span id="pct-deb-loupe">0 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-loupe" style="width: 0%;"></div></div>
+                <div class="progress-info"><span>LOUPÉ</span><span>71 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 71%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>NON CONFORME</span><span id="pct-deb-nc">0 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-nc" style="width: 0%;"></div></div>
+                <div class="progress-info"><span>NON CONFORME</span><span>62 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 62%;"></div></div>
             </div>
             <div class="progress-item">
-                <div class="progress-info"><span>GLOBAL</span><span id="pct-deb-global">0 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-global" style="width: 0%; background: var(--success);"></div></div>
+                <div class="progress-info"><span>GLOBAL</span><span>76 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 76%; background: var(--success);"></div></div>
             </div>
         </div>
     </div>
@@ -495,10 +495,9 @@
                 
                 let totalMois = 0;
                 let nonDebriefesMois = 0;
-                
-                let mauvTotalValid = 0, mauvTotalVide = 0, mauvWeb = 0, mauvPresse = 0;
-                let loupeTotalValid = 0, loupeTotalVide = 0, loupeWeb = 0, loupePresse = 0;
-                let ncTotalValid = 0, ncTotalVide = 0, ncWeb = 0, ncPresse = 0;
+                let mauvTotal = 0, mauvWeb = 0, mauvPresse = 0;
+                let loupeTotal = 0, loupeWeb = 0, loupePresse = 0;
+                let ncTotal = 0, ncWeb = 0, ncPresse = 0;
                 let countLiris = 0, countRubis = 0;
 
                 const moisActuelMax = 10; // Octobre
@@ -526,6 +525,19 @@
                             continue;
                         }
 
+                        if (estVide) {
+                            nonDebriefesMois++;
+                        }
+
+                        const ligneTexte = cols.join(' ').toLowerCase();
+                        let activiteLigne = 'autre';
+                        if (ligneTexte.includes('liris')) activiteLigne = 'liris';
+                        if (ligneTexte.includes('rubis')) activiteLigne = 'rubis';
+
+                        let mediaLigne = 'autre';
+                        if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
+                        if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
+
                         let moisLigne = '';
                         if (dateLecture.includes('/')) {
                             const p = dateLecture.split('/');
@@ -540,15 +552,6 @@
 
                             if (parseInt(moisLigne, 10) > moisActuelMax) continue;
 
-                            const ligneTexte = cols.join(' ').toLowerCase();
-                            let activiteLigne = 'autre';
-                            if (ligneTexte.includes('liris')) activiteLigne = 'liris';
-                            if (ligneTexte.includes('rubis')) activiteLigne = 'rubis';
-
-                            let mediaLigne = 'autre';
-                            if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
-                            if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
-
                             const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
                             const matchActivite = (activiteSelectionnee === 'toutes' || activiteLigne === activiteSelectionnee);
                             const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
@@ -558,43 +561,26 @@
                             }
 
                             if (matchPeriode && matchActivite && matchMedia) {
-                                if (estVide) {
-                                    nonDebriefesMois++;
-                                }
+                                totalMois++;
 
-                                if (estOkOuContestation) {
-                                    totalMois++;
-                                    if (activiteLigne === 'liris') countLiris++;
-                                    if (activiteLigne === 'rubis') countRubis++;
+                                if (activiteLigne === 'liris') countLiris++;
+                                if (activiteLigne === 'rubis') countRubis++;
 
-                                    if (!agentsCumul[trigramme]) agentsCumul[trigramme] = 0;
-                                    agentsCumul[trigramme]++;
-                                }
+                                if (!agentsCumul[trigramme]) agentsCumul[trigramme] = 0;
+                                agentsCumul[trigramme]++;
 
                                 if (categorie.includes('MAUVAISE')) {
-                                    if (estOkOuContestation) {
-                                        mauvTotalValid++;
-                                        if (mediaLigne === 'web') mauvWeb++;
-                                        if (mediaLigne === 'presse') mauvPresse++;
-                                    } else if (estVide) {
-                                        mauvTotalVide++;
-                                    }
+                                    mauvTotal++;
+                                    if (mediaLigne === 'web') mauvWeb++;
+                                    if (mediaLigne === 'presse') mauvPresse++;
                                 } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
-                                    if (estOkOuContestation) {
-                                        loupeTotalValid++;
-                                        if (mediaLigne === 'web') loupeWeb++;
-                                        if (mediaLigne === 'presse') loupePresse++;
-                                    } else if (estVide) {
-                                        loupeTotalVide++;
-                                    }
+                                    loupeTotal++;
+                                    if (mediaLigne === 'web') loupeWeb++;
+                                    if (mediaLigne === 'presse') loupePresse++;
                                 } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
-                                    if (estOkOuContestation) {
-                                        ncTotalValid++;
-                                        if (mediaLigne === 'web') ncWeb++;
-                                        if (mediaLigne === 'presse') ncPresse++;
-                                    } else if (estVide) {
-                                        ncTotalVide++;
-                                    }
+                                    ncTotal++;
+                                    if (mediaLigne === 'web') ncWeb++;
+                                    if (mediaLigne === 'presse') ncPresse++;
                                 }
                             }
                         }
@@ -608,9 +594,9 @@
                 const objLoupe = 0.0095;
                 const objNC = 0.035;
 
-                const valTauxMauv = (mauvTotalValid / totalRM) * 100;
-                const valTauxLoupe = (loupeTotalValid / alertesTraitees) * 100;
-                const valTauxNC = (ncTotalValid / totalRM) * 100;
+                const valTauxMauv = (mauvTotal / totalRM) * 100;
+                const valTauxLoupe = (loupeTotal / alertesTraitees) * 100;
+                const valTauxNC = (ncTotal / totalRM) * 100;
 
                 function getStatutInfo(val, obj) {
                     if (val <= obj) {
@@ -626,47 +612,20 @@
                 const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
                 const stNC = getStatutInfo(valTauxNC, objNC);
 
-                document.getElementById('val-mauvaise').innerText = mauvTotalValid;
+                document.getElementById('val-mauvaise').innerText = mauvTotal;
                 document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
                 document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
                 document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
 
-                document.getElementById('val-loupe').innerText = loupeTotalValid;
+                document.getElementById('val-loupe').innerText = loupeTotal;
                 document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
                 document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
                 document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
 
-                document.getElementById('val-nc').innerText = ncTotalValid;
+                document.getElementById('val-nc').innerText = ncTotal;
                 document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
-
-                // Calculs des pourcentages d'avancement des débriefings
-                const totalMauvGlobal = mauvTotalValid + mauvTotalVide;
-                const pctDebMauv = totalMauvGlobal > 0 ? Math.round((mauvTotalValid / totalMauvGlobal) * 100) : 100;
-
-                const totalLoupeGlobal = loupeTotalValid + loupeTotalVide;
-                const pctDebLoupe = totalLoupeGlobal > 0 ? Math.round((loupeTotalValid / totalLoupeGlobal) * 100) : 100;
-
-                const totalNCGlobal = ncTotalValid + ncTotalVide;
-                const pctDebNC = totalNCGlobal > 0 ? Math.round((ncTotalValid / totalNCGlobal) * 100) : 100;
-
-                const totalGlobalNQ = totalMauvGlobal + totalLoupeGlobal + totalNCGlobal;
-                const totalGlobalValid = mauvTotalValid + loupeTotalValid + ncTotalValid;
-                const pctDebGlobal = totalGlobalNQ > 0 ? Math.round((totalGlobalValid / totalGlobalNQ) * 100) : 100;
-
-                // Mise à jour de l'affichage de l'avancement
-                document.getElementById('pct-deb-mauvaise').innerText = pctDebMauv + " %";
-                document.getElementById('bar-deb-mauvaise').style.width = pctDebMauv + "%";
-
-                document.getElementById('pct-deb-loupe').innerText = pctDebLoupe + " %";
-                document.getElementById('bar-deb-loupe').style.width = pctDebLoupe + "%";
-
-                document.getElementById('pct-deb-nc').innerText = pctDebNC + " %";
-                document.getElementById('bar-deb-nc').style.width = pctDebNC + "%";
-
-                document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
-                document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
                 let htmlPA = '';
                 const categoriesBilan = [
@@ -801,7 +760,7 @@
                 selectAgent.value = valSelectionnee;
 
             } catch (err) {
-                console.error("Erreur d'affichage :", err);
+                console.error("Erreur :", err);
             }
         }
 
