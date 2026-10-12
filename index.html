@@ -308,7 +308,7 @@
         </div>
     </div>
 
-    <!-- KPI CARDS AVEC SUIVI DES NON DÉBRIEFÉS -->
+    <!-- KPI CARDS -->
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées (Saisie)</h3>
@@ -321,16 +321,16 @@
             <div class="subtitle">Pour calculs taux Mauvaise & NC</div>
         </div>
         <div class="kpi-card">
-            <h3>NQ Global / Non débriefées</h3>
+            <h3>NQ Validées (OK/Contestation)</h3>
             <div class="value" id="kpi-nq">0 NQ</div>
             <div class="subtitle"><span id="kpi-non-debriefes" style="color: var(--danger); font-weight:700;">0 ligne(s)</span> non débriefée(s)</div>
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES & 3 BLOCS DE PLAN D'ACTION (ROUGE / ORANGE / VERT) -->
+    <!-- SECTION CATÉGORIES & PLAN D'ACTION (3 NIVEAUX) -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Non-qualité par catégories</h2>
+            <h2>Non-qualité par catégories (OK & Contestations)</h2>
             <table>
                 <thead>
                     <tr>
@@ -374,7 +374,6 @@
         <div class="card-section">
             <h2>Plan d'Action (3 Niveaux d'Alerte)</h2>
             <div id="pa-container" style="font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
-                <!-- Injecté dynamiquement -->
                 <div style="color: var(--text-muted);">Analyse des seuils en cours...</div>
             </div>
         </div>
@@ -383,7 +382,7 @@
     <!-- GRAPHIQUE ÉVOLUTION GLOBALE -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Volumes par mois)</h2>
+            <h2>Évolution NQ Global (Par mois)</h2>
             <div class="chart-container" id="chart-months-container">
                 <!-- Rempli dynamiquement -->
             </div>
@@ -452,7 +451,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT AVEC GESTION DES 3 BLOCS ET DÉTECTION DES LIGNES NON DÉBRIEFÉES -->
+    <!-- SCRIPT AVEC FILTRE COLONNE Q (OK ou Contestation, Exclusion KO) -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -472,6 +471,10 @@
                 let idxDate = enTetes.findIndex(h => h.includes('date de lecture'));
                 let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
                 let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
+                let idxValidee = 16; // Colonne Q (17ème colonne -> index 16) ou recherche automatique si présente
+                
+                const foundValidée = enTetes.findIndex(h => h.includes('validée') || h.includes('validee'));
+                if (foundValidée !== -1) idxValidee = foundValidée;
 
                 if (idxTrigramme === -1) idxTrigramme = 0;
                 if (idxDate === -1) idxDate = 1;
@@ -490,7 +493,7 @@
                 let volumesParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 
                 let totalMois = 0;
-                let nonDebriefesMois = 0; // Compteur des lignes vides / non débriefées
+                let nonDebriefesMois = 0;
                 let mauvTotal = 0, mauvWeb = 0, mauvPresse = 0;
                 let loupeTotal = 0, loupeWeb = 0, loupePresse = 0;
                 let ncTotal = 0, ncWeb = 0, ncPresse = 0;
@@ -507,7 +510,24 @@
                         const dateLecture = cols[idxDate] || '';
                         const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
+                        const statutValidée = cols[idxValidee] ? cols[idxValidee].toUpperCase() : '';
                         
+                        // --- RÈGLE MÉTIER VALIDÉE (COLONNE Q) ---
+                        // On exclut les KO explicites
+                        if (statutValidée.includes('KO')) continue;
+
+                        // On vérifie si c'est OK, Contestation, ou vide (pour les non débriefées)
+                        const estOkOuContestation = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
+                        const estVide = (statutValidée === '' || cols.some(c => c === ''));
+
+                        if (!estOkOuContestation && !estVide) {
+                            continue; // Si ce n'est ni OK, ni contestation, ni vide, on ignore
+                        }
+
+                        if (estVide) {
+                            nonDebriefesMois++;
+                        }
+
                         const ligneTexte = cols.join(' ').toLowerCase();
                         let activiteLigne = 'autre';
                         if (ligneTexte.includes('liris')) activiteLigne = 'liris';
@@ -542,12 +562,6 @@
                             if (matchPeriode && matchActivite && matchMedia) {
                                 totalMois++;
 
-                                // Détection des lignes non débriefées (cellules vides ou absence de commentaire de débrief)
-                                // On vérifie si la ligne contient des valeurs vides sur les colonnes de fin ou de statut
-                                if (cols.some(c => c === '') || !ligneTexte.includes('ok')) {
-                                    nonDebriefesMois++;
-                                }
-
                                 if (activiteLigne === 'liris') countLiris++;
                                 if (activiteLigne === 'rubis') countRubis++;
 
@@ -576,7 +590,7 @@
                 document.getElementById('kpi-nq').innerText = totalMois + " NQ";
                 document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
 
-                // 2. Calculs et statuts (3 niveaux : Vert, Orange, Rouge)
+                // 2. Calculs et statuts (3 niveaux)
                 const objMauvaise = 0.25;
                 const objLoupe = 0.0095;
                 const objNC = 0.035;
@@ -585,11 +599,10 @@
                 const valTauxLoupe = (loupeTotal / alertesTraitees) * 100;
                 const valTauxNC = (ncTotal / totalRM) * 100;
 
-                // Fonction d'attribution de statut à 3 niveaux
                 function getStatutInfo(val, obj) {
                     if (val <= obj) {
                         return { classe: 'status-tenu', texte: 'Objectif tenu', niveau: 'vert' };
-                    } else if (val <= obj * 1.15) { // Si ça frôle (dépasse de moins de 15%)
+                    } else if (val <= obj * 1.15) {
                         return { classe: 'status-surveiller', texte: 'À surveiller (Frôle)', niveau: 'orange' };
                     } else {
                         return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
@@ -618,10 +631,8 @@
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // --- GÉNÉRATION DES 3 BLOCS DE PLAN D'ACTION ---
+                // --- 3 BLOCS DE PLAN D'ACTION ---
                 let htmlPA = '';
-                
-                // Tableau combinant les catégories pour le tri dynamique
                 const categoriesBilan = [
                     { nom: 'Non Conforme', st: stNC, paRouge: "PA Correctif : Lancer un rappel immédiat sur les consignes de formatage et de saisie.", paOrange: "Attention : Le taux frôle la limite. Vérifier les dernières fiches de saisie.", paVert: "Objectif tenu : Maintenir la rigueur actuelle." },
                     { nom: 'Loupé', st: stLoupe, paRouge: "PA Correctif : Auditer le Flop 5 des agents et planifier des debriefings individuels.", paOrange: "Attention : Surveillance requise sur les flux média en retard.", paVert: "Objectif tenu : Couverture des flux média maîtrisée." },
@@ -657,7 +668,6 @@
                     `;
                 });
 
-                // Ajout du bloc spécial pour les lignes non débriefées
                 if (nonDebriefesMois > 0) {
                     htmlPA += `
                         <div style="background: var(--bg-main); border-left: 4px solid #f87171; padding: 10px; border-radius: 6px;">
