@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #cbd5e1; /* Gris perle / acier clair */
+            --bg-main: #cbd5e1; /* Gris perle / acier clair (le juste milieu parfait) */
             --bg-card: #f8fafc; /* Blanc cassé lumineux pour les cartes */
             --border-color: #94a3b8; /* Bordure contrastée et propre */
             --text-main: #0f172a; /* Texte foncé ultra-lisible */
@@ -390,7 +390,7 @@
         </div>
 
         <div class="card-section">
-            <h2>Avancement des débriefings (Mois sélectionné)</h2>
+            <h2>Avancement des débriefings</h2>
             <div class="progress-item">
                 <div class="progress-info"><span>MAUVAISE</span><span id="pct-deb-mauvaise">0 %</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-mauvaise" style="width: 0%;"></div></div>
@@ -452,7 +452,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT AVEC CALCULS 100% DYNAMIQUES DEPUIS LA SOURCE -->
+    <!-- SCRIPT FONCTIONNEL -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -496,12 +496,13 @@
                 let totalMois = 0;
                 let nonDebriefesMois = 0;
                 
-                // Compteurs pour avancement par catégorie du mois sélectionné
+                // Compteurs pour calcul exact de l'avancement des débriefings par catégorie
                 let mauvTotalValid = 0, mauvTotalVide = 0, mauvWeb = 0, mauvPresse = 0;
                 let loupeTotalValid = 0, loupeTotalVide = 0, loupeWeb = 0, loupePresse = 0;
                 let ncTotalValid = 0, ncTotalVide = 0, ncWeb = 0, ncPresse = 0;
 
                 let countLiris = 0, countRubis = 0;
+
                 const moisActuelMax = 10; // Octobre
 
                 for (let i = 1; i < lignes.length; i++) {
@@ -511,7 +512,6 @@
                     if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
                         const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
                         
-                        // Exclusion stricte de XXX et lignes vides
                         if (trigramme === 'XXX' || trigramme === '') continue;
 
                         const dateLecture = cols[idxDate] || '';
@@ -519,8 +519,14 @@
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
                         const statutValidée = cols[idxValidee] !== undefined && cols[idxValidee] !== null ? cols[idxValidee].toUpperCase() : '';
                         
-                        // Exclusion des KO
                         if (statutValidée.includes('KO')) continue;
+
+                        const estOkOuContestation = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
+                        const estVide = (statutValidée === '');
+
+                        if (!estOkOuContestation && !estVide) {
+                            continue;
+                        }
 
                         let moisLigne = '';
                         if (dateLecture.includes('/')) {
@@ -549,21 +555,11 @@
                             const matchActivite = (activiteSelectionnee === 'toutes' || activiteLigne === activiteSelectionnee);
                             const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
 
-                            // Pour le graphique annuel (toutes activités / médias si non filtré)
                             if (matchActivite && matchMedia) {
-                                const estValideOuVide = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ') || statutValidée === '';
-                                if (estValideOuVide) {
-                                    volumesParMois[moisLigne]++;
-                                }
+                                volumesParMois[moisLigne]++;
                             }
 
-                            // Si la ligne correspond aux filtres de période, activité et média
                             if (matchPeriode && matchActivite && matchMedia) {
-                                const estOkOuContestation = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
-                                const estVide = (statutValidée === '');
-
-                                if (!estOkOuContestation && !estVide) continue;
-
                                 if (estVide) {
                                     nonDebriefesMois++;
                                 }
@@ -577,7 +573,6 @@
                                     agentsCumul[trigramme]++;
                                 }
 
-                                // Ventilation par catégorie (en dissociant validé et vide pour l'avancement exact du mois)
                                 if (categorie.includes('MAUVAISE')) {
                                     if (estOkOuContestation) {
                                         mauvTotalValid++;
@@ -608,11 +603,9 @@
                     }
                 }
 
-                // 1. KPI NQ et Non Débriefées (Strictement du mois sélectionné)
                 document.getElementById('kpi-nq').innerText = totalMois + " NQ";
                 document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
 
-                // 2. Calculs des taux NQ
                 const objMauvaise = 0.25;
                 const objLoupe = 0.0095;
                 const objNC = 0.035;
@@ -635,25 +628,22 @@
                 const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
                 const stNC = getStatutInfo(valTauxNC, objNC);
 
-                // MAUVAISE
                 document.getElementById('val-mauvaise').innerText = mauvTotalValid;
                 document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
                 document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
                 document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
 
-                // LOUPÉ
                 document.getElementById('val-loupe').innerText = loupeTotalValid;
                 document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
                 document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
                 document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
 
-                // NON CONFORME
                 document.getElementById('val-nc').innerText = ncTotalValid;
                 document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // 3. Calcul dynamique des pourcentages d'avancement des débriefings
+                // --- CALCUL DES POURCENTAGES D'AVANCEMENT DES DÉBRIEFINGS (Basé sur la base réelle) ---
                 const totalMauvGlobal = mauvTotalValid + mauvTotalVide;
                 const pctDebMauv = totalMauvGlobal > 0 ? Math.round((mauvTotalValid / totalMauvGlobal) * 100) : 100;
 
@@ -680,7 +670,6 @@
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // --- BLOCS PLAN D'ACTION ---
                 let htmlPA = '';
                 const categoriesBilan = [
                     { 
@@ -716,120 +705,4 @@
                         borderColor = '#dc2626';
                         badgeBg = '#fee2e2';
                         badgeColor = '#991b1b';
-                        messagePA = cat.paRouge;
-                    } else if (cat.st.niveau === 'orange') {
-                        borderColor = '#d97706';
-                        badgeBg = '#fef3c7';
-                        badgeColor = '#b45309';
-                        messagePA = cat.paOrange;
-                    }
-
-                    htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #0f172a;">${cat.nom}</strong>
-                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${cat.st.texte}</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">${messagePA}</div>
-                        </div>
-                    `;
-                });
-
-                if (nonDebriefesMois > 0) {
-                    htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid #dc2626; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
-                                <span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">Action requise : Compléter le suivi ou planifier les entretiens de débriefing en suspens.</div>
-                        </div>
-                    `;
-                }
-
-                document.getElementById('pa-container').innerHTML = htmlPA;
-
-                // Barres LIRIS / RUBIS
-                const totalAct = (countLiris + countRubis) || 1;
-                const pctLiris = Math.round((countLiris / totalAct) * 100);
-                const pctRubis = Math.round((countRubis / totalAct) * 100);
-
-                document.getElementById('stat-liris').innerText = countLiris + " NQ (" + pctLiris + "%)";
-                document.getElementById('bar-liris').style.width = pctLiris + "%";
-
-                document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
-                document.getElementById('bar-rubis').style.width = pctRubis + "%";
-
-                // Graphique Annuel
-                const chartContainer = document.getElementById('chart-months-container');
-                chartContainer.innerHTML = '';
-                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
-                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-                const maxVol = Math.max(...Object.values(volumesParMois), 1);
-
-                clesMois.forEach((cle, idx) => {
-                    const moisNum = parseInt(cle, 10);
-                    const vol = moisNum > moisActuelMax ? 0 : volumesParMois[cle];
-                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 4);
-
-                    const grp = document.createElement('div');
-                    grp.className = 'chart-bar-group';
-                    grp.innerHTML = `
-                        <div class="chart-value-label">${vol > 0 ? vol : ''}</div>
-                        <div class="chart-bar" style="height: ${hauteur}%;"></div>
-                        <div class="chart-label">${nomsMois[idx]}</div>
-                    `;
-                    chartContainer.appendChild(grp);
-                });
-
-                // Flop 5 des agents
-                const agentsTries = Object.keys(agentsCumul).map(t => {
-                    return { trigramme: t, total: agentsCumul[t] };
-                }).sort((a, b) => b.total - a.total).slice(0, 5);
-
-                const tbody = document.getElementById('agents-table-body');
-                tbody.innerHTML = '';
-
-                if (agentsTries.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucune erreur pour cette période</td></tr>';
-                } else {
-                    agentsTries.forEach((item, index) => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td><strong>${item.trigramme}</strong></td>
-                            <td>${item.total} erreur(s) cumulée(s)</td>
-                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
-                            <td>À débriefer</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-
-                // Liste des agents dans le filtre
-                const selectAgent = document.getElementById('filter-agent');
-                const valSelectionnee = selectAgent.value;
-                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
-                Array.from(tousLesAgents).sort().forEach(agent => {
-                    const opt = document.createElement('option');
-                    opt.value = agent.toLowerCase();
-                    opt.textContent = agent;
-                    selectAgent.appendChild(opt);
-                });
-                selectAgent.value = valSelectionnee;
-
-            } catch (err) {
-                console.error("Erreur :", err);
-            }
-        }
-
-        document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
-
-        rafraichirTableauDeBord();
-    </script>
-
-</body>
-</html>
+                        messagePA = cat.pa
