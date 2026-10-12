@@ -451,7 +451,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT AVEC FILTRE COLONNE Q (OK ou Contestation, Exclusion KO) -->
+    <!-- SCRIPT AVEC GESTION DE LA COLONNE Q ET EXCLUSION DE XXX -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -471,7 +471,7 @@
                 let idxDate = enTetes.findIndex(h => h.includes('date de lecture'));
                 let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
                 let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
-                let idxValidee = 16; // Colonne Q (17ème colonne -> index 16) ou recherche automatique si présente
+                let idxValidee = 16; // Colonne Q (17ème colonne -> index 16)
                 
                 const foundValidée = enTetes.findIndex(h => h.includes('validée') || h.includes('validee'));
                 if (foundValidée !== -1) idxValidee = foundValidée;
@@ -507,21 +507,24 @@
                     
                     if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
                         const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
+                        
+                        // --- EXCLUSION STRICTE DU TRIGRAMME XXX ---
+                        if (trigramme === 'XXX' || trigramme === '') continue;
+
                         const dateLecture = cols[idxDate] || '';
                         const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
                         const statutValidée = cols[idxValidee] ? cols[idxValidee].toUpperCase() : '';
                         
                         // --- RÈGLE MÉTIER VALIDÉE (COLONNE Q) ---
-                        // On exclut les KO explicites
+                        // Exclusion des KO
                         if (statutValidée.includes('KO')) continue;
 
-                        // On vérifie si c'est OK, Contestation, ou vide (pour les non débriefées)
                         const estOkOuContestation = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
-                        const estVide = (statutValidée === '' || cols.some(c => c === ''));
+                        const estVide = (statutValidée === '');
 
                         if (!estOkOuContestation && !estVide) {
-                            continue; // Si ce n'est ni OK, ni contestation, ni vide, on ignore
+                            continue;
                         }
 
                         if (estVide) {
@@ -616,19 +619,19 @@
                 // MAUVAISE
                 document.getElementById('val-mauvaise').innerText = mauvTotal;
                 document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
-                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
+                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} \vert{} Presse${mauvPresse}`;
                 document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
 
                 // LOUPÉ
                 document.getElementById('val-loupe').innerText = loupeTotal;
                 document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
-                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
+                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} \vert{} Presse${loupePresse}`;
                 document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
 
                 // NON CONFORME
                 document.getElementById('val-nc').innerText = ncTotal;
                 document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
-                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
+                document.getElementById('rep-nc').innerText = `Web ${ncWeb} \vert{} Presse${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
                 // --- 3 BLOCS DE PLAN D'ACTION ---
@@ -661,108 +664,4 @@
                         <div style="background: var(--bg-main); border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                                 <strong style="font-size: 12px; text-transform: uppercase;">${cat.nom}</strong>
-                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${cat.st.texte}</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 12px;">${messagePA}</div>
-                        </div>
-                    `;
-                });
-
-                if (nonDebriefesMois > 0) {
-                    htmlPA += `
-                        <div style="background: var(--bg-main); border-left: 4px solid #f87171; padding: 10px; border-radius: 6px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #f87171;">Lignes non débriefées</strong>
-                                <span style="background: rgba(248, 113, 113, 0.2); color: #f87171; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${nonDebriefesMois} à traiter</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 12px;">Action requise : Compléter le suivi ou planifier les entretiens de débriefing en suspens.</div>
-                        </div>
-                    `;
-                }
-
-                document.getElementById('pa-container').innerHTML = htmlPA;
-
-                // Barres LIRIS / RUBIS
-                const totalAct = (countLiris + countRubis) || 1;
-                const pctLiris = Math.round((countLiris / totalAct) * 100);
-                const pctRubis = Math.round((countRubis / totalAct) * 100);
-
-                document.getElementById('stat-liris').innerText = countLiris + " NQ (" + pctLiris + "%)";
-                document.getElementById('bar-liris').style.width = pctLiris + "%";
-
-                document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
-                document.getElementById('bar-rubis').style.width = pctRubis + "%";
-
-                // 3. Graphique Annuel
-                const chartContainer = document.getElementById('chart-months-container');
-                chartContainer.innerHTML = '';
-                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
-                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-                const maxVol = Math.max(...Object.values(volumesParMois), 1);
-
-                clesMois.forEach((cle, idx) => {
-                    const moisNum = parseInt(cle, 10);
-                    const vol = moisNum > moisActuelMax ? 0 : volumesParMois[cle];
-                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 4);
-
-                    const grp = document.createElement('div');
-                    grp.className = 'chart-bar-group';
-                    grp.innerHTML = `
-                        <div class="chart-value-label">${vol > 0 ? vol : ''}</div>
-                        <div class="chart-bar" style="height: ${hauteur}%;"></div>
-                        <div class="chart-label">${nomsMois[idx]}</div>
-                    `;
-                    chartContainer.appendChild(grp);
-                });
-
-                // 4. Flop 5 des agents
-                const agentsTries = Object.keys(agentsCumul).map(t => {
-                    return { trigramme: t, total: agentsCumul[t] };
-                }).sort((a, b) => b.total - a.total).slice(0, 5);
-
-                const tbody = document.getElementById('agents-table-body');
-                tbody.innerHTML = '';
-
-                if (agentsTries.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucune erreur pour cette période</td></tr>';
-                } else {
-                    agentsTries.forEach((item, index) => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td><strong>${item.trigramme}</strong></td>
-                            <td>${item.total} erreur(s) cumulée(s)</td>
-                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
-                            <td>À débriefer</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-
-                // 5. Liste des agents
-                const selectAgent = document.getElementById('filter-agent');
-                const valSelectionnee = selectAgent.value;
-                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
-                Array.from(tousLesAgents).sort().forEach(agent => {
-                    const opt = document.createElement('option');
-                    opt.value = agent.toLowerCase();
-                    opt.textContent = agent;
-                    selectAgent.appendChild(opt);
-                });
-                selectAgent.value = valSelectionnee;
-
-            } catch (err) {
-                console.error("Erreur :", err);
-            }
-        }
-
-        document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
-
-        rafraichirTableauDeBord();
-    </script>
-
-</body>
-</html>
+                                <span style="background: ${badgeBg}; color:${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font
