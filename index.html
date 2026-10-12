@@ -139,10 +139,6 @@
             margin-bottom: 24px;
         }
 
-        .grid-1col {
-            margin-bottom: 24px;
-        }
-
         @media (max-width: 1024px) {
             .grid-2col { grid-template-columns: 1fr; }
         }
@@ -170,6 +166,7 @@
             border-collapse: collapse;
             font-size: 13px;
             text-align: left;
+            margin-bottom: 20px;
         }
 
         th {
@@ -257,19 +254,28 @@
             font-weight: 700;
         }
 
-        /* EVOLUTION MULTI-CATEGORIES CHART (STYLE MODÈLE) */
-        .evolution-chart-container {
+        /* GRAPHIQUE INTÉGRÉ AVEC LIGNES DE TENDANCE */
+        .sub-chart-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 24px;
+            margin-bottom: 12px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 16px;
+        }
+        .evo-chart-wrapper {
+            position: relative;
+            height: 180px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 220px;
-            padding-top: 35px;
-            padding-bottom: 10px;
-            gap: 8px;
+            padding-top: 30px;
+            gap: 4px;
             border-bottom: 2px solid var(--border-color);
-            position: relative;
         }
-        .evo-month-group {
+        .evo-col {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -278,31 +284,39 @@
             justify-content: flex-end;
             position: relative;
         }
-        .evo-bars-wrapper {
+        .evo-bars {
             display: flex;
             align-items: flex-end;
             gap: 2px;
+            height: 120px;
             width: 100%;
             justify-content: center;
-            height: 140px;
         }
-        .evo-bar {
+        .evo-single-bar {
             width: 6px;
             border-radius: 2px 2px 0 0;
             min-height: 2px;
         }
-        .evo-label {
-            font-size: 11px;
+        .evo-x-label {
+            font-size: 10px;
             color: var(--text-muted);
-            margin-top: 8px;
+            margin-top: 6px;
             font-weight: 700;
+        }
+        .evo-svg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 140px;
+            pointer-events: none;
         }
         .chart-legend {
             display: flex;
             gap: 16px;
             justify-content: center;
-            margin-top: 14px;
-            font-size: 12px;
+            margin-top: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
         }
@@ -312,8 +326,8 @@
             gap: 6px;
         }
         .legend-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
         }
     </style>
@@ -392,7 +406,7 @@
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES & PLAN D'ACTION -->
+    <!-- SECTION CATÉGORIES, GRAPHIQUE INTÉGRÉ & PLAN D'ACTION -->
     <div class="grid-2col">
         <div class="card-section">
             <h2>Non-qualité par catégories (OK & Contestations)</h2>
@@ -434,27 +448,25 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE AVEC LIGNES INTÉGRÉ DANS LE MÊME BLOC -->
+            <div class="sub-chart-title">Évolution mensuelle par catégorie (Jan - Déc)</div>
+            <div class="evo-chart-wrapper" id="evo-chart-wrapper">
+                <!-- SVG superposé pour tracer les lignes de tendance connectées -->
+                <svg class="evo-svg-overlay" id="evo-svg-lines"></svg>
+                <!-- Barres mensuelles par catégorie -->
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
+            </div>
         </div>
 
         <div class="card-section">
             <h2>Plan d'Action (3 Niveaux d'Alerte)</h2>
             <div id="pa-container" style="font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
                 <div style="color: var(--text-muted);">Analyse des seuils en cours...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NOUVEAU GRAPHIQUE D'ÉVOLUTION MENSUELLE PAR CATÉGORIE -->
-    <div class="grid-1col">
-        <div class="card-section">
-            <h2>Évolution mensuelle par catégorie (Détails Jan - Déc)</h2>
-            <div class="evolution-chart-container" id="evo-chart-container">
-                <!-- Rempli dynamiquement en JS -->
-            </div>
-            <div class="chart-legend">
-                <div class="legend-item"><div class="legend-dot" style="background: #475569;"></div> Mauvaise</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
             </div>
         </div>
     </div>
@@ -572,7 +584,6 @@
                 let tousLesAgents = new Set();
                 let volumesParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 
-                // Tableaux pour le graphique d'évolution détaillé par catégorie (Jan-Déc)
                 let evoMauvaise = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 let evoLoupe = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 let evoNC = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
@@ -606,9 +617,7 @@
                         const estOkOuContestation = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
                         const estVide = (statutValidée === '');
 
-                        if (!estOkOuContestation && !estVide) {
-                            continue;
-                        }
+                        if (!estOkOuContestation && !estVide) continue;
 
                         let moisLigne = '';
                         if (dateLecture.includes('/')) {
@@ -640,7 +649,6 @@
                             if (matchActivite && matchMedia) {
                                 volumesParMois[moisLigne]++;
                                 
-                                // Remplissage pour le graphique d'évolution par catégorie (uniquement valide/contesté)
                                 if (estOkOuContestation) {
                                     if (categorie.includes('MAUVAISE')) {
                                         evoMauvaise[moisLigne]++;
@@ -653,9 +661,7 @@
                             }
 
                             if (matchPeriode && matchActivite && matchMedia) {
-                                if (estVide) {
-                                    nonDebriefesMois++;
-                                }
+                                if (estVide) nonDebriefesMois++;
 
                                 if (estOkOuContestation) {
                                     totalMois++;
@@ -862,10 +868,12 @@
                     chartContainer.appendChild(grp);
                 });
 
-                // NOUVEAU : Génération du graphique d'évolution multi-catégories (Jan-Déc)
-                const evoContainer = document.getElementById('evo-chart-container');
-                evoContainer.innerHTML = '';
-                
+                // Génération du graphique intégré (Barres + Lignes de tendance SVG connectées)
+                const evoWrapper = document.getElementById('evo-chart-wrapper');
+                // Nettoyer uniquement les colonnes existantes (garder le SVG)
+                const existingCols = evoWrapper.querySelectorAll('.evo-col');
+                existingCols.forEach(c => c.remove());
+
                 const maxEvoVal = Math.max(
                     ...Object.values(evoMauvaise), 
                     ...Object.values(evoLoupe), 
@@ -873,28 +881,74 @@
                     1
                 );
 
+                let ptsMauv = [], ptsLoupe = [], ptsNC = [];
+
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
                     const mVal = moisNum > moisActuelMax ? 0 : evoMauvaise[cle];
                     const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
                     const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
 
-                    const hM = Math.max(Math.round((mVal / maxEvoVal) * 100), 4);
-                    const hL = Math.max(Math.round((lVal / maxEvoVal) * 100), 4);
-                    const hNC = Math.max(Math.round((ncVal / maxEvoVal) * 100), 4);
+                    const hM = Math.max(Math.round((mVal / maxEvoVal) * 90), 4);
+                    const hL = Math.max(Math.round((lVal / maxEvoVal) * 90), 4);
+                    const hNC = Math.max(Math.round((ncVal / maxEvoVal) * 90), 4);
 
-                    const colGroup = document.createElement('div');
-                    colGroup.className = 'evo-month-group';
-                    colGroup.innerHTML = `
-                        <div class="evo-bars-wrapper">
-                            <div class="evo-bar" style="height: ${hM}%; background: #475569;" title="Mauvaise: ${mVal}"></div>
-                            <div class="evo-bar" style="height: ${hL}%; background: #eab308;" title="Loupé: ${lVal}"></div>
-                            <div class="evo-bar" style="height: ${hNC}%; background: #dc2626;" title="Non Conforme: ${ncVal}"></div>
+                    const col = document.createElement('div');
+                    col.className = 'evo-col';
+                    col.innerHTML = `
+                        <div class="evo-bars">
+                            <div class="evo-single-bar" style="height: ${hM}%; background: #64748b;" title="Mauvaise: ${mVal}"></div>
+                            <div class="evo-single-bar" style="height: ${hL}%; background: #eab308;" title="Loupé: ${lVal}"></div>
+                            <div class="evo-single-bar" style="height: ${hNC}%; background: #dc2626;" title="Non Conforme: ${ncVal}"></div>
                         </div>
-                        <div class="evo-label">${nomsMois[idx]}</div>
+                        <div class="evo-x-label">${nomsMois[idx]}</div>
                     `;
-                    evoContainer.appendChild(colGroup);
+                    evoWrapper.appendChild(col);
+
+                    // Calcul des coordonnées relatives pour les points et lignes SVG
+                    setTimeout(() => {
+                        const colRect = col.getBoundingClientRect();
+                        const wrapperRect = evoWrapper.getBoundingClientRect();
+                        const x = (colRect.left + colRect.width / 2) - wrapperRect.left;
+                        
+                        // Hauteur du conteneur SVG fixée à 140px
+                        const yM = 140 - (hM * 1.2);
+                        const yL = 140 - (hL * 1.2);
+                        const yNC = 140 - (hNC * 1.2);
+
+                        ptsMauv.push({x, y: yM, val: mVal});
+                        ptsLoupe.push({x, y: yL, val: lVal});
+                        ptsNC.push({x, y: yNC, val: ncVal});
+
+                        if (idx === clesMois.length - 1) {
+                            drawSvgLines(ptsMauv, ptsLoupe, ptsNC);
+                        }
+                    }, 50);
                 });
+
+                function drawSvgLines(m, l, nc) {
+                    const svg = document.getElementById('evo-svg-lines');
+                    let svgContent = '';
+
+                    function createPathAndDots(points, color) {
+                        let pathD = '';
+                        let circles = '';
+                        points.forEach((p, i) => {
+                            pathD += (i === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`);
+                            circles += `<circle cx="${p.x}" cy="${p.y}" r="3" fill="${color}" />`;
+                            if (p.val > 0) {
+                                circles += `<text x="${p.x}" y="${p.y - 6}" font-size="9" fill="${color}" font-weight="700" text-anchor="middle">${p.val}</text>`;
+                            }
+                        });
+                        return `<path d="${pathD}" fill="none" stroke="${color}" stroke-width="2" />` + circles;
+                    }
+
+                    svgContent += createPathAndDots(m, '#64748b');
+                    svgContent += createPathAndDots(l, '#eab308');
+                    svgContent += createPathAndDots(nc, '#dc2626');
+
+                    svg.innerHTML = svgContent;
+                }
 
                 const agentsTries = Object.keys(agentsCumul).map(t => {
                     return { trigramme: t, total: agentsCumul[t] };
@@ -907,41 +961,4 @@
                     tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucune erreur pour cette période</td></tr>';
                 } else {
                     agentsTries.forEach((item, index) => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td><strong>${item.trigramme}</strong></td>
-                            <td>${item.total} erreur(s) cumulée(s)</td>
-                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
-                            <td>À débriefer</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-
-                const selectAgent = document.getElementById('filter-agent');
-                const valSelectionnee = selectAgent.value;
-                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
-                Array.from(tousLesAgents).sort().forEach(agent => {
-                    const opt = document.createElement('option');
-                    opt.value = agent.toLowerCase();
-                    opt.textContent = agent;
-                    selectAgent.appendChild(opt);
-                });
-                selectAgent.value = valSelectionnee;
-
-            } catch (err) {
-                console.error("Erreur d'affichage :", err);
-            }
-        }
-
-        document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
-
-        rafraichirTableauDeBord();
-    </script>
-
-</body>
-</html>
+                        const tr = document.
