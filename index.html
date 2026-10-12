@@ -451,7 +451,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT AVEC GESTION DE LA COLONNE Q ET EXCLUSION DE XXX -->
+    <!-- SCRIPT STABILISÉ ET MIS À JOUR -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -471,7 +471,7 @@
                 let idxDate = enTetes.findIndex(h => h.includes('date de lecture'));
                 let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
                 let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
-                let idxValidee = 16; // Colonne Q (17ème colonne -> index 16)
+                let idxValidee = 16; 
                 
                 const foundValidée = enTetes.findIndex(h => h.includes('validée') || h.includes('validee'));
                 if (foundValidée !== -1) idxValidee = foundValidée;
@@ -508,18 +508,18 @@
                     if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
                         const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
                         
-                        // --- EXCLUSION STRICTE DU TRIGRAMME XXX ---
+                        // Exclusion du trigramme XXX et des lignes vides
                         if (trigramme === 'XXX' || trigramme === '') continue;
 
                         const dateLecture = cols[idxDate] || '';
                         const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
-                        const statutValidée = cols[idxValidee] ? cols[idxValidee].toUpperCase() : '';
+                        const statutValidée = cols[idxValidee] !== undefined && cols[idxValidee] !== null ? cols[idxValidee].toUpperCase() : '';
                         
-                        // --- RÈGLE MÉTIER VALIDÉE (COLONNE Q) ---
                         // Exclusion des KO
                         if (statutValidée.includes('KO')) continue;
 
+                        // Gestion souple de la validation (OK, contestation ou vide)
                         const estOkOuContestation = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
                         const estVide = (statutValidée === '');
 
@@ -634,12 +634,30 @@
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // --- 3 BLOCS DE PLAN D'ACTION ---
+                // --- 3 BLOCS DE PLAN D'ACTION (TEXTES PERSONNALISÉS) ---
                 let htmlPA = '';
                 const categoriesBilan = [
-                    { nom: 'Non Conforme', st: stNC, paRouge: "PA Correctif : Lancer un rappel immédiat sur les consignes de formatage et de saisie.", paOrange: "Attention : Le taux frôle la limite. Vérifier les dernières fiches de saisie.", paVert: "Objectif tenu : Maintenir la rigueur actuelle." },
-                    { nom: 'Loupé', st: stLoupe, paRouge: "PA Correctif : Auditer le Flop 5 des agents et planifier des debriefings individuels.", paOrange: "Attention : Surveillance requise sur les flux média en retard.", paVert: "Objectif tenu : Couverture des flux média maîtrisée." },
-                    { nom: 'Mauvaise', st: stMauv, paRouge: "PA Correctif : Revoir les critères de pertinence (homonymies/passages significatifs).", paOrange: "Attention : Risque de dépassement sur les critères de sélection.", paVert: "Sous objectif : Capitaliser sur les bonnes pratiques." }
+                    { 
+                        nom: 'Non Conforme', 
+                        st: stNC, 
+                        paRouge: "PA Correctif : Lancer un rappel immédiat sur les consignes et process montage WEB, erreur titre, scories etc.", 
+                        paOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.", 
+                        paVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB." 
+                    },
+                    { 
+                        nom: 'Loupé', 
+                        st: stLoupe, 
+                        paRouge: "PA Correctif : Auditer le Flop 5 des agents et planifier des debriefings individuels.", 
+                        paOrange: "Attention : Surveillance requise sur les flux média en retard.", 
+                        paVert: "Objectif tenu : Couverture des flux média maîtrisée." 
+                    },
+                    { 
+                        nom: 'Mauvaise', 
+                        st: stMauv, 
+                        paRouge: "PA Correctif : Revoir les critères de pertinence (homonymies/passages significatifs).", 
+                        paOrange: "Attention : Risque de dépassement sur les critères de sélection.", 
+                        paVert: "Sous objectif : Capitaliser sur les bonnes pratiques." 
+                    }
                 ];
 
                 categoriesBilan.forEach(cat => {
