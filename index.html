@@ -164,7 +164,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
             text-align: left;
             margin-bottom: 20px;
         }
@@ -172,12 +172,12 @@
         th {
             color: var(--text-muted);
             font-weight: 700;
-            padding: 8px 12px;
+            padding: 8px 10px;
             border-bottom: 2px solid var(--border-color);
         }
 
         td {
-            padding: 12px;
+            padding: 10px;
             border-bottom: 1px solid #e2e8f0;
             color: #1e293b;
             font-weight: 500;
@@ -185,7 +185,7 @@
 
         /* STATUS BADGES */
         .status-badge {
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
             font-size: 11px;
             font-weight: 700;
@@ -260,17 +260,17 @@
             font-weight: 700;
             text-transform: uppercase;
             color: var(--text-muted);
-            margin-top: 20px;
-            margin-bottom: 12px;
+            margin-top: 15px;
+            margin-bottom: 10px;
             border-top: 1px dashed var(--border-color);
-            padding-top: 14px;
+            padding-top: 12px;
         }
         .evo-chart-container {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 140px;
-            padding-top: 20px;
+            height: 130px;
+            padding-top: 15px;
             gap: 6px;
             border-bottom: 2px solid var(--border-color);
         }
@@ -286,7 +286,7 @@
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 100px;
+            height: 90px;
             width: 100%;
             justify-content: center;
         }
@@ -305,7 +305,7 @@
             display: flex;
             gap: 16px;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: 8px;
             font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
@@ -395,45 +395,49 @@
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES, GRAPHIQUE INTÉGRÉ & PLAN D'ACTION -->
+    <!-- SECTION CATÉGORIES DÉTAILLÉES, GRAPHIQUE & PLAN D'ACTION -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Non-qualité par catégories (OK & Contestations)</h2>
+            <h2>Suivi par Catégorie (OK, Contestations & Vides)</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Catégorie</th>
-                        <th>Volume NQ</th>
-                        <th>Objectif</th>
-                        <th>Atteinte réelle</th>
+                        <th>OK</th>
+                        <th>Contest.</th>
+                        <th>Vides (À déb.)</th>
+                        <th>Obj.</th>
+                        <th>Taux Réel (OK)</th>
                         <th>Statut</th>
-                        <th>Répartition Web / Presse</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><strong>MAUVAISE</strong></td>
-                        <td id="val-mauvaise">0</td>
-                        <td>0,25 %</td>
+                        <td id="mauv-ok">0</td>
+                        <td id="mauv-cont">0</td>
+                        <td id="mauv-vide" style="color: var(--danger); font-weight:700;">0</td>
+                        <td>0,25%</td>
                         <td><strong id="taux-mauvaise">0,00 %</strong></td>
-                        <td id="statut-mauvaise"><span class="status-badge status-tenu">Objectif tenu</span></td>
-                        <td id="rep-mauvaise">Web 0 | Presse 0</td>
+                        <td id="statut-mauvaise"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                     <tr>
                         <td><strong>LOUPÉ</strong></td>
-                        <td id="val-loupe">0</td>
-                        <td>0,0095 %</td>
+                        <td id="loupe-ok">0</td>
+                        <td id="loupe-cont">0</td>
+                        <td id="loupe-vide" style="color: var(--danger); font-weight:700;">0</td>
+                        <td>0,0095%</td>
                         <td><strong id="taux-loupe">0,00 %</strong></td>
-                        <td id="statut-loupe"><span class="status-badge status-tenu">Objectif tenu</span></td>
-                        <td id="rep-loupe">Web 0 | Presse 0</td>
+                        <td id="statut-loupe"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                     <tr>
                         <td><strong>NON CONFORME</strong></td>
-                        <td id="val-nc">0</td>
-                        <td>0,035 %</td>
+                        <td id="nc-ok">0</td>
+                        <td id="nc-cont">0</td>
+                        <td id="nc-vide" style="color: var(--danger); font-weight:700;">0</td>
+                        <td>0,035%</td>
                         <td><strong id="taux-nc">0,00 %</strong></td>
-                        <td id="statut-nc"><span class="status-badge status-tenu">Objectif tenu</span></td>
-                        <td id="rep-nc">Web 0 | Presse 0</td>
+                        <td id="statut-nc"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -530,7 +534,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FONCTIONNEL -->
+    <!-- SCRIPT FONCTIONNEL AMÉLIORÉ -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -578,11 +582,12 @@
                 let totalMois = 0;
                 let nonDebriefesMois = 0;
                 
-                let mauvTotalValid = 0, mauvTotalVide = 0, mauvWeb = 0, mauvPresse = 0;
-                let loupeTotalValid = 0, loupeTotalVide = 0, loupeWeb = 0, loupePresse = 0;
-                let ncTotalValid = 0, ncTotalVide = 0, ncWeb = 0, ncPresse = 0;
-                let countLiris = 0, countRubis = 0;
+                // Compteurs détaillés par sous-statut
+                let mauvOK = 0, mauvCont = 0, mauvVide = 0;
+                let loupeOK = 0, loupeCont = 0, loupeVide = 0;
+                let ncOK = 0, ncCont = 0, ncVide = 0;
 
+                let countLiris = 0, countRubis = 0;
                 const moisActuelMax = 10; // Octobre
 
                 for (let i = 1; i < lignes.length; i++) {
@@ -591,7 +596,6 @@
                     
                     if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
                         const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
-                        
                         if (trigramme === 'XXX' || trigramme === '') continue;
 
                         const dateLecture = cols[idxDate] || '';
@@ -601,10 +605,11 @@
                         
                         if (statutValidée.includes('KO')) continue;
 
-                        const estOkOuContestation = statutValidée.includes('OK') || statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
+                        const estOK = statutValidée.includes('OK');
+                        const estContestation = statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
                         const estVide = (statutValidée === '');
 
-                        if (!estOkOuContestation && !estVide) continue;
+                        if (!estOK && !estContestation && !estVide) continue;
 
                         let moisLigne = '';
                         if (dateLecture.includes('/')) {
@@ -617,7 +622,6 @@
 
                         if (trigramme.length >= 2 && trigramme.length <= 5 && moisLigne >= '01' && moisLigne <= '12') {
                             tousLesAgents.add(trigramme);
-
                             if (parseInt(moisLigne, 10) > moisActuelMax) continue;
 
                             const ligneTexte = cols.join(' ').toLowerCase();
@@ -629,21 +633,17 @@
                             if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
                             if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
 
-                            // Application stricte du filtre Activité (LIRIS ou RUBIS)
                             const matchActivite = (activiteLigne === activiteSelectionnee);
                             const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
 
                             if (matchActivite && matchMedia) {
                                 volumesParMois[moisLigne]++;
                                 
-                                if (estOkOuContestation) {
-                                    if (categorie.includes('MAUVAISE')) {
-                                        evoMauvaise[moisLigne]++;
-                                    } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
-                                        evoLoupe[moisLigne]++;
-                                    } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
-                                        evoNC[moisLigne]++;
-                                    }
+                                // Pour le graphique mensuel (basé sur OK ou Contestations)
+                                if (estOK || estContestation) {
+                                    if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
+                                    else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
+                                    else if (categorie.includes('CONFORME') || categorie.includes('NC')) evoNC[moisLigne]++;
                                 }
                             }
 
@@ -652,7 +652,7 @@
                             if (matchPeriode && matchActivite && matchMedia) {
                                 if (estVide) nonDebriefesMois++;
 
-                                if (estOkOuContestation) {
+                                if (estOK || estContestation) {
                                     totalMois++;
                                     if (activiteLigne === 'liris') countLiris++;
                                     if (activiteLigne === 'rubis') countRubis++;
@@ -661,30 +661,19 @@
                                     agentsCumul[trigramme]++;
                                 }
 
+                                // Ventilation par catégorie et sous-statut
                                 if (categorie.includes('MAUVAISE')) {
-                                    if (estOkOuContestation) {
-                                        mauvTotalValid++;
-                                        if (mediaLigne === 'web') mauvWeb++;
-                                        if (mediaLigne === 'presse') mauvPresse++;
-                                    } else if (estVide) {
-                                        mauvTotalVide++;
-                                    }
+                                    if (estOK) mauvOK++;
+                                    else if (estContestation) mauvCont++;
+                                    else if (estVide) mauvVide++;
                                 } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
-                                    if (estOkOuContestation) {
-                                        loupeTotalValid++;
-                                        if (mediaLigne === 'web') loupeWeb++;
-                                        if (mediaLigne === 'presse') loupePresse++;
-                                    } else if (estVide) {
-                                        loupeTotalVide++;
-                                    }
+                                    if (estOK) loupeOK++;
+                                    else if (estContestation) loupeCont++;
+                                    else if (estVide) loupeVide++;
                                 } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
-                                    if (estOkOuContestation) {
-                                        ncTotalValid++;
-                                        if (mediaLigne === 'web') ncWeb++;
-                                        if (mediaLigne === 'presse') ncPresse++;
-                                    } else if (estVide) {
-                                        ncTotalVide++;
-                                    }
+                                    if (estOK) ncOK++;
+                                    else if (estContestation) ncCont++;
+                                    else if (estVide) ncVide++;
                                 }
                             }
                         }
@@ -694,19 +683,20 @@
                 document.getElementById('kpi-nq').innerText = totalMois + " NQ";
                 document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
 
+                // Calculs des taux basés strictement sur les OK validés
                 const objMauvaise = 0.25;
                 const objLoupe = 0.0095;
                 const objNC = 0.035;
 
-                const valTauxMauv = (mauvTotalValid / totalRM) * 100;
-                const valTauxLoupe = (loupeTotalValid / alertesTraitees) * 100;
-                const valTauxNC = (ncTotalValid / totalRM) * 100;
+                const valTauxMauv = (mauvOK / totalRM) * 100;
+                const valTauxLoupe = (loupeOK / alertesTraitees) * 100;
+                const valTauxNC = (ncOK / totalRM) * 100;
 
                 function getStatutInfo(val, obj) {
                     if (val <= obj) {
-                        return { classe: 'status-tenu', texte: 'Objectif tenu', niveau: 'vert' };
+                        return { classe: 'status-tenu', texte: 'Tenu', niveau: 'vert' };
                     } else if (val <= obj * 1.15) {
-                        return { classe: 'status-surveiller', texte: 'À surveiller (Frôle)', niveau: 'orange' };
+                        return { classe: 'status-surveiller', texte: 'À surveiller', niveau: 'orange' };
                     } else {
                         return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
                     }
@@ -716,33 +706,37 @@
                 const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
                 const stNC = getStatutInfo(valTauxNC, objNC);
 
-                document.getElementById('val-mauvaise').innerText = mauvTotalValid;
+                // Affichage du tableau détaillé
+                document.getElementById('mauv-ok').innerText = mauvOK;
+                document.getElementById('mauv-cont').innerText = mauvCont;
+                document.getElementById('mauv-vide').innerText = mauvVide;
                 document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
-                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
                 document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
 
-                document.getElementById('val-loupe').innerText = loupeTotalValid;
+                document.getElementById('loupe-ok').innerText = loupeOK;
+                document.getElementById('loupe-cont').innerText = loupeCont;
+                document.getElementById('loupe-vide').innerText = loupeVide;
                 document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
-                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
                 document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
 
-                document.getElementById('val-nc').innerText = ncTotalValid;
+                document.getElementById('nc-ok').innerText = ncOK;
+                document.getElementById('nc-cont').innerText = ncCont;
+                document.getElementById('nc-vide').innerText = ncVide;
                 document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
-                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
                 // Avancement des débriefings
-                const totalMauvGlobal = mauvTotalValid + mauvTotalVide;
-                const pctDebMauv = totalMauvGlobal > 0 ? Math.round((mauvTotalValid / totalMauvGlobal) * 100) : 100;
+                const totalMauvGlobal = mauvOK + mauvCont + mauvVide;
+                const pctDebMauv = totalMauvGlobal > 0 ? Math.round(((mauvOK + mauvCont) / totalMauvGlobal) * 100) : 100;
 
-                const totalLoupeGlobal = loupeTotalValid + loupeTotalVide;
-                const pctDebLoupe = totalLoupeGlobal > 0 ? Math.round((loupeTotalValid / totalLoupeGlobal) * 100) : 100;
+                const totalLoupeGlobal = loupeOK + loupeCont + loupeVide;
+                const pctDebLoupe = totalLoupeGlobal > 0 ? Math.round(((loupeOK + loupeCont) / totalLoupeGlobal) * 100) : 100;
 
-                const totalNCGlobal = ncTotalValid + ncTotalVide;
-                const pctDebNC = totalNCGlobal > 0 ? Math.round((ncTotalValid / totalNCGlobal) * 100) : 100;
+                const totalNCGlobal = ncOK + ncCont + ncVide;
+                const pctDebNC = totalNCGlobal > 0 ? Math.round(((ncOK + ncCont) / totalNCGlobal) * 100) : 100;
 
                 const totalGlobalNQ = totalMauvGlobal + totalLoupeGlobal + totalNCGlobal;
-                const totalGlobalValid = mauvTotalValid + loupeTotalValid + ncTotalValid;
+                const totalGlobalValid = (mauvOK + mauvCont) + (loupeOK + loupeCont) + (ncOK + ncCont);
                 const pctDebGlobal = totalGlobalNQ > 0 ? Math.round((totalGlobalValid / totalGlobalNQ) * 100) : 100;
 
                 document.getElementById('pct-deb-mauvaise').innerText = pctDebMauv + " %";
@@ -757,72 +751,41 @@
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
+                // Plan d'action dynamique
                 let htmlPA = '';
                 const categoriesBilan = [
-                    { 
-                        nom: 'Non Conforme', 
-                        st: stNC, 
-                        paRouge: "PA Correctif : Lancer un rappel immédiat sur les consignes et process montage WEB, erreur titre, scories etc.", 
-                        paOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.", 
-                        paVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB." 
-                    },
-                    { 
-                        nom: 'Loupé', 
-                        st: stLoupe, 
-                        paRouge: "PA Correctif : Auditer le Flop 5 des agents et planifier des debriefings individuels.", 
-                        paOrange: "Attention : Surveillance requise sur les flux média en retard.", 
-                        paVert: "Objectif tenu : Couverture des flux média maîtrisée." 
-                    },
-                    { 
-                        nom: 'Mauvaise', 
-                        st: stMauv, 
-                        paRouge: "PA Correctif : Revoir les critères de pertinence (homonymies/passages significatifs).", 
-                        paOrange: "Attention : Risque de dépassement sur les critères de sélection.", 
-                        paVert: "Sous objectif : Capitaliser sur les bonnes pratiques." 
-                    }
+                    { nom: 'Non Conforme', st: stNC, paRouge: "Rappel urgent sur les consignes WEB.", paOrange: "Vérifier la rigueur de montage.", paVert: "Objectif tenu sur les consignes WEB." },
+                    { nom: 'Loupé', st: stLoupe, paRouge: "Auditer le Flop 5 et planifier des debriefings.", paOrange: "Surveillance requise sur les flux.", paVert: "Couverture média maîtrisée." },
+                    { nom: 'Mauvaise', st: stMauv, paRouge: "Revoir les critères de pertinence.", paOrange: "Risque de dépassement sur les sélections.", paVert: "Capitaliser sur les bonnes pratiques." }
                 ];
 
                 categoriesBilan.forEach(cat => {
-                    let borderColor = '#059669';
-                    let badgeBg = '#d1fae5';
-                    let badgeColor = '#065f46';
-                    let messagePA = cat.paVert;
-
-                    if (cat.st.niveau === 'rouge') {
-                        borderColor = '#dc2626';
-                        badgeBg = '#fee2e2';
-                        badgeColor = '#991b1b';
-                        messagePA = cat.paRouge;
-                    } else if (cat.st.niveau === 'orange') {
-                        borderColor = '#d97706';
-                        badgeBg = '#fef3c7';
-                        badgeColor = '#b45309';
-                        messagePA = cat.paOrange;
-                    }
+                    let borderColor = '#059669', badgeBg = '#d1fae5', badgeColor = '#065f46', msg = cat.paVert;
+                    if (cat.st.niveau === 'rouge') { borderColor = '#dc2626'; badgeBg = '#fee2e2'; badgeColor = '#991b1b'; msg = cat.paRouge; }
+                    else if (cat.st.niveau === 'orange') { borderColor = '#d97706'; badgeBg = '#fef3c7'; badgeColor = '#b45309'; msg = cat.paOrange; }
 
                     htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #0f172a;">${cat.nom}</strong>
-                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${cat.st.texte}</span>
+                        <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                <strong style="font-size: 11px; text-transform: uppercase;">${cat.nom}</strong>
+                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${cat.st.texte}</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">${messagePA}</div>
+                            <div style="color: var(--text-muted); font-size: 11px;">${msg}</div>
                         </div>
                     `;
                 });
 
                 if (nonDebriefesMois > 0) {
                     htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid #dc2626; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
-                                <span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
+                        <div style="background: #ffffff; border-left: 4px solid #dc2626; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                <strong style="font-size: 11px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
+                                <span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">Action requise : Compléter le suivi ou planifier les entretiens de débriefing en suspens.</div>
+                            <div style="color: var(--text-muted); font-size: 11px;">Planifier les entretiens en suspens.</div>
                         </div>
                     `;
                 }
-
                 document.getElementById('pa-container').innerHTML = htmlPA;
 
                 const totalAct = (countLiris + countRubis) || 1;
@@ -857,16 +820,10 @@
                     chartContainer.appendChild(grp);
                 });
 
-                // Génération du graphique intégré par catégorie
+                // Graphique Intégré par catégorie
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
-
-                const maxEvoVal = Math.max(
-                    ...Object.values(evoMauvaise), 
-                    ...Object.values(evoLoupe), 
-                    ...Object.values(evoNC), 
-                    1
-                );
+                const maxEvoVal = Math.max(...Object.values(evoMauvaise), ...Object.values(evoLoupe), ...Object.values(evoNC), 1);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
@@ -891,10 +848,8 @@
                     evoContainer.appendChild(group);
                 });
 
-                const agentsTries = Object.keys(agentsCumul).map(t => {
-                    return { trigramme: t, total: agentsCumul[t] };
-                }).sort((a, b) => b.total - a.total).slice(0, 5);
-
+                // Flop 5 Agents
+                const agentsTries = Object.keys(agentsCumul).map(t => ({ trigramme: t, total: agentsCumul[t] })).sort((a, b) => b.total - a.total).slice(0, 5);
                 const tbody = document.getElementById('agents-table-body');
                 tbody.innerHTML = '';
 
@@ -905,7 +860,7 @@
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td><strong>${item.trigramme}</strong></td>
-                            <td>${item.total} erreur(s) cumulée(s)</td>
+                            <td>${item.total} erreur(s)</td>
                             <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
                             <td>À débriefer</td>
                         `;
@@ -932,7 +887,7 @@
         document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
         document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
         document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
+        document.getElementById('input-alertes').addEventListener('input', rafraichirData = () => rafraichirTableauDeBord());
         document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
 
         rafraichirTableauDeBord();
