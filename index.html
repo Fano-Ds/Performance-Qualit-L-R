@@ -1,943 +1,943 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quality Performance Center - LIRIS & RUBIS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-main: #cbd5e1; /* Gris perle / acier clair */
-            --bg-card: #f8fafc; /* Blanc cassé lumineux pour les cartes */
-            --border-color: #94a3b8; /* Bordure contrastée et propre */
-            --text-main: #0f172a; /* Texte foncé ultra-lisible */
-            --text-muted: #475569; /* Texte secondaire gris pro */
-            --primary: #0284c7; /* Bleu corporate vif */
-            --danger: #dc2626; /* Rouge alerte */
-            --warning: #d97706; /* Ambre chaleureux */
-            --success: #059669; /* Vert succès */
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Performance Center - LIRIS & RUBIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #cbd5e1; /* Gris perle / acier clair */
+            --bg-card: #f8fafc; /* Blanc cassé lumineux pour les cartes */
+            --border-color: #94a3b8; /* Bordure contrastée et propre */
+            --text-main: #0f172a; /* Texte foncé ultra-lisible */
+            --text-muted: #475569; /* Texte secondaire gris pro */
+            --primary: #0284c7; /* Bleu corporate vif */
+            --danger: #dc2626; /* Rouge alerte */
+            --warning: #d97706; /* Ambre chaleureux */
+            --success: #059669; /* Vert succès */
+        }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            padding: 24px;
-        }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 24px;
+        }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
 
-        header h1 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0f172a;
-        }
+        header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
 
-        header h1 span {
-            color: var(--primary);
-        }
+        header h1 span {
+            color: var(--primary);
+        }
 
-        .datetime {
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 600;
-        }
+        .datetime {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-        /* FILTERS BAR */
-        .filters-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 24px;
-        }
+        /* FILTERS BAR */
+        .filters-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
 
-        .filter-group select, .filter-group input {
-            width: 100%;
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            outline: none;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+        .filter-group select, .filter-group input {
+            width: 100%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
 
-        .filter-group select:focus, .filter-group input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
-        }
+        .filter-group select:focus, .filter-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+        }
 
-        /* KPI CARDS */
-        .kpi-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
+        /* KPI CARDS */
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
 
-        .kpi-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+        .kpi-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
 
-        .kpi-card h3 {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
+        .kpi-card h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
 
-        .kpi-card .value {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #0f172a;
-        }
+        .kpi-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
 
-        .kpi-card .subtitle {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+        .kpi-card .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
 
-        .kpi-input {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 20px;
-            font-weight: 700;
-            width: 100%;
-            margin-bottom: 8px;
-        }
+        .kpi-input {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 20px;
+            font-weight: 700;
+            width: 100%;
+            margin-bottom: 8px;
+        }
 
-        /* GRID SECTIONS */
-        .grid-2col {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
+        /* GRID SECTIONS */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
 
-        @media (max-width: 1024px) {
-            .grid-2col { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 1024px) {
+            .grid-2col { grid-template-columns: 1fr; }
+        }
 
-        .card-section {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+        .card-section {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
 
-        .card-section h2 {
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            color: #0f172a;
-            letter-spacing: 0.5px;
-        }
+        .card-section h2 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            color: #0f172a;
+            letter-spacing: 0.5px;
+        }
 
-        /* TABLES */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11px;
-            text-align: left;
-            margin-bottom: 20px;
-        }
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
 
-        th {
-            color: var(--text-muted);
-            font-weight: 700;
-            padding: 8px 6px;
-            border-bottom: 2px solid var(--border-color);
-        }
+        th {
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 8px 6px;
+            border-bottom: 2px solid var(--border-color);
+        }
 
-        td {
-            padding: 10px 6px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1e293b;
-            font-weight: 500;
-        }
+        td {
+            padding: 10px 6px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e293b;
+            font-weight: 500;
+        }
 
-        /* STATUS BADGES */
-        .status-badge {
-            padding: 4px 6px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-        .status-tenu { background: #d1fae5; color: #065f46; }
-        .status-surveiller { background: #fef3c7; color: #b45309; }
-        .status-depasse { background: #fee2e2; color: #991b1b; }
+        /* STATUS BADGES */
+        .status-badge {
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .status-tenu { background: #d1fae5; color: #065f46; }
+        .status-surveiller { background: #fef3c7; color: #b45309; }
+        .status-depasse { background: #fee2e2; color: #991b1b; }
 
-        /* PROGRESS BARS */
-        .progress-item {
-            margin-bottom: 14px;
-        }
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: #1e293b;
-        }
-        .progress-bar-bg {
-            background: #cbd5e1;
-            border-radius: 4px;
-            height: 8px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            background: var(--primary);
-            height: 100%;
-            border-radius: 4px;
-        }
+        /* PROGRESS BARS */
+        .progress-item {
+            margin-bottom: 14px;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #1e293b;
+        }
+        .progress-bar-bg {
+            background: #cbd5e1;
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            border-radius: 4px;
+        }
 
-        /* CHART */
-        .chart-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 160px;
-            padding-top: 25px;
-            gap: 6px;
-        }
-        .chart-bar-group {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-end;
-        }
-        .chart-value-label {
-            font-size: 9px;
-            color: var(--primary);
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-        .chart-bar {
-            width: 100%;
-            background: linear-gradient(to top, #0284c7, #38bdf8);
-            border-radius: 4px 4px 0 0;
-            min-height: 4px;
-        }
-        .chart-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 8px;
-            font-weight: 700;
-        }
+        /* CHART */
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 160px;
+            padding-top: 25px;
+            gap: 6px;
+        }
+        .chart-bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .chart-value-label {
+            font-size: 9px;
+            color: var(--primary);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .chart-bar {
+            width: 100%;
+            background: linear-gradient(to top, #0284c7, #38bdf8);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+        }
+        .chart-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-weight: 700;
+        }
 
-        /* GRAPHIQUE INTÉGRÉ DANS LE BLOC CATÉGORIE */
-        .sub-chart-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-top: 15px;
-            margin-bottom: 10px;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 12px;
-        }
-        .evo-chart-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 130px;
-            padding-top: 15px;
-            gap: 6px;
-            border-bottom: 2px solid var(--border-color);
-        }
-        .evo-bar-group {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-end;
-        }
-        .evo-bars-flex {
-            display: flex;
-            align-items: flex-end;
-            gap: 2px;
-            height: 90px;
-            width: 100%;
-            justify-content: center;
-        }
-        .evo-bar-item {
-            width: 6px;
-            border-radius: 2px 2px 0 0;
-            min-height: 2px;
-        }
-        .evo-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 6px;
-            font-weight: 700;
-        }
-        .chart-legend {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-top: 8px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .legend-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-    </style>
+        /* GRAPHIQUE INTÉGRÉ DANS LE BLOC CATÉGORIE */
+        .sub-chart-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 15px;
+            margin-bottom: 10px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 12px;
+        }
+        .evo-chart-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 130px;
+            padding-top: 15px;
+            gap: 6px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .evo-bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .evo-bars-flex {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 90px;
+            width: 100%;
+            justify-content: center;
+        }
+        .evo-bar-item {
+            width: 6px;
+            border-radius: 2px 2px 0 0;
+            min-height: 2px;
+        }
+        .evo-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 700;
+        }
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header>
-        <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
-        <div class="datetime" id="current-datetime">Chargement...</div>
-    </header>
-
-    <!-- FILTERS BAR -->
-    <div class="filters-bar">
-        <div class="filter-group">
-            <select id="filter-periode">
-                <option value="toutes">Période : Toutes (Jan - Déc)</option>
-                <option value="01">Janvier</option>
-                <option value="02">Février</option>
-                <option value="03">Mars</option>
-                <option value="04">Avril</option>
-                <option value="05">Mai</option>
-                <option value="06">Juin</option>
-                <option value="07">Juillet</option>
-                <option value="08">Août</option>
-                <option value="09">Septembre</option>
-                <option value="10" selected>Octobre</option>
-                <option value="11">Novembre</option>
-                <option value="12">Décembre</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <select id="filter-activite">
-                <option value="liris" selected>Activité : LIRIS</option>
-                <option value="rubis">Activité : RUBIS</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <select id="filter-production">
-                <option value="toutes">Production : Toutes</option>
-                <option value="tana">TANA</option>
-                <option value="diego">DIEGO</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <select id="filter-media">
-                <option value="tous" selected>Média : Tous (Web & Presse)</option>
-                <option value="web">WEB</option>
-                <option value="presse">PRESSE</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <select id="filter-agent">
-                <option value="tous">Agent : Tous les agents</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- KPI CARDS -->
-    <div class="kpi-container">
-        <div class="kpi-card">
-            <h3>Alertes traitées (Saisie)</h3>
-            <input type="number" id="input-alertes" class="kpi-input" value="12540">
-            <div class="subtitle">Pour calcul taux Loupé</div>
-        </div>
-        <div class="kpi-card">
-            <h3>RM / Retombées média (Saisie)</h3>
-            <input type="number" id="input-rm" class="kpi-input" value="8936">
-            <div class="subtitle">Pour calculs taux Mauvaise & NC</div>
-        </div>
-        <div class="kpi-card">
-            <h3>NQ Validées (OK/Contestation)</h3>
-            <div class="value" id="kpi-nq">0 NQ</div>
-            <div class="subtitle"><span id="kpi-non-debriefes" style="color: var(--danger); font-weight:700;">0 ligne(s)</span> non débriefée(s)</div>
-        </div>
-    </div>
-
-    <!-- SECTION CATÉGORIES DÉTAILLÉES & PLAN D'ACTION -->
-    <div class="grid-2col">
-        <div class="card-section">
-            <h2>Suivi par Catégorie (OK, Contestations, Vides & Répartition)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Catégorie</th>
-                        <th>OK</th>
-                        <th>Cont.</th>
-                        <th>Vides</th>
-                        <th>Obj.</th>
-                        <th>Taux Réel</th>
-                        <th>Répart. Web / Presse</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>MAUVAISE</strong></td>
-                        <td id="mauv-ok">0</td>
-                        <td id="mauv-cont">0</td>
-                        <td id="mauv-vide" style="color: var(--danger); font-weight:700;">0</td>
-                        <td>0,25%</td>
-                        <td><strong id="taux-mauvaise">0,00 %</strong></td>
-                        <td id="rep-mauvaise" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
-                        <td id="statut-mauvaise"><span class="status-badge status-tenu">Tenu</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>LOUPÉ</strong></td>
-                        <td id="loupe-ok">0</td>
-                        <td id="loupe-cont">0</td>
-                        <td id="loupe-vide" style="color: var(--danger); font-weight:700;">0</td>
-                        <td>0,0095%</td>
-                        <td><strong id="taux-loupe">0,00 %</strong></td>
-                        <td id="rep-loupe" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
-                        <td id="statut-loupe"><span class="status-badge status-tenu">Tenu</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>NON CONFORME</strong></td>
-                        <td id="nc-ok">0</td>
-                        <td id="nc-cont">0</td>
-                        <td id="nc-vide" style="color: var(--danger); font-weight:700;">0</td>
-                        <td>0,035%</td>
-                        <td><strong id="taux-nc">0,00 %</strong></td>
-                        <td id="rep-nc" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
-                        <td id="statut-nc"><span class="status-badge status-tenu">Tenu</span></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE INTÉGRÉ -->
-            <div class="sub-chart-title">Évolution mensuelle par catégorie (Jan - Déc)</div>
-            <div class="evo-chart-container" id="evo-chart-container">
-                <!-- Rempli dynamiquement en JS -->
-            </div>
-            <div class="chart-legend">
-                <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
-            </div>
-        </div>
-
-        <div class="card-section">
-            <h2>Plan d'Action (3 Niveaux d'Alerte)</h2>
-            <div id="pa-container" style="font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
-                <div style="color: var(--text-muted);">Analyse des seuils en cours...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- GRAPHIQUE ÉVOLUTION GLOBALE & AVANCEMENT -->
-    <div class="grid-2col">
-        <div class="card-section">
-            <h2>Évolution NQ Global (Par mois)</h2>
-            <div class="chart-container" id="chart-months-container">
-                <!-- Rempli dynamiquement -->
-            </div>
-        </div>
-
-        <div class="card-section">
-            <h2>Avancement des débriefings</h2>
-            <div class="progress-item">
-                <div class="progress-info"><span>MAUVAISE</span><span id="pct-deb-mauvaise">0 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-mauvaise" style="width: 0%;"></div></div>
-            </div>
-            <div class="progress-item">
-                <div class="progress-info"><span>LOUPÉ</span><span id="pct-deb-loupe">0 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-loupe" style="width: 0%;"></div></div>
-            </div>
-            <div class="progress-item">
-                <div class="progress-info"><span>NON CONFORME</span><span id="pct-deb-nc">0 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-nc" style="width: 0%;"></div></div>
-            </div>
-            <div class="progress-item">
-                <div class="progress-info"><span>GLOBAL</span><span id="pct-deb-global">0 %</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-global" style="width: 0%; background: var(--success);"></div></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- AGENTS À SUIVRE & NQ PAR ACTIVITÉ -->
-    <div class="grid-2col">
-        <div class="card-section">
-            <h2>Agents à suivre de très près (Flop 5 NQ du mois)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Agent (Trigramme)</th>
-                        <th>Cumul Erreurs NQ</th>
-                        <th>Statut</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="agents-table-body">
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card-section">
-            <h2>NQ par activité (Mois sélectionné)</h2>
-            <div class="progress-item">
-                <div class="progress-info"><span>LIRIS</span><span id="stat-liris">0 NQ</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-liris" style="width: 0%;"></div></div>
-            </div>
-            <div class="progress-item">
-                <div class="progress-info"><span>RUBIS</span><span id="stat-rubis">0 NQ</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-rubis" style="width: 0%;"></div></div>
-            </div>
-            <div class="progress-item" style="margin-top:20px;">
-                <div class="progress-info"><span>TANA (Production)</span><span>---</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 50%;"></div></div>
-            </div>
-            <div class="progress-item">
-                <div class="progress-info"><span>DIEGO (Production)</span><span>---</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 40%;"></div></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPT FONCTIONNEL COMPLET -->
-    <script>
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
-
-        document.getElementById('current-datetime').innerText = new Date().toLocaleDateString('fr-FR') + ' — ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
-
-        async function rafraichirTableauDeBord() {
-            try {
-                const response = await fetch(csvUrl);
-                const data = await response.text();
-                
-                const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                if (lignes.length <= 1) return;
-
-                const enTetes = lignes[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
-                
-                let idxTrigramme = enTetes.findIndex(h => h.includes('trigramme'));
-                let idxDate = enTetes.findIndex(h => h.includes('date de lecture'));
-                let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
-                let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
-                let idxValidee = 16; 
-                
-                const foundValidée = enTetes.findIndex(h => h.includes('validée') || h.includes('validee'));
-                if (foundValidée !== -1) idxValidee = foundValidée;
-
-                if (idxTrigramme === -1) idxTrigramme = 0;
-                if (idxDate === -1) idxDate = 1;
-                if (idxMedia === -1) idxMedia = 4;
-                if (idxCategorie === -1) idxCategorie = 6;
-
-                const moisSelectionne = document.getElementById('filter-periode').value;
-                const activiteSelectionnee = document.getElementById('filter-activite').value; // 'liris' ou 'rubis'
-                const mediaSelectionne = document.getElementById('filter-media').value;
-
-                const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
-                const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
-
-                let agentsCumul = {};
-                let tousLesAgents = new Set();
-                let volumesParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-                
-                let evoMauvaise = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-                let evoLoupe = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-                let evoNC = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-
-                let totalMois = 0;
-                let nonDebriefesMois = 0;
-                
-                let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
-                let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
-                let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
-
-                let countLiris = 0, countRubis = 0;
-                const moisActuelMax = 10; // Octobre
-
-                for (let i = 1; i < lignes.length; i++) {
-                    const rawLigne = lignes[i];
-                    const cols = rawLigne.split(',').map(c => c.replace(/"/g, '').trim());
-                    
-                    if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
-                        const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
-                        if (trigramme === 'XXX' || trigramme === '') continue;
-
-                        const dateLecture = cols[idxDate] || '';
-                        const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
-                        const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
-                        const statutValidée = cols[idxValidee] !== undefined && cols[idxValidee] !== null ? cols[idxValidee].toUpperCase() : '';
-                        
-                        if (statutValidée.includes('KO')) continue;
-
-                        const estOK = statutValidée.includes('OK');
-                        const estContestation = statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
-                        const estVide = (statutValidée === '');
-
-                        if (!estOK && !estContestation && !estVide) continue;
-
-                        let moisLigne = '';
-                        if (dateLecture.includes('/')) {
-                            const p = dateLecture.split('/');
-                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
-                        } else if (dateLecture.includes('-')) {
-                            const p = dateLecture.split('-');
-                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
-                        }
-
-                        if (trigramme.length >= 2 && trigramme.length <= 5 && moisLigne >= '01' && moisLigne <= '12') {
-                            tousLesAgents.add(trigramme);
-                            if (parseInt(moisLigne, 10) > moisActuelMax) continue;
-
-                            const ligneTexte = cols.join(' ').toLowerCase();
-                            let activiteLigne = 'autre';
-                            if (ligneTexte.includes('liris')) activiteLigne = 'liris';
-                            if (ligneTexte.includes('rubis')) activiteLigne = 'rubis';
-
-                            let mediaLigne = 'autre';
-                            if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
-                            if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
-
-                            const matchActivite = (activiteLigne === activiteSelectionnee);
-                            const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
-
-                            if (matchActivite && matchMedia) {
-                                volumesParMois[moisLigne]++;
-                                
-                                if (estOK || estContestation) {
-                                    if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
-                                    else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
-                                    else if (categorie.includes('CONFORME') || categorie.includes('NC')) evoNC[moisLigne]++;
-                                }
-                            }
-
-                            const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
-
-                            if (matchPeriode && matchActivite && matchMedia) {
-                                if (estVide) nonDebriefesMois++;
-
-                                if (estOK || estContestation) {
-                                    totalMois++;
-                                    if (activiteLigne === 'liris') countLiris++;
-                                    if (activiteLigne === 'rubis') countRubis++;
-
-                                    if (!agentsCumul[trigramme]) agentsCumul[trigramme] = 0;
-                                    agentsCumul[trigramme]++;
-                                }
-
-                                if (categorie.includes('MAUVAISE')) {
-                                    if (estOK || estContestation) {
-                                        if (estOK) mauvOK++;
-                                        else mauvCont++;
-                                        if (mediaLigne === 'web') mauvWeb++;
-                                        if (mediaLigne === 'presse') mauvPresse++;
-                                    } else if (estVide) {
-                                        mauvVide++;
-                                    }
-                                } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
-                                    if (estOK || estContestation) {
-                                        if (estOK) loupeOK++;
-                                        else loupeCont++;
-                                        if (mediaLigne === 'web') loupeWeb++;
-                                        if (mediaLigne === 'presse') loupePresse++;
-                                    } else if (estVide) {
-                                        loupeVide++;
-                                    }
-                                } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
-                                    if (estOK || estContestation) {
-                                        if (estOK) ncOK++;
-                                        else ncCont++;
-                                        if (mediaLigne === 'web') ncWeb++;
-                                        if (mediaLigne === 'presse') ncPresse++;
-                                    } else if (estVide) {
-                                        ncVide++;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                document.getElementById('kpi-nq').innerText = totalMois + " NQ";
-                document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
-
-                const objMauvaise = 0.25;
-                const objLoupe = 0.0095;
-                const objNC = 0.035;
-
-                const valTauxMauv = (mauvOK / totalRM) * 100;
-                const valTauxLoupe = (loupeOK / alertesTraitees) * 100;
-                const valTauxNC = (ncOK / totalRM) * 100;
-
-                function getStatutInfo(val, obj) {
-                    if (val <= obj) {
-                        return { classe: 'status-tenu', texte: 'Tenu', niveau: 'vert' };
-                    } else if (val <= obj * 1.15) {
-                        return { classe: 'status-surveiller', texte: 'À surveiller', niveau: 'orange' };
-                    } else {
-                        return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
-                    }
-                }
-
-                const stMauv = getStatutInfo(valTauxMauv, objMauvaise);
-                const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
-                const stNC = getStatutInfo(valTauxNC, objNC);
-
-                document.getElementById('mauv-ok').innerText = mauvOK;
-                document.getElementById('mauv-cont').innerText = mauvCont;
-                document.getElementById('mauv-vide').innerText = mauvVide;
-                document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
-                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
-                document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
-
-                document.getElementById('loupe-ok').innerText = loupeOK;
-                document.getElementById('loupe-cont').innerText = loupeCont;
-                document.getElementById('loupe-vide').innerText = loupeVide;
-                document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
-                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
-                document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
-
-                document.getElementById('nc-ok').innerText = ncOK;
-                document.getElementById('nc-cont').innerText = ncCont;
-                document.getElementById('nc-vide').innerText = ncVide;
-                document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
-                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
-                document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
-
-                // Avancement des débriefings
-                const totalMauvGlobal = mauvOK + mauvCont + mauvVide;
-                const pctDebMauv = totalMauvGlobal > 0 ? Math.round(((mauvOK + mauvCont) / totalMauvGlobal) * 100) : 100;
-
-                const totalLoupeGlobal = loupeOK + loupeCont + loupeVide;
-                const pctDebLoupe = totalLoupeGlobal > 0 ? Math.round(((loupeOK + loupeCont) / totalLoupeGlobal) * 100) : 100;
-
-                const totalNCGlobal = ncOK + ncCont + ncVide;
-                const pctDebNC = totalNCGlobal > 0 ? Math.round(((ncOK + ncCont) / totalNCGlobal) * 100) : 100;
-
-                const totalGlobalNQ = totalMauvGlobal + totalLoupeGlobal + totalNCGlobal;
-                const totalGlobalValid = (mauvOK + mauvCont) + (loupeOK + loupeCont) + (ncOK + ncCont);
-                const pctDebGlobal = totalGlobalNQ > 0 ? Math.round((totalGlobalValid / totalGlobalNQ) * 100) : 100;
-
-                document.getElementById('pct-deb-mauvaise').innerText = pctDebMauv + " %";
-                document.getElementById('bar-deb-mauvaise').style.width = pctDebMauv + "%";
-
-                document.getElementById('pct-deb-loupe').innerText = pctDebLoupe + " %";
-                document.getElementById('bar-deb-loupe').style.width = pctDebLoupe + "%";
-
-                document.getElementById('pct-deb-nc').innerText = pctDebNC + " %";
-                document.getElementById('bar-deb-nc').style.width = pctDebNC + "%";
-
-                document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
-                document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
-
-                // Génération intelligente du Plan d'Action selon le niveau (Rouge / Orange / Vert) pour chaque catégorie
-                let htmlPA = '';
-                
-                const definitionsPA = [
-                    {
-                        nom: 'Non Conforme',
-                        st: stNC,
-                        msgRouge: "Rappel urgent sur le process montage WEB et regles de découpe.",
-                        msgOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.",
-                        msgVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB."
-                    },
-                    {
-                        nom: 'Loupé',
-                        st: stLoupe,
-                        msgRouge: "Auditer le Flop 5 et planifier des debriefings et entretien individuel.",
-                        msgOrange: "Attention : Surveillance requise sur les flux média en retard.",
-                        msgVert: "Objectif tenu : Couverture des flux média maîtrisée."
-                    },
-                    {
-                        nom: 'Mauvaise',
-                        st: stMauv,
-                        msgRouge: "Revoir les critères de pertinence (homonymies/passages significatifs).",
-                        msgOrange: "Attention : Risque de dépassement sur les critères de sélection.",
-                        msgVert: "Capitaliser sur les bonnes pratiques."
-                    }
-                ];
-
-                definitionsPA.forEach(cat => {
-                    let borderColor = '#059669', badgeBg = '#d1fae5', badgeColor = '#065f46', actionTexte = cat.msgVert;
-
-                    if (cat.st.niveau === 'rouge') {
-                        borderColor = '#dc2626';
-                        badgeBg = '#fee2e2';
-                        badgeColor = '#991b1b';
-                        actionTexte = cat.msgRouge;
-                    } else if (cat.st.niveau === 'orange') {
-                        borderColor = '#d97706';
-                        badgeBg = '#fef3c7';
-                        badgeColor = '#b45309';
-                        actionTexte = cat.msgOrange;
-                    }
-
-                    htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                <strong style="font-size: 11px; text-transform: uppercase; color: #0f172a;">${cat.nom}</strong>
-                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${cat.st.texte}</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">${actionTexte}</div>
-                        </div>
-                    `;
-                });
-
-                if (nonDebriefesMois > 0) {
-                    htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid #dc2626; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                <strong style="font-size: 11px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
-                                <span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier les entretiens en suspens.</div>
-                        </div>
-                    `;
-                }
-                document.getElementById('pa-container').innerHTML = htmlPA;
-
-                const totalAct = (countLiris + countRubis) || 1;
-                const pctLiris = Math.round((countLiris / totalAct) * 100);
-                const pctRubis = Math.round((countRubis / totalAct) * 100);
-
-                document.getElementById('stat-liris').innerText = countLiris + " NQ (" + pctLiris + "%)";
-                document.getElementById('bar-liris').style.width = pctLiris + "%";
-
-                document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
-                document.getElementById('bar-rubis').style.width = pctRubis + "%";
-
-                // Graphique Global par mois
-                const chartContainer = document.getElementById('chart-months-container');
-                chartContainer.innerHTML = '';
-                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
-                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-                const maxVol = Math.max(...Object.values(volumesParMois), 1);
-
-                clesMois.forEach((cle, idx) => {
-                    const moisNum = parseInt(cle, 10);
-                    const vol = moisNum > moisActuelMax ? 0 : volumesParMois[cle];
-                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 4);
-
-                    const grp = document.createElement('div');
-                    grp.className = 'chart-bar-group';
-                    grp.innerHTML = `
-                        <div class="chart-value-label">${vol > 0 ? vol : ''}</div>
-                        <div class="chart-bar" style="height: ${hauteur}%;"></div>
-                        <div class="chart-label">${nomsMois[idx]}</div>
-                    `;
-                    chartContainer.appendChild(grp);
-                });
-
-                // Graphique Intégré par catégorie
-                const evoContainer = document.getElementById('evo-chart-container');
-                evoContainer.innerHTML = '';
-                const maxEvoVal = Math.max(...Object.values(evoMauvaise), ...Object.values(evoLoupe), ...Object.values(evoNC), 1);
-
-                clesMois.forEach((cle, idx) => {
-                    const moisNum = parseInt(cle, 10);
-                    const mVal = moisNum > moisActuelMax ? 0 : evoMauvaise[cle];
-                    const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
-                    const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
-
-                    const hM = Math.max(Math.round((mVal / maxEvoVal) * 100), 4);
-                    const hL = Math.max(Math.round((lVal / maxEvoVal) * 100), 4);
-                    const hNC = Math.max(Math.round((ncVal / maxEvoVal) * 100), 4);
-
-                    const group = document.createElement('div');
-                    group.className = 'evo-bar-group';
-                    group.innerHTML = `
-                        <div class="evo-bars-flex">
-                            <div class="evo-bar-item" style="height: ${hM}%; background: #64748b;" title="Mauvaise: ${mVal}"></div>
-                            <div class="evo-bar-item" style="height: ${hL}%; background: #eab308;" title="Loupé: ${lVal}"></div>
-                            <div class="evo-bar-item" style="height: ${hNC}%; background: #dc2626;" title="Non Conforme: ${ncVal}"></div>
-                        </div>
-                        <div class="evo-label">${nomsMois[idx]}</div>
-                    `;
-                    evoContainer.appendChild(group);
-                });
-
-                // Flop 5 Agents
-                const agentsTries = Object.keys(agentsCumul).map(t => ({ trigramme: t, total: agentsCumul[t] })).sort((a, b) => b.total - a.total).slice(0, 5);
-                const tbody = document.getElementById('agents-table-body');
-                tbody.innerHTML = '';
-
-                if (agentsTries.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucune erreur pour cette période</td></tr>';
-                } else {
-                    agentsTries.forEach((item, index) => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td><strong>${item.trigramme}</strong></td>
-                            <td>${item.total} erreur(s)</td>
-                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
-                            <td>À débriefer</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-
-                const selectAgent = document.getElementById('filter-agent');
-                const valSelectionnee = selectAgent.value;
-                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
-                Array.from(tousLesAgents).sort().forEach(agent => {
-                    const opt = document.createElement('option');
-                    opt.value = agent.toLowerCase();
-                    opt.textContent = agent;
-                    selectAgent.appendChild(opt);
-                });
-                selectAgent.value = valSelectionnee;
-
-            } catch (err) {
-                console.error("Erreur d'affichage :", err);
-            }
-        }
-
-        document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
-
-        rafraichirTableauDeBord();
-    </script>
+    <!-- HEADER -->
+    <header>
+        <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
+        <div class="datetime" id="current-datetime">Chargement...</div>
+    </header>
+
+    <!-- FILTERS BAR -->
+    <div class="filters-bar">
+        <div class="filter-group">
+            <select id="filter-periode">
+                <option value="toutes">Période : Toutes (Jan - Déc)</option>
+                <option value="01">Janvier</option>
+                <option value="02">Février</option>
+                <option value="03">Mars</option>
+                <option value="04">Avril</option>
+                <option value="05">Mai</option>
+                <option value="06">Juin</option>
+                <option value="07">Juillet</option>
+                <option value="08">Août</option>
+                <option value="09">Septembre</option>
+                <option value="10" selected>Octobre</option>
+                <option value="11">Novembre</option>
+                <option value="12">Décembre</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <select id="filter-activite">
+                <option value="liris" selected>Activité : LIRIS</option>
+                <option value="rubis">Activité : RUBIS</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <select id="filter-production">
+                <option value="toutes">Production : Toutes</option>
+                <option value="tana">TANA</option>
+                <option value="diego">DIEGO</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <select id="filter-media">
+                <option value="tous" selected>Média : Tous (Web & Presse)</option>
+                <option value="web">WEB</option>
+                <option value="presse">PRESSE</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <select id="filter-agent">
+                <option value="tous">Agent : Tous les agents</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-container">
+        <div class="kpi-card">
+            <h3>Alertes traitées (Saisie)</h3>
+            <input type="number" id="input-alertes" class="kpi-input" value="12540">
+            <div class="subtitle">Pour calcul taux Loupé</div>
+        </div>
+        <div class="kpi-card">
+            <h3>RM / Retombées média (Saisie)</h3>
+            <input type="number" id="input-rm" class="kpi-input" value="8936">
+            <div class="subtitle">Pour calculs taux Mauvaise & NC</div>
+        </div>
+        <div class="kpi-card">
+            <h3>NQ Validées (OK/Contestation)</h3>
+            <div class="value" id="kpi-nq">0 NQ</div>
+            <div class="subtitle"><span id="kpi-non-debriefes" style="color: var(--danger); font-weight:700;">0 ligne(s)</span> non débriefée(s)</div>
+        </div>
+    </div>
+
+    <!-- SECTION CATÉGORIES DÉTAILLÉES & PLAN D'ACTION -->
+    <div class="grid-2col">
+        <div class="card-section">
+            <h2>Suivi par Catégorie (OK, Contestations, Vides & Répartition)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Catégorie</th>
+                        <th>OK</th>
+                        <th>Cont.</th>
+                        <th>Vides</th>
+                        <th>Obj.</th>
+                        <th>Taux Réel</th>
+                        <th>Répart. Web / Presse</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAUVAISE</strong></td>
+                        <td id="mauv-ok">0</td>
+                        <td id="mauv-cont">0</td>
+                        <td id="mauv-vide" style="color: var(--danger); font-weight:700;">0</td>
+                        <td>0,25%</td>
+                        <td><strong id="taux-mauvaise">0,00 %</strong></td>
+                        <td id="rep-mauvaise" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
+                        <td id="statut-mauvaise"><span class="status-badge status-tenu">Tenu</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LOUPÉ</strong></td>
+                        <td id="loupe-ok">0</td>
+                        <td id="loupe-cont">0</td>
+                        <td id="loupe-vide" style="color: var(--danger); font-weight:700;">0</td>
+                        <td>0,0095%</td>
+                        <td><strong id="taux-loupe">0,00 %</strong></td>
+                        <td id="rep-loupe" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
+                        <td id="statut-loupe"><span class="status-badge status-tenu">Tenu</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>NON CONFORME</strong></td>
+                        <td id="nc-ok">0</td>
+                        <td id="nc-cont">0</td>
+                        <td id="nc-vide" style="color: var(--danger); font-weight:700;">0</td>
+                        <td>0,035%</td>
+                        <td><strong id="taux-nc">0,00 %</strong></td>
+                        <td id="rep-nc" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
+                        <td id="statut-nc"><span class="status-badge status-tenu">Tenu</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE INTÉGRÉ -->
+            <div class="sub-chart-title">Évolution mensuelle par catégorie (Jan - Déc)</div>
+            <div class="evo-chart-container" id="evo-chart-container">
+                <!-- Rempli dynamiquement en JS -->
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
+            </div>
+        </div>
+
+        <div class="card-section">
+            <h2>Plan d'Action (3 Niveaux d'Alerte)</h2>
+            <div id="pa-container" style="font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="color: var(--text-muted);">Analyse des seuils en cours...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRAPHIQUE ÉVOLUTION GLOBALE & AVANCEMENT -->
+    <div class="grid-2col">
+        <div class="card-section">
+            <h2>Évolution NQ Global (Par mois)</h2>
+            <div class="chart-container" id="chart-months-container">
+                <!-- Rempli dynamiquement -->
+            </div>
+        </div>
+
+        <div class="card-section">
+            <h2>Avancement des débriefings</h2>
+            <div class="progress-item">
+                <div class="progress-info"><span>MAUVAISE</span><span id="pct-deb-mauvaise">0 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-mauvaise" style="width: 0%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>LOUPÉ</span><span id="pct-deb-loupe">0 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-loupe" style="width: 0%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>NON CONFORME</span><span id="pct-deb-nc">0 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-nc" style="width: 0%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>GLOBAL</span><span id="pct-deb-global">0 %</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-deb-global" style="width: 0%; background: var(--success);"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AGENTS À SUIVRE & NQ PAR ACTIVITÉ -->
+    <div class="grid-2col">
+        <div class="card-section">
+            <h2>Agents à suivre de très près (Flop 5 NQ du mois)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Agent (Trigramme)</th>
+                        <th>Cumul Erreurs NQ</th>
+                        <th>Statut</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="agents-table-body">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-section">
+            <h2>NQ par activité (Mois sélectionné)</h2>
+            <div class="progress-item">
+                <div class="progress-info"><span>LIRIS</span><span id="stat-liris">0 NQ</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-liris" style="width: 0%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>RUBIS</span><span id="stat-rubis">0 NQ</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-rubis" style="width: 0%;"></div></div>
+            </div>
+            <div class="progress-item" style="margin-top:20px;">
+                <div class="progress-info"><span>TANA (Production)</span><span>---</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 50%;"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-info"><span>DIEGO (Production)</span><span>---</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 40%;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT FONCTIONNEL COMPLET -->
+    <script>
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
+
+        document.getElementById('current-datetime').innerText = new Date().toLocaleDateString('fr-FR') + ' — ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+
+        async function rafraichirTableauDeBord() {
+            try {
+                const response = await fetch(csvUrl);
+                const data = await response.text();
+                
+                const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                if (lignes.length <= 1) return;
+
+                const enTetes = lignes[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+                
+                let idxTrigramme = enTetes.findIndex(h => h.includes('trigramme'));
+                let idxDate = enTetes.findIndex(h => h.includes('date de lecture'));
+                let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
+                let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
+                let idxValidee = 16; 
+                
+                const foundValidée = enTetes.findIndex(h => h.includes('validée') || h.includes('validee'));
+                if (foundValidée !== -1) idxValidee = foundValidée;
+
+                if (idxTrigramme === -1) idxTrigramme = 0;
+                if (idxDate === -1) idxDate = 1;
+                if (idxMedia === -1) idxMedia = 4;
+                if (idxCategorie === -1) idxCategorie = 6;
+
+                const moisSelectionne = document.getElementById('filter-periode').value;
+                const activiteSelectionnee = document.getElementById('filter-activite').value; // 'liris' ou 'rubis'
+                const mediaSelectionne = document.getElementById('filter-media').value;
+
+                const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
+                const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
+
+                let agentsCumul = {};
+                let tousLesAgents = new Set();
+                let volumesParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                
+                let evoMauvaise = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                let evoLoupe = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                let evoNC = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+
+                let totalMois = 0;
+                let nonDebriefesMois = 0;
+                
+                let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
+                let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
+                let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
+
+                let countLiris = 0, countRubis = 0;
+                const moisActuelMax = 10; // Octobre
+
+                for (let i = 1; i < lignes.length; i++) {
+                    const rawLigne = lignes[i];
+                    const cols = rawLigne.split(',').map(c => c.replace(/"/g, '').trim());
+                    
+                    if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
+                        const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
+                        if (trigramme === 'XXX' || trigramme === '') continue;
+
+                        const dateLecture = cols[idxDate] || '';
+                        const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
+                        const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
+                        const statutValidée = cols[idxValidee] !== undefined && cols[idxValidee] !== null ? cols[idxValidee].toUpperCase() : '';
+                        
+                        if (statutValidée.includes('KO')) continue;
+
+                        const estOK = statutValidée.includes('OK');
+                        const estContestation = statutValidée.includes('CONTESTATION') || statutValidée.includes('CONTESTÉ');
+                        const estVide = (statutValidée === '');
+
+                        if (!estOK && !estContestation && !estVide) continue;
+
+                        let moisLigne = '';
+                        if (dateLecture.includes('/')) {
+                            const p = dateLecture.split('/');
+                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
+                        } else if (dateLecture.includes('-')) {
+                            const p = dateLecture.split('-');
+                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
+                        }
+
+                        if (trigramme.length >= 2 && trigramme.length <= 5 && moisLigne >= '01' && moisLigne <= '12') {
+                            tousLesAgents.add(trigramme);
+                            if (parseInt(moisLigne, 10) > moisActuelMax) continue;
+
+                            const ligneTexte = cols.join(' ').toLowerCase();
+                            let activiteLigne = 'autre';
+                            if (ligneTexte.includes('liris')) activiteLigne = 'liris';
+                            if (ligneTexte.includes('rubis')) activiteLigne = 'rubis';
+
+                            let mediaLigne = 'autre';
+                            if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
+                            if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
+
+                            const matchActivite = (activiteLigne === activiteSelectionnee);
+                            const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
+
+                            if (matchActivite && matchMedia) {
+                                volumesParMois[moisLigne]++;
+                                
+                                if (estOK || estContestation) {
+                                    if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
+                                    else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
+                                    else if (categorie.includes('CONFORME') || categorie.includes('NC')) evoNC[moisLigne]++;
+                                }
+                            }
+
+                            const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
+
+                            if (matchPeriode && matchActivite && matchMedia) {
+                                if (estVide) nonDebriefesMois++;
+
+                                if (estOK || estContestation) {
+                                    totalMois++;
+                                    if (activiteLigne === 'liris') countLiris++;
+                                    if (activiteLigne === 'rubis') countRubis++;
+
+                                    if (!agentsCumul[trigramme]) agentsCumul[trigramme] = 0;
+                                    agentsCumul[trigramme]++;
+                                }
+
+                                if (categorie.includes('MAUVAISE')) {
+                                    if (estOK || estContestation) {
+                                        if (estOK) mauvOK++;
+                                        else mauvCont++;
+                                        if (mediaLigne === 'web') mauvWeb++;
+                                        if (mediaLigne === 'presse') mauvPresse++;
+                                    } else if (estVide) {
+                                        mauvVide++;
+                                    }
+                                } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
+                                    if (estOK || estContestation) {
+                                        if (estOK) loupeOK++;
+                                        else loupeCont++;
+                                        if (mediaLigne === 'web') loupeWeb++;
+                                        if (mediaLigne === 'presse') loupePresse++;
+                                    } else if (estVide) {
+                                        loupeVide++;
+                                    }
+                                } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
+                                    if (estOK || estContestation) {
+                                        if (estOK) ncOK++;
+                                        else ncCont++;
+                                        if (mediaLigne === 'web') ncWeb++;
+                                        if (mediaLigne === 'presse') ncPresse++;
+                                    } else if (estVide) {
+                                        ncVide++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                document.getElementById('kpi-nq').innerText = totalMois + " NQ";
+                document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
+
+                const objMauvaise = 0.25;
+                const objLoupe = 0.0095;
+                const objNC = 0.035;
+
+                const valTauxMauv = (mauvOK / totalRM) * 100;
+                const valTauxLoupe = (loupeOK / alertesTraitees) * 100;
+                const valTauxNC = (ncOK / totalRM) * 100;
+
+                function getStatutInfo(val, obj) {
+                    if (val <= obj) {
+                        return { classe: 'status-tenu', texte: 'Tenu', niveau: 'vert' };
+                    } else if (val <= obj * 1.15) {
+                        return { classe: 'status-surveiller', texte: 'À surveiller', niveau: 'orange' };
+                    } else {
+                        return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
+                    }
+                }
+
+                const stMauv = getStatutInfo(valTauxMauv, objMauvaise);
+                const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
+                const stNC = getStatutInfo(valTauxNC, objNC);
+
+                document.getElementById('mauv-ok').innerText = mauvOK;
+                document.getElementById('mauv-cont').innerText = mauvCont;
+                document.getElementById('mauv-vide').innerText = mauvVide;
+                document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
+                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
+                document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
+
+                document.getElementById('loupe-ok').innerText = loupeOK;
+                document.getElementById('loupe-cont').innerText = loupeCont;
+                document.getElementById('loupe-vide').innerText = loupeVide;
+                document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
+                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
+                document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
+
+                document.getElementById('nc-ok').innerText = ncOK;
+                document.getElementById('nc-cont').innerText = ncCont;
+                document.getElementById('nc-vide').innerText = ncVide;
+                document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
+                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
+                document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
+
+                // Avancement des débriefings
+                const totalMauvGlobal = mauvOK + mauvCont + mauvVide;
+                const pctDebMauv = totalMauvGlobal > 0 ? Math.round(((mauvOK + mauvCont) / totalMauvGlobal) * 100) : 100;
+
+                const totalLoupeGlobal = loupeOK + loupeCont + loupeVide;
+                const pctDebLoupe = totalLoupeGlobal > 0 ? Math.round(((loupeOK + loupeCont) / totalLoupeGlobal) * 100) : 100;
+
+                const totalNCGlobal = ncOK + ncCont + ncVide;
+                const pctDebNC = totalNCGlobal > 0 ? Math.round(((ncOK + ncCont) / totalNCGlobal) * 100) : 100;
+
+                const totalGlobalNQ = totalMauvGlobal + totalLoupeGlobal + totalNCGlobal;
+                const totalGlobalValid = (mauvOK + mauvCont) + (loupeOK + loupeCont) + (ncOK + ncCont);
+                const pctDebGlobal = totalGlobalNQ > 0 ? Math.round((totalGlobalValid / totalGlobalNQ) * 100) : 100;
+
+                document.getElementById('pct-deb-mauvaise').innerText = pctDebMauv + " %";
+                document.getElementById('bar-deb-mauvaise').style.width = pctDebMauv + "%";
+
+                document.getElementById('pct-deb-loupe').innerText = pctDebLoupe + " %";
+                document.getElementById('bar-deb-loupe').style.width = pctDebLoupe + "%";
+
+                document.getElementById('pct-deb-nc').innerText = pctDebNC + " %";
+                document.getElementById('bar-deb-nc').style.width = pctDebNC + "%";
+
+                document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
+                document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
+
+                // Génération intelligente du Plan d'Action selon le niveau (Rouge / Orange / Vert) pour chaque catégorie
+                let htmlPA = '';
+                
+                const definitionsPA = [
+                    {
+                        nom: 'Non Conforme',
+                        st: stNC,
+                        msgRouge: "Rappel urgent sur le process montage WEB et regles de découpe.",
+                        msgOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.",
+                        msgVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB."
+                    },
+                    {
+                        nom: 'Loupé',
+                        st: stLoupe,
+                        msgRouge: "Auditer le Flop 5 et planifier des debriefings et entretien individuel.",
+                        msgOrange: "Attention : Surveillance requise sur les flux média en retard.",
+                        msgVert: "Objectif tenu : Couverture des flux média maîtrisée."
+                    },
+                    {
+                        nom: 'Mauvaise',
+                        st: stMauv,
+                        msgRouge: "Revoir les critères de pertinence (homonymies/passages significatifs).",
+                        msgOrange: "Attention : Risque de dépassement sur les critères de sélection.",
+                        msgVert: "Capitaliser sur les bonnes pratiques."
+                    }
+                ];
+
+                definitionsPA.forEach(cat => {
+                    let borderColor = '#059669', badgeBg = '#d1fae5', badgeColor = '#065f46', actionTexte = cat.msgVert;
+
+                    if (cat.st.niveau === 'rouge') {
+                        borderColor = '#dc2626';
+                        badgeBg = '#fee2e2';
+                        badgeColor = '#991b1b';
+                        actionTexte = cat.msgRouge;
+                    } else if (cat.st.niveau === 'orange') {
+                        borderColor = '#d97706';
+                        badgeBg = '#fef3c7';
+                        badgeColor = '#b45309';
+                        actionTexte = cat.msgOrange;
+                    }
+
+                    htmlPA += `
+                        <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                <strong style="font-size: 11px; text-transform: uppercase; color: #0f172a;">${cat.nom}</strong>
+                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${cat.st.texte}</span>
+                            </div>
+                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">${actionTexte}</div>
+                        </div>
+                    `;
+                });
+
+                if (nonDebriefesMois > 0) {
+                    htmlPA += `
+                        <div style="background: #ffffff; border-left: 4px solid #dc2626; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                <strong style="font-size: 11px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
+                                <span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
+                            </div>
+                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier les entretiens en suspens.</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('pa-container').innerHTML = htmlPA;
+
+                const totalAct = (countLiris + countRubis) || 1;
+                const pctLiris = Math.round((countLiris / totalAct) * 100);
+                const pctRubis = Math.round((countRubis / totalAct) * 100);
+
+                document.getElementById('stat-liris').innerText = countLiris + " NQ (" + pctLiris + "%)";
+                document.getElementById('bar-liris').style.width = pctLiris + "%";
+
+                document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
+                document.getElementById('bar-rubis').style.width = pctRubis + "%";
+
+                // Graphique Global par mois
+                const chartContainer = document.getElementById('chart-months-container');
+                chartContainer.innerHTML = '';
+                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                const maxVol = Math.max(...Object.values(volumesParMois), 1);
+
+                clesMois.forEach((cle, idx) => {
+                    const moisNum = parseInt(cle, 10);
+                    const vol = moisNum > moisActuelMax ? 0 : volumesParMois[cle];
+                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 4);
+
+                    const grp = document.createElement('div');
+                    grp.className = 'chart-bar-group';
+                    grp.innerHTML = `
+                        <div class="chart-value-label">${vol > 0 ? vol : ''}</div>
+                        <div class="chart-bar" style="height: ${hauteur}%;"></div>
+                        <div class="chart-label">${nomsMois[idx]}</div>
+                    `;
+                    chartContainer.appendChild(grp);
+                });
+
+                // Graphique Intégré par catégorie
+                const evoContainer = document.getElementById('evo-chart-container');
+                evoContainer.innerHTML = '';
+                const maxEvoVal = Math.max(...Object.values(evoMauvaise), ...Object.values(evoLoupe), ...Object.values(evoNC), 1);
+
+                clesMois.forEach((cle, idx) => {
+                    const moisNum = parseInt(cle, 10);
+                    const mVal = moisNum > moisActuelMax ? 0 : evoMauvaise[cle];
+                    const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
+                    const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
+
+                    const hM = Math.max(Math.round((mVal / maxEvoVal) * 100), 4);
+                    const hL = Math.max(Math.round((lVal / maxEvoVal) * 100), 4);
+                    const hNC = Math.max(Math.round((ncVal / maxEvoVal) * 100), 4);
+
+                    const group = document.createElement('div');
+                    group.className = 'evo-bar-group';
+                    group.innerHTML = `
+                        <div class="evo-bars-flex">
+                            <div class="evo-bar-item" style="height: ${hM}%; background: #64748b;" title="Mauvaise: ${mVal}"></div>
+                            <div class="evo-bar-item" style="height: ${hL}%; background: #eab308;" title="Loupé: ${lVal}"></div>
+                            <div class="evo-bar-item" style="height: ${hNC}%; background: #dc2626;" title="Non Conforme: ${ncVal}"></div>
+                        </div>
+                        <div class="evo-label">${nomsMois[idx]}</div>
+                    `;
+                    evoContainer.appendChild(group);
+                });
+
+                // Flop 5 Agents
+                const agentsTries = Object.keys(agentsCumul).map(t => ({ trigramme: t, total: agentsCumul[t] })).sort((a, b) => b.total - a.total).slice(0, 5);
+                const tbody = document.getElementById('agents-table-body');
+                tbody.innerHTML = '';
+
+                if (agentsTries.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucune erreur pour cette période</td></tr>';
+                } else {
+                    agentsTries.forEach((item, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><strong>${item.trigramme}</strong></td>
+                            <td>${item.total} erreur(s)</td>
+                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
+                            <td>À débriefer</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                const selectAgent = document.getElementById('filter-agent');
+                const valSelectionnee = selectAgent.value;
+                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
+                Array.from(tousLesAgents).sort().forEach(agent => {
+                    const opt = document.createElement('option');
+                    opt.value = agent.toLowerCase();
+                    opt.textContent = agent;
+                    selectAgent.appendChild(opt);
+                });
+                selectAgent.value = valSelectionnee;
+
+            } catch (err) {
+                console.error("Erreur d'affichage :", err);
+            }
+        }
+
+        document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
+        document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
+        document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
+        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
+        document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
+
+        rafraichirTableauDeBord();
+    </script>
 
 </body>
 </html>
