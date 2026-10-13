@@ -572,7 +572,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FONCTIONNEL INTÉGRANT LES RETARDS XXX -->
+    <!-- SCRIPT COMPLET -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -623,7 +623,7 @@
 
                 let totalMois = 0;
                 let nonDebriefesMois = 0;
-                let retardXXXCount = 0; // Compteur pour les loupés en retard (Trigramme XXX)
+                let retardXXXCount = 0;
                 
                 let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
                 let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
@@ -643,7 +643,6 @@
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
                         const statutValidée = cols[idxValidee] !== undefined && cols[idxValidee] !== null ? cols[idxValidee].toUpperCase() : '';
                         
-                        // Détection spécifique des loupés en retard (Trigramme XXX ou vide avec catégorie Loupé)
                         let moisLigne = '';
                         if (dateLecture.includes('/')) {
                             const p = dateLecture.split('/');
@@ -658,7 +657,7 @@
                             if (matchP) retardXXXCount++;
                         }
 
-                        if (trigramme === 'XXX' || trigramme === '') continue;
+                        if (trigramme === 'XXX' || trigramme === '' || trigramme === 'ANONYME') continue;
                         if (statutValidée.includes('KO')) continue;
 
                         const estOK = statutValidée.includes('OK');
@@ -703,8 +702,10 @@
                                     if (activiteLigne === 'liris') countLiris++;
                                     if (activiteLigne === 'rubis') countRubis++;
 
-                                    if (!agentsCumul[trigramme]) agentsCumul[trigramme] = 0;
-                                    agentsCumul[trigramme]++;
+                                    if (categorie.includes('MAUVAISE') || categorie.includes('LOUPÉ') || categorie.includes('LOUPE') || categorie.includes('CONFORME') || categorie.includes('NC')) {
+                                        if (!agentsCumul[trigramme]) agentsCumul[trigramme] = 0;
+                                        agentsCumul[trigramme]++;
+                                    }
                                 }
 
                                 if (categorie.includes('MAUVAISE')) {
@@ -794,7 +795,7 @@
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // Plan d'action
+                // Plan d'action (3 Niveaux uniquement + Rattrapage des débriefs)
                 let htmlPA = '';
                 const definitionsPA = [
                     {
@@ -833,18 +834,6 @@
                     `;
                 });
 
-                if (retardXXXCount > 0) {
-                    htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid #d97706; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                <strong style="font-size: 11px; text-transform: uppercase; color: #d97706;">Retards de production (XXX)</strong>
-                                <span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${retardXXXCount} loupé(s)</span>
-                            </div>
-                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Attention : Volume en attente / retard identifié (Trigramme XXX).</div>
-                        </div>
-                    `;
-                }
-
                 if (nonDebriefesMois > 0) {
                     htmlPA += `
                         <div style="background: #ffffff; border-left: 4px solid #dc2626; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
@@ -852,7 +841,7 @@
                                 <strong style="font-size: 11px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
                                 <span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier les entretiens en suspens.</div>
+                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier une session de rattrapage des debrief en suspens.</div>
                         </div>
                     `;
                 }
@@ -934,18 +923,22 @@
                 });
 
                 // Flop 5 Agents
-                const agentsTries = Object.keys(agentsCumul).map(t => ({ trigramme: t, total: agentsCumul[t] })).sort((a, b) => b.total - a.total).slice(0, 5);
+                const agentsTries = Object.keys(agentsCumul)
+                    .map(t => ({ trigramme: t, total: agentsCumul[t] }))
+                    .sort((a, b) => b.total - a.total)
+                    .slice(0, 5);
+
                 const tbody = document.getElementById('agents-table-body');
                 tbody.innerHTML = '';
 
                 if (agentsTries.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Aucune erreur pour cette période</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Aucune erreur enregistrée pour cette sélection</td></tr>';
                 } else {
                     agentsTries.forEach((item, index) => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td><strong>${item.trigramme}</strong></td>
-                            <td>${item.total} erreur(s)</td>
+                            <td>${item.total} erreur(s) NQ</td>
                             <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
                             <td>À débriefer</td>
                         `;
