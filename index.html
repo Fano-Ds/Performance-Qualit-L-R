@@ -7,15 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #cbd5e1; /* Gris perle / acier clair */
-            --bg-card: #f8fafc; /* Blanc cassé lumineux pour les cartes */
-            --border-color: #94a3b8; /* Bordure contrastée et propre */
-            --text-main: #0f172a; /* Texte foncé ultra-lisible */
-            --text-muted: #475569; /* Texte secondaire gris pro */
-            --primary: #0284c7; /* Bleu corporate vif */
-            --danger: #dc2626; /* Rouge alerte */
-            --warning: #d97706; /* Ambre chaleureux */
-            --success: #059669; /* Vert succès */
+            --bg-main: #cbd5e1;
+            --bg-card: #f8fafc;
+            --border-color: #94a3b8;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #0284c7;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --success: #059669;
         }
 
         * {
@@ -85,7 +85,7 @@
         /* KPI CARDS */
         .kpi-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 24px;
         }
@@ -106,15 +106,8 @@
             font-weight: 700;
         }
 
-        .kpi-card .value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: #0f172a;
-        }
-
         .kpi-card .subtitle {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -125,10 +118,10 @@
             color: var(--text-main);
             padding: 6px 10px;
             border-radius: 6px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             width: 100%;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         /* GRID SECTIONS */
@@ -218,7 +211,7 @@
             border-radius: 4px;
         }
 
-        /* CHART */
+        /* CHART GLOBAL */
         .chart-container {
             display: flex;
             justify-content: space-between;
@@ -254,7 +247,7 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE AVEC LIGNES OBJECTIFS */
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE AVEC LIGNES D'OBJECTIFS */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
@@ -265,20 +258,15 @@
             border-top: 1px dashed var(--border-color);
             padding-top: 12px;
         }
-        .evo-chart-wrapper {
-            position: relative;
-            height: 150px;
-            border-bottom: 2px solid var(--border-color);
-            padding-top: 10px;
-        }
         .evo-chart-container {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 100%;
+            height: 140px;
+            padding-top: 20px;
             gap: 6px;
+            border-bottom: 2px solid var(--border-color);
             position: relative;
-            z-index: 2;
         }
         .evo-bar-group {
             flex: 1;
@@ -287,12 +275,13 @@
             align-items: center;
             height: 100%;
             justify-content: flex-end;
+            z-index: 2;
         }
         .evo-bars-flex {
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 120px;
+            height: 100px;
             width: 100%;
             justify-content: center;
         }
@@ -307,7 +296,7 @@
             margin-top: 6px;
             font-weight: 700;
         }
-        /* Lignes directrices horizontales d'objectifs */
+        /* Lignes directrices fixes de repère */
         .target-line {
             position: absolute;
             left: 0;
@@ -315,16 +304,6 @@
             border-top: 2px dashed;
             z-index: 1;
             pointer-events: none;
-        }
-        .target-line-label {
-            position: absolute;
-            right: 4px;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 1px 4px;
-            border-radius: 3px;
-            transform: translateY(-50%);
-            z-index: 3;
         }
 
         .chart-legend {
@@ -406,29 +385,29 @@
     <!-- KPI & OBJECTIFS VOLUME CARDS -->
     <div class="kpi-container">
         <div class="kpi-card">
-            <h3>Alertes traitées (Saisie)</h3>
+            <h3>Alertes traitées</h3>
             <input type="number" id="input-alertes" class="kpi-input" value="12540">
             <div class="subtitle">Calcul taux Loupé</div>
         </div>
         <div class="kpi-card">
-            <h3>RM / Retombées (Saisie)</h3>
+            <h3>RM / Retombées</h3>
             <input type="number" id="input-rm" class="kpi-input" value="8936">
             <div class="subtitle">Calcul taux Mauv. & NC</div>
         </div>
         <div class="kpi-card">
-            <h3>Obj. Volume Mauvaise</h3>
+            <h3>Obj. Vol. Mauvaise</h3>
             <input type="number" id="obj-vol-mauvaise" class="kpi-input" value="500" style="color: #64748b;">
-            <div class="subtitle">Ligne repère graphique</div>
+            <div class="subtitle">Ligne repère grise</div>
         </div>
         <div class="kpi-card">
-            <h3>Obj. Volume Loupé</h3>
+            <h3>Obj. Vol. Loupé</h3>
             <input type="number" id="obj-vol-loupe" class="kpi-input" value="90" style="color: #eab308;">
-            <div class="subtitle">Ligne repère graphique</div>
+            <div class="subtitle">Ligne repère jaune</div>
         </div>
         <div class="kpi-card">
-            <h3>Obj. Volume NC</h3>
+            <h3>Obj. Vol. NC</h3>
             <input type="number" id="obj-vol-nc" class="kpi-input" value="100" style="color: #dc2626;">
-            <div class="subtitle">Ligne repère graphique</div>
+            <div class="subtitle">Ligne repère rouge</div>
         </div>
     </div>
 
@@ -485,17 +464,15 @@
 
             <!-- GRAPHIQUE ÉVOLUTION MENSUELLE AVEC LIGNES DIRECTRICES -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
-            <div class="evo-chart-wrapper" id="evo-chart-wrapper">
-                <!-- Les lignes directrices d'objectifs injectées en JS -->
-                <div class="evo-chart-container" id="evo-chart-container">
-                    <!-- Rempli dynamiquement en JS -->
-                </div>
+            <div class="evo-chart-container" id="evo-chart-container">
+                <!-- Lignes horizontales injectées dynamiquement en JS -->
+                <!-- Barres injectées en JS -->
             </div>
             <div class="chart-legend">
                 <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
                 <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
                 <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
-                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #dc2626;"></div> Seuil Obj. (Ligne)</div>
+                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #dc2626;"></div> Ligne Seuil Obj.</div>
             </div>
         </div>
 
@@ -579,7 +556,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FONCTIONNEL COMPLET -->
+    <!-- SCRIPT FONCTIONNEL ULTRA-ROBUSTE -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -616,7 +593,6 @@
                 const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
                 const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
 
-                // Récupération des objectifs en volume saisis
                 const objVolMauv = parseFloat(document.getElementById('obj-vol-mauvaise').value) || 500;
                 const objVolLoupe = parseFloat(document.getElementById('obj-vol-loupe').value) || 90;
                 const objVolNC = parseFloat(document.getElementById('obj-vol-nc').value) || 100;
@@ -637,7 +613,7 @@
                 let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
 
                 let countLiris = 0, countRubis = 0;
-                const moisActuelMax = 10; // Octobre
+                const moisActuelMax = 10;
 
                 for (let i = 1; i < lignes.length; i++) {
                     const rawLigne = lignes[i];
@@ -711,31 +687,22 @@
 
                                 if (categorie.includes('MAUVAISE')) {
                                     if (estOK || estContestation) {
-                                        if (estOK) mauvOK++;
-                                        else mauvCont++;
+                                        if (estOK) mauvOK++; else mauvCont++;
                                         if (mediaLigne === 'web') mauvWeb++;
                                         if (mediaLigne === 'presse') mauvPresse++;
-                                    } else if (estVide) {
-                                        mauvVide++;
-                                    }
+                                    } else if (estVide) mauvVide++;
                                 } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
                                     if (estOK || estContestation) {
-                                        if (estOK) loupeOK++;
-                                        else loupeCont++;
+                                        if (estOK) loupeOK++; else loupeCont++;
                                         if (mediaLigne === 'web') loupeWeb++;
                                         if (mediaLigne === 'presse') loupePresse++;
-                                    } else if (estVide) {
-                                        loupeVide++;
-                                    }
+                                    } else if (estVide) loupeVide++;
                                 } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
                                     if (estOK || estContestation) {
-                                        if (estOK) ncOK++;
-                                        else ncCont++;
+                                        if (estOK) ncOK++; else ncCont++;
                                         if (mediaLigne === 'web') ncWeb++;
                                         if (mediaLigne === 'presse') ncPresse++;
-                                    } else if (estVide) {
-                                        ncVide++;
-                                    }
+                                    } else if (estVide) ncVide++;
                                 }
                             }
                         }
@@ -754,13 +721,9 @@
                 const valTauxNC = (ncOK / totalRM) * 100;
 
                 function getStatutInfo(val, obj) {
-                    if (val <= obj) {
-                        return { classe: 'status-tenu', texte: 'Tenu', niveau: 'vert' };
-                    } else if (val <= obj * 1.15) {
-                        return { classe: 'status-surveiller', texte: 'À surveiller', niveau: 'orange' };
-                    } else {
-                        return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
-                    }
+                    if (val <= obj) return { classe: 'status-tenu', texte: 'Tenu', niveau: 'vert' };
+                    if (val <= obj * 1.15) return { classe: 'status-surveiller', texte: 'À surveiller', niveau: 'orange' };
+                    return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
                 }
 
                 const stMauv = getStatutInfo(valTauxMauv, objMauvaise);
@@ -788,52 +751,43 @@
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // Avancement des débriefings
+                // Avancement
                 const totalMauvGlobal = mauvOK + mauvCont + mauvVide;
                 const pctDebMauv = totalMauvGlobal > 0 ? Math.round(((mauvOK + mauvCont) / totalMauvGlobal) * 100) : 100;
-
                 const totalLoupeGlobal = loupeOK + loupeCont + loupeVide;
                 const pctDebLoupe = totalLoupeGlobal > 0 ? Math.round(((loupeOK + loupeCont) / totalLoupeGlobal) * 100) : 100;
-
                 const totalNCGlobal = ncOK + ncCont + ncVide;
                 const pctDebNC = totalNCGlobal > 0 ? Math.round(((ncOK + ncCont) / totalNCGlobal) * 100) : 100;
-
                 const totalGlobalNQ = totalMauvGlobal + totalLoupeGlobal + totalNCGlobal;
                 const totalGlobalValid = (mauvOK + mauvCont) + (loupeOK + loupeCont) + (ncOK + ncCont);
                 const pctDebGlobal = totalGlobalNQ > 0 ? Math.round((totalGlobalValid / totalGlobalNQ) * 100) : 100;
 
                 document.getElementById('pct-deb-mauvaise').innerText = pctDebMauv + " %";
                 document.getElementById('bar-deb-mauvaise').style.width = pctDebMauv + "%";
-
                 document.getElementById('pct-deb-loupe').innerText = pctDebLoupe + " %";
                 document.getElementById('bar-deb-loupe').style.width = pctDebLoupe + "%";
-
                 document.getElementById('pct-deb-nc').innerText = pctDebNC + " %";
                 document.getElementById('bar-deb-nc').style.width = pctDebNC + "%";
-
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // Plan d'action dynamique
+                // Plan d'action
                 let htmlPA = '';
                 const definitionsPA = [
                     {
-                        nom: 'Non Conforme',
-                        st: stNC,
+                        nom: 'Non Conforme', st: stNC,
                         msgRouge: "Rappel urgent sur le process montage WEB et regles de découpe.",
                         msgOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.",
                         msgVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB."
                     },
                     {
-                        nom: 'Loupé',
-                        st: stLoupe,
+                        nom: 'Loupé', st: stLoupe,
                         msgRouge: "Auditer le Flop 5 et planifier des debriefings et entretien individuel.",
                         msgOrange: "Attention : Surveillance requise sur les flux média en retard.",
                         msgVert: "Objectif tenu : Couverture des flux média maîtrisée."
                     },
                     {
-                        nom: 'Mauvaise',
-                        st: stMauv,
+                        nom: 'Mauvaise', st: stMauv,
                         msgRouge: "Revoir les critères de pertinence (homonymies/passages significatifs).",
                         msgOrange: "Attention : Risque de dépassement sur les critères de sélection.",
                         msgVert: "Capitaliser sur les bonnes pratiques."
@@ -842,18 +796,8 @@
 
                 definitionsPA.forEach(cat => {
                     let borderColor = '#059669', badgeBg = '#d1fae5', badgeColor = '#065f46', actionTexte = cat.msgVert;
-
-                    if (cat.st.niveau === 'rouge') {
-                        borderColor = '#dc2626';
-                        badgeBg = '#fee2e2';
-                        badgeColor = '#991b1b';
-                        actionTexte = cat.msgRouge;
-                    } else if (cat.st.niveau === 'orange') {
-                        borderColor = '#d97706';
-                        badgeBg = '#fef3c7';
-                        badgeColor = '#b45309';
-                        actionTexte = cat.msgOrange;
-                    }
+                    if (cat.st.niveau === 'rouge') { borderColor = '#dc2626'; badgeBg = '#fee2e2'; badgeColor = '#991b1b'; actionTexte = cat.msgRouge; }
+                    else if (cat.st.niveau === 'orange') { borderColor = '#d97706'; badgeBg = '#fef3c7'; badgeColor = '#b45309'; actionTexte = cat.msgOrange; }
 
                     htmlPA += `
                         <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
@@ -911,39 +855,25 @@
                     chartContainer.appendChild(grp);
                 });
 
-                // Graphique Intégré par catégorie avec lignes d'objectifs horizontales
-                const wrapper = document.getElementById('evo-chart-wrapper');
-                // Nettoyer les anciennes lignes d'objectifs
-                Array.from(wrapper.querySelectorAll('.target-line')).forEach(el => el.remove());
-
+                // Graphique Intégré par catégorie avec lignes d'objectifs horizontales repères
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
                 const maxEvoVal = Math.max(...Object.values(evoMauvaise), ...Object.values(evoLoupe), ...Object.values(evoNC), objVolMauv, objVolLoupe, objVolNC, 1);
 
-                // Ajout dynamique des lignes horizontales d'objectifs basées sur les hauteurs en pourcentage
+                // Ajout des lignes directrices horizontales d'objectifs
                 const thresholds = [
-                    { val: objVolNC, color: '#dc2626', label: 'Obj NC: ' + objVolNC },
-                    { val: objVolLoupe, color: '#eab308', label: 'Obj Loupé: ' + objVolLoupe },
-                    { val: objVolMauv, color: '#64748b', label: 'Obj Mauv: ' + objVolMauv }
+                    { val: objVolNC, color: '#dc2626' },
+                    { val: objVolLoupe, color: '#eab308' },
+                    { val: objVolMauv, color: '#64748b' }
                 ];
 
                 thresholds.forEach(t => {
                     const pctHeight = Math.min(Math.round((t.val / maxEvoVal) * 100), 100);
                     const line = document.createElement('div');
                     line.className = 'target-line';
-                    // Dans un conteneur flex/hauteur inversée, bottom correspond au pourcentage
                     line.style.bottom = pctHeight + '%';
                     line.style.borderColor = t.color;
-                    
-                    const lbl = document.createElement('div');
-                    lbl.className = 'target-line-label';
-                    lbl.style.bottom = pctHeight + '%';
-                    lbl.style.backgroundColor = t.color;
-                    lbl.style.color = '#ffffff';
-                    lbl.innerText = t.label;
-                    
-                    wrapper.appendChild(line);
-                    wrapper.appendChild(lbl);
+                    evoContainer.appendChild(line);
                 });
 
                 clesMois.forEach((cle, idx) => {
