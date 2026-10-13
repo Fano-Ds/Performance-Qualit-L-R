@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quality Performance Center - LIRIS & RUBIS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-main: #cbd5e1;
@@ -31,36 +31,43 @@
             padding: 24px;
         }
 
-        /* HEADER DÉDIÉ, AGRANDI ET CENTRÉ */
+        /* HEADER PROFESSIONNEL & MODERNE AVEC LOGO À DROITE */
         header {
-            background-color: var(--bg-card);
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 24px;
+            padding: 22px 28px;
             margin-bottom: 24px;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
             position: relative;
+            overflow: hidden;
         }
 
-        .header-logo {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            margin-bottom: 12px;
-            border-radius: 8px;
+        header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: var(--primary);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         header h1 {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             color: #0f172a;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
         }
 
         header h1 span {
@@ -71,6 +78,17 @@
             color: var(--text-muted);
             font-size: 13px;
             font-weight: 600;
+        }
+
+        .header-logo {
+            max-height: 52px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 6px;
+            padding: 2px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         /* FILTERS BAR */
@@ -353,12 +371,13 @@
 </head>
 <body>
 
-    <!-- HEADER CENTRÉ AVEC LOGO -->
+    <!-- HEADER PROFESSIONNEL AVEC LOGO À DROITE -->
     <header>
-        <!-- Remplace l'attribut src par le lien direct vers ton logo ou une image locale -->
-        <img src="https://via.placeholder.com/150x50/0284c7/ffffff?text=LOGO" alt="Logo" class="header-logo">
-        <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
-        <div class="datetime" id="current-datetime">Chargement...</div>
+        <div class="header-content">
+            <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
+            <div class="datetime" id="current-datetime">Chargement...</div>
+        </div>
+        <img src="https://admvalue.com/app/uploads/2024/03/logo-tbh.jpg" alt="Logo ADM Value" class="header-logo">
     </header>
 
     <!-- FILTERS BAR -->
@@ -898,7 +917,7 @@
                     chartContainer.appendChild(grp);
                 });
 
-                // Gráfico Évolution Mensuelle Intégré avec lignes directrices
+                // Graphique Évolution Mensuelle Intégré avec lignes directrices
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
                 const maxEvoVal = Math.max(...Object.values(evoMauvaise), ...Object.values(evoLoupe), ...Object.values(evoNC), objVolMauv, objVolLoupe, objVolNC, 1);
