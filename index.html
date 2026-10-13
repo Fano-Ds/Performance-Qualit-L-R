@@ -395,7 +395,7 @@
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES DÉTAILLÉES AVEC RÉPARTITION WEB/PRESSE -->
+    <!-- SECTION CATÉGORIES DÉTAILLÉES & PLAN D'ACTION -->
     <div class="grid-2col">
         <div class="card-section">
             <h2>Suivi par Catégorie (OK, Contestations, Vides & Répartition)</h2>
@@ -586,7 +586,6 @@
                 let totalMois = 0;
                 let nonDebriefesMois = 0;
                 
-                // Compteurs détaillés par sous-statut et par média
                 let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
                 let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
                 let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
@@ -664,7 +663,6 @@
                                     agentsCumul[trigramme]++;
                                 }
 
-                                // Ventilation par catégorie, sous-statut et comptage média (sur OK ou Contestations)
                                 if (categorie.includes('MAUVAISE')) {
                                     if (estOK || estContestation) {
                                         if (estOK) mauvOK++;
@@ -701,7 +699,6 @@
                 document.getElementById('kpi-nq').innerText = totalMois + " NQ";
                 document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
 
-                // Calculs des taux basés strictement sur les OK validés
                 const objMauvaise = 0.25;
                 const objLoupe = 0.0095;
                 const objNC = 0.035;
@@ -724,7 +721,6 @@
                 const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
                 const stNC = getStatutInfo(valTauxNC, objNC);
 
-                // Affichage du tableau détaillé avec répartition Web/Presse
                 document.getElementById('mauv-ok').innerText = mauvOK;
                 document.getElementById('mauv-cont').innerText = mauvCont;
                 document.getElementById('mauv-vide').innerText = mauvVide;
@@ -772,26 +768,55 @@
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // Plan d'action dynamique
+                // Génération intelligente du Plan d'Action selon le niveau (Rouge / Orange / Vert) pour chaque catégorie
                 let htmlPA = '';
-                const categoriesBilan = [
-                    { nom: 'Non Conforme', st: stNC, paRouge: "Rappel urgent sur les consignes WEB.", paOrange: "Vérifier la rigueur de montage.", paVert: "Objectif tenu sur les consignes WEB." },
-                    { nom: 'Loupé', st: stLoupe, paRouge: "Auditer le Flop 5 et planifier des debriefings.", paOrange: "Surveillance requise sur les flux.", paVert: "Couverture média maîtrisée." },
-                    { nom: 'Mauvaise', st: stMauv, paRouge: "Revoir les critères de pertinence.", paOrange: "Risque de dépassement sur les sélections.", paVert: "Capitaliser sur les bonnes pratiques." }
+                
+                const definitionsPA = [
+                    {
+                        nom: 'Non Conforme',
+                        st: stNC,
+                        msgRouge: "Rappel urgent sur le process montage WEB et regles de découpe.",
+                        msgOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.",
+                        msgVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB."
+                    },
+                    {
+                        nom: 'Loupé',
+                        st: stLoupe,
+                        msgRouge: "Auditer le Flop 5 et planifier des debriefings et entretien individuel.",
+                        msgOrange: "Attention : Surveillance requise sur les flux média en retard.",
+                        msgVert: "Objectif tenu : Couverture des flux média maîtrisée."
+                    },
+                    {
+                        nom: 'Mauvaise',
+                        st: stMauv,
+                        msgRouge: "Revoir les critères de pertinence (homonymies/passages significatifs).",
+                        msgOrange: "Attention : Risque de dépassement sur les critères de sélection.",
+                        msgVert: "Capitaliser sur les bonnes pratiques."
+                    }
                 ];
 
-                categoriesBilan.forEach(cat => {
-                    let borderColor = '#059669', badgeBg = '#d1fae5', badgeColor = '#065f46', msg = cat.paVert;
-                    if (cat.st.niveau === 'rouge') { borderColor = '#dc2626'; badgeBg = '#fee2e2'; badgeColor = '#991b1b'; msg = cat.paRouge; }
-                    else if (cat.st.niveau === 'orange') { borderColor = '#d97706'; badgeBg = '#fef3c7'; badgeColor = '#b45309'; msg = cat.paOrange; }
+                definitionsPA.forEach(cat => {
+                    let borderColor = '#059669', badgeBg = '#d1fae5', badgeColor = '#065f46', actionTexte = cat.msgVert;
+
+                    if (cat.st.niveau === 'rouge') {
+                        borderColor = '#dc2626';
+                        badgeBg = '#fee2e2';
+                        badgeColor = '#991b1b';
+                        actionTexte = cat.msgRouge;
+                    } else if (cat.st.niveau === 'orange') {
+                        borderColor = '#d97706';
+                        badgeBg = '#fef3c7';
+                        badgeColor = '#b45309';
+                        actionTexte = cat.msgOrange;
+                    }
 
                     htmlPA += `
                         <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                <strong style="font-size: 11px; text-transform: uppercase;">${cat.nom}</strong>
+                                <strong style="font-size: 11px; text-transform: uppercase; color: #0f172a;">${cat.nom}</strong>
                                 <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${cat.st.texte}</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 11px;">${msg}</div>
+                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">${actionTexte}</div>
                         </div>
                     `;
                 });
@@ -803,7 +828,7 @@
                                 <strong style="font-size: 11px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
                                 <span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 11px;">Planifier les entretiens en suspens.</div>
+                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier les entretiens en suspens.</div>
                         </div>
                     `;
                 }
