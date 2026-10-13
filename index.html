@@ -48,7 +48,7 @@
             padding: 24px;
         }
 
-        /* HEADER PROFESSIONNEL AVEC BOUTON CENTRÉ ET LOGO AGRANDI */
+        /* HEADER PROFESSIONNEL AVEC SLOGAN DYNAMIQUE */
         header {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid #334155;
@@ -104,6 +104,25 @@
             color: #94a3b8;
             font-size: 13px;
             font-weight: 600;
+        }
+
+        /* SLOGAN DYNAMIQUE ANIMÉ */
+        .header-slogan {
+            font-size: 12px;
+            font-weight: 600;
+            color: #38bdf8;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            animation: fadeInSlide 1.2s ease-out infinite alternate;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border-left: 2px solid #38bdf8;
+        }
+
+        @keyframes fadeInSlide {
+            0% { opacity: 0.7; transform: translateY(1px); }
+            100% { opacity: 1; transform: translateY(-1px); }
         }
 
         /* BOUTON MODE SOMBRE DANS L'ENTÊTE */
@@ -420,12 +439,13 @@
 </head>
 <body>
 
-    <!-- HEADER PROFESSIONNEL AVEC BOUTON MODE SOMBRE À CÔTÉ DE LA DATE -->
+    <!-- HEADER PROFESSIONNEL AVEC SLOGAN DYNAMIQUE & MODE SOMBRE -->
     <header>
         <div class="header-content">
             <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
             <div class="header-subline">
                 <div class="datetime" id="current-datetime">Chargement...</div>
+                <div class="header-slogan">« Mesurer la qualité. Comprendre les écarts. Piloter la performance. »</div>
                 <button class="btn-theme-header" id="btn-theme" onclick="toggleTheme()">
                     🌙 <span id="theme-text">Mode Sombre</span>
                 </button>
