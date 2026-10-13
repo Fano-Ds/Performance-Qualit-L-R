@@ -31,19 +31,36 @@
             padding: 24px;
         }
 
+        /* HEADER DÉDIÉ, AGRANDI ET CENTRÉ */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
             margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            border-radius: 8px;
         }
 
         header h1 {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 26px;
+            font-weight: 800;
             color: #0f172a;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
         }
 
         header h1 span {
@@ -52,7 +69,7 @@
 
         .datetime {
             color: var(--text-muted);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
         }
 
@@ -336,8 +353,10 @@
 </head>
 <body>
 
-    <!-- HEADER -->
+    <!-- HEADER CENTRÉ AVEC LOGO -->
     <header>
+        <!-- Remplace l'attribut src par le lien direct vers ton logo ou une image locale -->
+        <img src="https://via.placeholder.com/150x50/0284c7/ffffff?text=LOGO" alt="Logo" class="header-logo">
         <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
         <div class="datetime" id="current-datetime">Chargement...</div>
     </header>
@@ -795,7 +814,7 @@
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // Plan d'action (3 Niveaux uniquement + Rattrapage des débriefs)
+                // Plan d'action
                 let htmlPA = '';
                 const definitionsPA = [
                     {
@@ -879,7 +898,7 @@
                     chartContainer.appendChild(grp);
                 });
 
-                // GRAPHIQUE ÉVOLUTION MENSUELLE INTÉGRÉ AVEC LIGNES DIRECTRICES
+                // Gráfico Évolution Mensuelle Intégré avec lignes directrices
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
                 const maxEvoVal = Math.max(...Object.values(evoMauvaise), ...Object.values(evoLoupe), ...Object.values(evoNC), objVolMauv, objVolLoupe, objVolNC, 1);
