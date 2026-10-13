@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,22 @@
             --danger: #dc2626;
             --warning: #d97706;
             --success: #059669;
+            --input-bg: #ffffff;
+            --table-hover: #f1f5f9;
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --success: #34d399;
+            --input-bg: #0f172a;
+            --table-hover: #273548;
         }
 
         * {
@@ -23,6 +39,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body {
@@ -31,7 +48,7 @@
             padding: 24px;
         }
 
-        /* HEADER PROFESSIONNEL AVEC FOND DISTINCT & LOGO AGRANDI */
+        /* HEADER PROFESSIONNEL AVEC FOND FONCÉ, LOGO & CONTRÔLES */
         header {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid #334155;
@@ -44,6 +61,8 @@
             box-shadow: 0 6px 15px -3px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         header::before {
@@ -78,6 +97,41 @@
             color: #94a3b8;
             font-size: 13px;
             font-weight: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-control:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-control.active {
+            background: var(--primary);
+            border-color: var(--primary);
         }
 
         .header-logo {
@@ -144,7 +198,7 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 4px;
-            color: #0f172a;
+            color: var(--text-main);
         }
 
         .kpi-card .subtitle {
@@ -154,7 +208,7 @@
         }
 
         .kpi-input {
-            background: #ffffff;
+            background: var(--input-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 6px 10px;
@@ -163,6 +217,12 @@
             font-weight: 700;
             width: 100%;
             margin-bottom: 4px;
+        }
+
+        .kpi-input:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background-color: rgba(0,0,0,0.05);
         }
 
         /* GRID SECTIONS */
@@ -190,7 +250,7 @@
             font-weight: 700;
             text-transform: uppercase;
             margin-bottom: 16px;
-            color: #0f172a;
+            color: var(--text-main);
             letter-spacing: 0.5px;
         }
 
@@ -212,9 +272,13 @@
 
         td {
             padding: 10px 6px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1e293b;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
             font-weight: 500;
+        }
+
+        tbody tr:hover {
+            background-color: var(--table-hover);
         }
 
         /* STATUS BADGES */
@@ -238,10 +302,10 @@
             font-size: 13px;
             font-weight: 700;
             margin-bottom: 6px;
-            color: #1e293b;
+            color: var(--text-main);
         }
         .progress-bar-bg {
-            background: #cbd5e1;
+            background: var(--border-color);
             border-radius: 4px;
             height: 8px;
             overflow: hidden;
@@ -370,13 +434,23 @@
 </head>
 <body>
 
-    <!-- HEADER PROFESSIONNEL AVEC FOND FONCÉ ET LOGO AGRANDI -->
+    <!-- HEADER AVEC CONTRÔLES MODE SOMBRE & VERROUILLAGE ADMIN -->
     <header>
         <div class="header-content">
             <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
             <div class="datetime" id="current-datetime">Chargement...</div>
         </div>
-        <img src="https://admvalue.com/app/uploads/2024/03/logo-tbh.jpg" alt="Logo ADM Value" class="header-logo">
+        <div class="header-right">
+            <div class="header-controls">
+                <button class="btn-control" id="btn-lock" onclick="toggleLock()">
+                    🔒 <span id="lock-text">Verrouillé</span>
+                </button>
+                <button class="btn-control" id="btn-theme" onclick="toggleTheme()">
+                    🌙 <span id="theme-text">Mode Sombre</span>
+                </button>
+            </div>
+            <img src="https://admvalue.com/app/uploads/2024/03/logo-tbh.jpg" alt="Logo ADM Value" class="header-logo">
+        </div>
     </header>
 
     <!-- FILTERS BAR -->
@@ -429,12 +503,12 @@
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées</h3>
-            <input type="number" id="input-alertes" class="kpi-input" value="12540">
+            <input type="number" id="input-alertes" class="kpi-input" value="12540" disabled>
             <div class="subtitle">Calcul taux Loupé</div>
         </div>
         <div class="kpi-card">
             <h3>RM / Retombées</h3>
-            <input type="number" id="input-rm" class="kpi-input" value="8936">
+            <input type="number" id="input-rm" class="kpi-input" value="8936" disabled>
             <div class="subtitle">Calcul taux Mauv. & NC</div>
         </div>
         <div class="kpi-card">
@@ -444,17 +518,17 @@
         </div>
         <div class="kpi-card">
             <h3>Obj. Vol. Mauvaise</h3>
-            <input type="number" id="obj-vol-mauvaise" class="kpi-input" value="500" style="color: #64748b;">
+            <input type="number" id="obj-vol-mauvaise" class="kpi-input" value="500" style="color: var(--text-muted);" disabled>
             <div class="subtitle">Ligne repère grise</div>
         </div>
         <div class="kpi-card">
             <h3>Obj. Vol. Loupé</h3>
-            <input type="number" id="obj-vol-loupe" class="kpi-input" value="90" style="color: #eab308;">
+            <input type="number" id="obj-vol-loupe" class="kpi-input" value="90" style="color: #eab308;" disabled>
             <div class="subtitle">Ligne repère jaune</div>
         </div>
         <div class="kpi-card">
             <h3>Obj. Vol. NC</h3>
-            <input type="number" id="obj-vol-nc" class="kpi-input" value="100" style="color: #dc2626;">
+            <input type="number" id="obj-vol-nc" class="kpi-input" value="100" style="color: #dc2626;" disabled>
             <div class="subtitle">Ligne repère rouge</div>
         </div>
     </div>
@@ -507,7 +581,7 @@
                         <td id="rep-nc" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
                         <td id="statut-nc"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
-                    <tr style="background: #f1f5f9; border-top: 2px solid var(--border-color);">
+                    <tr style="border-top: 2px solid var(--border-color);">
                         <td><strong style="color: var(--warning);">LOUPÉ EN RETARD (XXX)</strong></td>
                         <td colspan="3" id="retard-xxx-val" style="font-weight: 700; color: var(--warning);">0 cas</td>
                         <td>—</td>
@@ -614,6 +688,54 @@
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
         document.getElementById('current-datetime').innerText = new Date().toLocaleDateString('fr-FR') + ' — ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+
+        // Gestion du Mode Sombre / Clair
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeText = document.getElementById('theme-text');
+            const btnTheme = document.getElementById('btn-theme');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                themeText.innerText = 'Mode Sombre';
+                btnTheme.innerHTML = '🌙 Mode Sombre';
+                btnTheme.classList.remove('active');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeText.innerText = 'Mode Clair';
+                btnTheme.innerHTML = '☀️ Mode Clair';
+                btnTheme.classList.add('active');
+            }
+        }
+
+        // Gestion du Verrouillage Admin
+        let isAdminUnlocked = false;
+        function toggleLock() {
+            if (!isAdminUnlocked) {
+                let code = prompt("Veuillez entrer le mot de passe administrateur :");
+                if (code === "admin123" || code === "ADM") { // Modifie le mot de passe si besoin
+                    isAdminUnlocked = true;
+                    document.getElementById('lock-text').innerText = 'Mode Admin';
+                    document.getElementById('btn-lock').classList.add('active');
+                    document.getElementById('btn-lock').innerHTML = '🔓 Mode Admin';
+                    
+                    // Activer les inputs
+                    document.querySelectorAll('.kpi-input').forEach(input => input.removeAttribute('disabled'));
+                    alert("Mode Administrateur déverrouillé. Vous pouvez modifier les valeurs.");
+                } else if (code !== null) {
+                    alert("Mot de passe incorrect.");
+                }
+            } else {
+                isAdminUnlocked = false;
+                document.getElementById('lock-text').innerText = 'Verrouillé';
+                document.getElementById('btn-lock').classList.remove('active');
+                document.getElementById('btn-lock').innerHTML = '🔒 Verrouillé';
+                
+                // Désactiver les inputs
+                document.querySelectorAll('.kpi-input').forEach(input => input.setAttribute('disabled', 'true'));
+                alert("Tableau de bord reverrouillé.");
+            }
+        }
 
         async function rafraichirTableauDeBord() {
             try {
@@ -856,14 +978,14 @@
                 ];
 
                 definitionsPA.forEach(cat => {
-                    let borderColor = '#059669', badgeBg = '#d1fae5', badgeColor = '#065f46', actionTexte = cat.msgVert;
-                    if (cat.st.niveau === 'rouge') { borderColor = '#dc2626'; badgeBg = '#fee2e2'; badgeColor = '#991b1b'; actionTexte = cat.msgRouge; }
-                    else if (cat.st.niveau === 'orange') { borderColor = '#d97706'; badgeBg = '#fef3c7'; badgeColor = '#b45309'; actionTexte = cat.msgOrange; }
+                    let borderColor = 'var(--success)', badgeBg = 'rgba(5, 150, 105, 0.15)', badgeColor = 'var(--success)', actionTexte = cat.msgVert;
+                    if (cat.st.niveau === 'rouge') { borderColor = 'var(--danger)'; badgeBg = 'rgba(220, 38, 38, 0.15)'; badgeColor = 'var(--danger)'; actionTexte = cat.msgRouge; }
+                    else if (cat.st.niveau === 'orange') { borderColor = 'var(--warning)'; badgeBg = 'rgba(217, 119, 6, 0.15)'; badgeColor = 'var(--warning)'; actionTexte = cat.msgOrange; }
 
                     htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
+                        <div style="background: var(--bg-card); border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-left-width: 4px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                <strong style="font-size: 11px; text-transform: uppercase; color: #0f172a;">${cat.nom}</strong>
+                                <strong style="font-size: 11px; text-transform: uppercase; color: var(--text-main);">${cat.nom}</strong>
                                 <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${cat.st.texte}</span>
                             </div>
                             <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">${actionTexte}</div>
@@ -873,10 +995,10 @@
 
                 if (nonDebriefesMois > 0) {
                     htmlPA += `
-                        <div style="background: #ffffff; border-left: 4px solid #dc2626; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
+                        <div style="background: var(--bg-card); border-left: 4px solid var(--danger); padding: 10px; border-radius: 6px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-left-width: 4px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                <strong style="font-size: 11px; text-transform: uppercase; color: #dc2626;">Lignes non débriefées</strong>
-                                <span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
+                                <strong style="font-size: 11px; text-transform: uppercase; color: var(--danger);">Lignes non débriefées</strong>
+                                <span style="background: rgba(220, 38, 38, 0.15); color: var(--danger); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
                             </div>
                             <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier une session de rattrapage des debrief en suspens.</div>
                         </div>
@@ -1004,12 +1126,4 @@
         document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
         document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
         document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('obj-vol-mauvaise').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('obj-vol-loupe').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('obj-vol-nc').addEventListener('input', rafraichirTableauDeBord);
-
-        rafraichirTableauDeBord();
-    </script>
-
-</body>
-</html>
+        document.getElementById('obj-vol-mauvaise').addEventListener('input',
