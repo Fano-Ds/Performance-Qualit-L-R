@@ -164,7 +164,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11px;
             text-align: left;
             margin-bottom: 20px;
         }
@@ -172,12 +172,12 @@
         th {
             color: var(--text-muted);
             font-weight: 700;
-            padding: 8px 10px;
+            padding: 8px 6px;
             border-bottom: 2px solid var(--border-color);
         }
 
         td {
-            padding: 10px;
+            padding: 10px 6px;
             border-bottom: 1px solid #e2e8f0;
             color: #1e293b;
             font-weight: 500;
@@ -185,9 +185,9 @@
 
         /* STATUS BADGES */
         .status-badge {
-            padding: 4px 8px;
+            padding: 4px 6px;
             border-radius: 6px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
         }
         .status-tenu { background: #d1fae5; color: #065f46; }
@@ -395,19 +395,20 @@
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES DÉTAILLÉES, GRAPHIQUE & PLAN D'ACTION -->
+    <!-- SECTION CATÉGORIES DÉTAILLÉES AVEC RÉPARTITION WEB/PRESSE -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Suivi par Catégorie (OK, Contestations & Vides)</h2>
+            <h2>Suivi par Catégorie (OK, Contestations, Vides & Répartition)</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Catégorie</th>
                         <th>OK</th>
-                        <th>Contest.</th>
-                        <th>Vides (À déb.)</th>
+                        <th>Cont.</th>
+                        <th>Vides</th>
                         <th>Obj.</th>
-                        <th>Taux Réel (OK)</th>
+                        <th>Taux Réel</th>
+                        <th>Répart. Web / Presse</th>
                         <th>Statut</th>
                     </tr>
                 </thead>
@@ -419,6 +420,7 @@
                         <td id="mauv-vide" style="color: var(--danger); font-weight:700;">0</td>
                         <td>0,25%</td>
                         <td><strong id="taux-mauvaise">0,00 %</strong></td>
+                        <td id="rep-mauvaise" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
                         <td id="statut-mauvaise"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                     <tr>
@@ -428,6 +430,7 @@
                         <td id="loupe-vide" style="color: var(--danger); font-weight:700;">0</td>
                         <td>0,0095%</td>
                         <td><strong id="taux-loupe">0,00 %</strong></td>
+                        <td id="rep-loupe" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
                         <td id="statut-loupe"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                     <tr>
@@ -437,6 +440,7 @@
                         <td id="nc-vide" style="color: var(--danger); font-weight:700;">0</td>
                         <td>0,035%</td>
                         <td><strong id="taux-nc">0,00 %</strong></td>
+                        <td id="rep-nc" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
                         <td id="statut-nc"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                 </tbody>
@@ -534,7 +538,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FONCTIONNEL AMÉLIORÉ -->
+    <!-- SCRIPT FONCTIONNEL COMPLET -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -582,10 +586,10 @@
                 let totalMois = 0;
                 let nonDebriefesMois = 0;
                 
-                // Compteurs détaillés par sous-statut
-                let mauvOK = 0, mauvCont = 0, mauvVide = 0;
-                let loupeOK = 0, loupeCont = 0, loupeVide = 0;
-                let ncOK = 0, ncCont = 0, ncVide = 0;
+                // Compteurs détaillés par sous-statut et par média
+                let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
+                let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
+                let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
 
                 let countLiris = 0, countRubis = 0;
                 const moisActuelMax = 10; // Octobre
@@ -639,7 +643,6 @@
                             if (matchActivite && matchMedia) {
                                 volumesParMois[moisLigne]++;
                                 
-                                // Pour le graphique mensuel (basé sur OK ou Contestations)
                                 if (estOK || estContestation) {
                                     if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
                                     else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
@@ -661,19 +664,34 @@
                                     agentsCumul[trigramme]++;
                                 }
 
-                                // Ventilation par catégorie et sous-statut
+                                // Ventilation par catégorie, sous-statut et comptage média (sur OK ou Contestations)
                                 if (categorie.includes('MAUVAISE')) {
-                                    if (estOK) mauvOK++;
-                                    else if (estContestation) mauvCont++;
-                                    else if (estVide) mauvVide++;
+                                    if (estOK || estContestation) {
+                                        if (estOK) mauvOK++;
+                                        else mauvCont++;
+                                        if (mediaLigne === 'web') mauvWeb++;
+                                        if (mediaLigne === 'presse') mauvPresse++;
+                                    } else if (estVide) {
+                                        mauvVide++;
+                                    }
                                 } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
-                                    if (estOK) loupeOK++;
-                                    else if (estContestation) loupeCont++;
-                                    else if (estVide) loupeVide++;
+                                    if (estOK || estContestation) {
+                                        if (estOK) loupeOK++;
+                                        else loupeCont++;
+                                        if (mediaLigne === 'web') loupeWeb++;
+                                        if (mediaLigne === 'presse') loupePresse++;
+                                    } else if (estVide) {
+                                        loupeVide++;
+                                    }
                                 } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
-                                    if (estOK) ncOK++;
-                                    else if (estContestation) ncCont++;
-                                    else if (estVide) ncVide++;
+                                    if (estOK || estContestation) {
+                                        if (estOK) ncOK++;
+                                        else ncCont++;
+                                        if (mediaLigne === 'web') ncWeb++;
+                                        if (mediaLigne === 'presse') ncPresse++;
+                                    } else if (estVide) {
+                                        ncVide++;
+                                    }
                                 }
                             }
                         }
@@ -706,23 +724,26 @@
                 const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
                 const stNC = getStatutInfo(valTauxNC, objNC);
 
-                // Affichage du tableau détaillé
+                // Affichage du tableau détaillé avec répartition Web/Presse
                 document.getElementById('mauv-ok').innerText = mauvOK;
                 document.getElementById('mauv-cont').innerText = mauvCont;
                 document.getElementById('mauv-vide').innerText = mauvVide;
                 document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
+                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
                 document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
 
                 document.getElementById('loupe-ok').innerText = loupeOK;
                 document.getElementById('loupe-cont').innerText = loupeCont;
                 document.getElementById('loupe-vide').innerText = loupeVide;
                 document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
+                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
                 document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
 
                 document.getElementById('nc-ok').innerText = ncOK;
                 document.getElementById('nc-cont').innerText = ncCont;
                 document.getElementById('nc-vide').innerText = ncVide;
                 document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
+                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
                 // Avancement des débriefings
@@ -887,7 +908,7 @@
         document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
         document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
         document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
-        document.getElementById('input-alertes').addEventListener('input', rafraichirData = () => rafraichirTableauDeBord());
+        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
         document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
 
         rafraichirTableauDeBord();
