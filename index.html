@@ -85,7 +85,7 @@
         /* KPI CARDS */
         .kpi-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 24px;
         }
@@ -94,27 +94,27 @@
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
+            padding: 16px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .kpi-card h3 {
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             color: var(--text-muted);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 700;
         }
 
         .kpi-card .value {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             color: #0f172a;
         }
 
         .kpi-card .subtitle {
-            font-size: 13px;
+            font-size: 11px;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -125,10 +125,10 @@
             color: var(--text-main);
             padding: 6px 10px;
             border-radius: 6px;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         /* GRID SECTIONS */
@@ -218,7 +218,7 @@
             border-radius: 4px;
         }
 
-        /* CHART */
+        /* CHART GLOBAL */
         .chart-container {
             display: flex;
             justify-content: space-between;
@@ -254,7 +254,7 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE INTÉGRÉ DANS LE BLOC CATÉGORIE */
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE AVEC LIGNES D'OBJECTIFS */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
@@ -269,10 +269,11 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 130px;
-            padding-top: 15px;
+            height: 140px;
+            padding-top: 20px;
             gap: 6px;
             border-bottom: 2px solid var(--border-color);
+            position: relative;
         }
         .evo-bar-group {
             flex: 1;
@@ -281,12 +282,13 @@
             align-items: center;
             height: 100%;
             justify-content: flex-end;
+            z-index: 2;
         }
         .evo-bars-flex {
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 90px;
+            height: 100px;
             width: 100%;
             justify-content: center;
         }
@@ -301,14 +303,24 @@
             margin-top: 6px;
             font-weight: 700;
         }
+        .target-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            border-top: 2px dashed;
+            z-index: 1;
+            pointer-events: none;
+        }
+
         .chart-legend {
             display: flex;
             gap: 16px;
             justify-content: center;
-            margin-top: 8px;
+            margin-top: 10px;
             font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
+            flex-wrap: wrap;
         }
         .legend-item {
             display: flex;
@@ -376,22 +388,37 @@
         </div>
     </div>
 
-    <!-- KPI CARDS -->
+    <!-- KPI & OBJECTIFS VOLUME CARDS -->
     <div class="kpi-container">
         <div class="kpi-card">
-            <h3>Alertes traitées (Saisie)</h3>
+            <h3>Alertes traitées</h3>
             <input type="number" id="input-alertes" class="kpi-input" value="12540">
-            <div class="subtitle">Pour calcul taux Loupé</div>
+            <div class="subtitle">Calcul taux Loupé</div>
         </div>
         <div class="kpi-card">
-            <h3>RM / Retombées média (Saisie)</h3>
+            <h3>RM / Retombées</h3>
             <input type="number" id="input-rm" class="kpi-input" value="8936">
-            <div class="subtitle">Pour calculs taux Mauvaise & NC</div>
+            <div class="subtitle">Calcul taux Mauv. & NC</div>
         </div>
         <div class="kpi-card">
-            <h3>NQ Validées (OK/Contestation)</h3>
+            <h3>NQ Validées</h3>
             <div class="value" id="kpi-nq">0 NQ</div>
             <div class="subtitle"><span id="kpi-non-debriefes" style="color: var(--danger); font-weight:700;">0 ligne(s)</span> non débriefée(s)</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Obj. Vol. Mauvaise</h3>
+            <input type="number" id="obj-vol-mauvaise" class="kpi-input" value="500" style="color: #64748b;">
+            <div class="subtitle">Ligne repère grise</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Obj. Vol. Loupé</h3>
+            <input type="number" id="obj-vol-loupe" class="kpi-input" value="90" style="color: #eab308;">
+            <div class="subtitle">Ligne repère jaune</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Obj. Vol. NC</h3>
+            <input type="number" id="obj-vol-nc" class="kpi-input" value="100" style="color: #dc2626;">
+            <div class="subtitle">Ligne repère rouge</div>
         </div>
     </div>
 
@@ -406,7 +433,7 @@
                         <th>OK</th>
                         <th>Cont.</th>
                         <th>Vides</th>
-                        <th>Obj.</th>
+                        <th>Obj. %</th>
                         <th>Taux Réel</th>
                         <th>Répart. Web / Presse</th>
                         <th>Statut</th>
@@ -446,15 +473,16 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE INTÉGRÉ -->
-            <div class="sub-chart-title">Évolution mensuelle par catégorie (Jan - Déc)</div>
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE AVEC LIGNES DIRECTRICES -->
+            <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
             <div class="evo-chart-container" id="evo-chart-container">
-                <!-- Rempli dynamiquement en JS -->
+                <!-- Barres et lignes insérées dynamiquement -->
             </div>
             <div class="chart-legend">
                 <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
                 <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
                 <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
+                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #dc2626;"></div> Ligne Seuil Obj.</div>
             </div>
         </div>
 
@@ -538,7 +566,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FONCTIONNEL COMPLET -->
+    <!-- SCRIPT FONCTIONNEL INTÉGRANT VOS LIGNES D'OBJECTIFS -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -569,11 +597,16 @@
                 if (idxCategorie === -1) idxCategorie = 6;
 
                 const moisSelectionne = document.getElementById('filter-periode').value;
-                const activiteSelectionnee = document.getElementById('filter-activite').value; // 'liris' ou 'rubis'
+                const activiteSelectionnee = document.getElementById('filter-activite').value;
                 const mediaSelectionne = document.getElementById('filter-media').value;
 
                 const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
                 const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
+
+                // Récupération dynamique des seuils saisis dans les cartes KPI
+                const objVolMauv = parseFloat(document.getElementById('obj-vol-mauvaise').value) || 500;
+                const objVolLoupe = parseFloat(document.getElementById('obj-vol-loupe').value) || 90;
+                const objVolNC = parseFloat(document.getElementById('obj-vol-nc').value) || 100;
 
                 let agentsCumul = {};
                 let tousLesAgents = new Set();
@@ -591,7 +624,7 @@
                 let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
 
                 let countLiris = 0, countRubis = 0;
-                const moisActuelMax = 10; // Octobre
+                const moisActuelMax = 10;
 
                 for (let i = 1; i < lignes.length; i++) {
                     const rawLigne = lignes[i];
@@ -665,31 +698,22 @@
 
                                 if (categorie.includes('MAUVAISE')) {
                                     if (estOK || estContestation) {
-                                        if (estOK) mauvOK++;
-                                        else mauvCont++;
+                                        if (estOK) mauvOK++; else mauvCont++;
                                         if (mediaLigne === 'web') mauvWeb++;
                                         if (mediaLigne === 'presse') mauvPresse++;
-                                    } else if (estVide) {
-                                        mauvVide++;
-                                    }
+                                    } else if (estVide) mauvVide++;
                                 } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
                                     if (estOK || estContestation) {
-                                        if (estOK) loupeOK++;
-                                        else loupeCont++;
+                                        if (estOK) loupeOK++; else loupeCont++;
                                         if (mediaLigne === 'web') loupeWeb++;
                                         if (mediaLigne === 'presse') loupePresse++;
-                                    } else if (estVide) {
-                                        loupeVide++;
-                                    }
+                                    } else if (estVide) loupeVide++;
                                 } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
                                     if (estOK || estContestation) {
-                                        if (estOK) ncOK++;
-                                        else ncCont++;
+                                        if (estOK) ncOK++; else ncCont++;
                                         if (mediaLigne === 'web') ncWeb++;
                                         if (mediaLigne === 'presse') ncPresse++;
-                                    } else if (estVide) {
-                                        ncVide++;
-                                    }
+                                    } else if (estVide) ncVide++;
                                 }
                             }
                         }
@@ -708,13 +732,9 @@
                 const valTauxNC = (ncOK / totalRM) * 100;
 
                 function getStatutInfo(val, obj) {
-                    if (val <= obj) {
-                        return { classe: 'status-tenu', texte: 'Tenu', niveau: 'vert' };
-                    } else if (val <= obj * 1.15) {
-                        return { classe: 'status-surveiller', texte: 'À surveiller', niveau: 'orange' };
-                    } else {
-                        return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
-                    }
+                    if (val <= obj) return { classe: 'status-tenu', texte: 'Tenu', niveau: 'vert' };
+                    if (val <= obj * 1.15) return { classe: 'status-surveiller', texte: 'À surveiller', niveau: 'orange' };
+                    return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
                 }
 
                 const stMauv = getStatutInfo(valTauxMauv, objMauvaise);
@@ -742,53 +762,43 @@
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // Avancement des débriefings
+                // Avancement
                 const totalMauvGlobal = mauvOK + mauvCont + mauvVide;
                 const pctDebMauv = totalMauvGlobal > 0 ? Math.round(((mauvOK + mauvCont) / totalMauvGlobal) * 100) : 100;
-
                 const totalLoupeGlobal = loupeOK + loupeCont + loupeVide;
                 const pctDebLoupe = totalLoupeGlobal > 0 ? Math.round(((loupeOK + loupeCont) / totalLoupeGlobal) * 100) : 100;
-
                 const totalNCGlobal = ncOK + ncCont + ncVide;
                 const pctDebNC = totalNCGlobal > 0 ? Math.round(((ncOK + ncCont) / totalNCGlobal) * 100) : 100;
-
                 const totalGlobalNQ = totalMauvGlobal + totalLoupeGlobal + totalNCGlobal;
                 const totalGlobalValid = (mauvOK + mauvCont) + (loupeOK + loupeCont) + (ncOK + ncCont);
                 const pctDebGlobal = totalGlobalNQ > 0 ? Math.round((totalGlobalValid / totalGlobalNQ) * 100) : 100;
 
                 document.getElementById('pct-deb-mauvaise').innerText = pctDebMauv + " %";
                 document.getElementById('bar-deb-mauvaise').style.width = pctDebMauv + "%";
-
                 document.getElementById('pct-deb-loupe').innerText = pctDebLoupe + " %";
                 document.getElementById('bar-deb-loupe').style.width = pctDebLoupe + "%";
-
                 document.getElementById('pct-deb-nc').innerText = pctDebNC + " %";
                 document.getElementById('bar-deb-nc').style.width = pctDebNC + "%";
-
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // Génération intelligente du Plan d'Action selon le niveau (Rouge / Orange / Vert) pour chaque catégorie
+                // Plan d'action
                 let htmlPA = '';
-                
                 const definitionsPA = [
                     {
-                        nom: 'Non Conforme',
-                        st: stNC,
+                        nom: 'Non Conforme', st: stNC,
                         msgRouge: "Rappel urgent sur le process montage WEB et regles de découpe.",
                         msgOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.",
                         msgVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB."
                     },
                     {
-                        nom: 'Loupé',
-                        st: stLoupe,
+                        nom: 'Loupé', st: stLoupe,
                         msgRouge: "Auditer le Flop 5 et planifier des debriefings et entretien individuel.",
                         msgOrange: "Attention : Surveillance requise sur les flux média en retard.",
                         msgVert: "Objectif tenu : Couverture des flux média maîtrisée."
                     },
                     {
-                        nom: 'Mauvaise',
-                        st: stMauv,
+                        nom: 'Mauvaise', st: stMauv,
                         msgRouge: "Revoir les critères de pertinence (homonymies/passages significatifs).",
                         msgOrange: "Attention : Risque de dépassement sur les critères de sélection.",
                         msgVert: "Capitaliser sur les bonnes pratiques."
@@ -797,18 +807,8 @@
 
                 definitionsPA.forEach(cat => {
                     let borderColor = '#059669', badgeBg = '#d1fae5', badgeColor = '#065f46', actionTexte = cat.msgVert;
-
-                    if (cat.st.niveau === 'rouge') {
-                        borderColor = '#dc2626';
-                        badgeBg = '#fee2e2';
-                        badgeColor = '#991b1b';
-                        actionTexte = cat.msgRouge;
-                    } else if (cat.st.niveau === 'orange') {
-                        borderColor = '#d97706';
-                        badgeBg = '#fef3c7';
-                        badgeColor = '#b45309';
-                        actionTexte = cat.msgOrange;
-                    }
+                    if (cat.st.niveau === 'rouge') { borderColor = '#dc2626'; badgeBg = '#fee2e2'; badgeColor = '#991b1b'; actionTexte = cat.msgRouge; }
+                    else if (cat.st.niveau === 'orange') { borderColor = '#d97706'; badgeBg = '#fef3c7'; badgeColor = '#b45309'; actionTexte = cat.msgOrange; }
 
                     htmlPA += `
                         <div style="background: #ffffff; border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; border-left-width: 4px;">
@@ -866,10 +866,26 @@
                     chartContainer.appendChild(grp);
                 });
 
-                // Graphique Intégré par catégorie
+                // GRAPHIQUE ÉVOLUTION MENSUELLE INTÉGRÉ AVEC LIGNES DIRECTRICES
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
-                const maxEvoVal = Math.max(...Object.values(evoMauvaise), ...Object.values(evoLoupe), ...Object.values(evoNC), 1);
+                const maxEvoVal = Math.max(...Object.values(evoMauvaise), ...Object.values(evoLoupe), ...Object.values(evoNC), objVolMauv, objVolLoupe, objVolNC, 1);
+
+                // Injection des lignes directrices horizontales d'objectifs
+                const thresholds = [
+                    { val: objVolNC, color: '#dc2626' },
+                    { val: objVolLoupe, color: '#eab308' },
+                    { val: objVolMauv, color: '#64748b' }
+                ];
+
+                thresholds.forEach(t => {
+                    const pctHeight = Math.min(Math.round((t.val / maxEvoVal) * 100), 100);
+                    const line = document.createElement('div');
+                    line.className = 'target-line';
+                    line.style.bottom = pctHeight + '%';
+                    line.style.borderColor = t.color;
+                    evoContainer.appendChild(line);
+                });
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
@@ -935,6 +951,9 @@
         document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
         document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
         document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
+        document.getElementById('obj-vol-mauvaise').addEventListener('input', rafraichirTableauDeBord);
+        document.getElementById('obj-vol-loupe').addEventListener('input', rafraichirTableauDeBord);
+        document.getElementById('obj-vol-nc').addEventListener('input', rafraichirTableauDeBord);
 
         rafraichirTableauDeBord();
     </script>
