@@ -7,17 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #cbd5e1;
-            --bg-card: #f8fafc;
-            --border-color: #94a3b8;
+            --bg-main: #f1f5f9;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
             --text-main: #0f172a;
-            --text-muted: #475569;
+            --text-muted: #64748b;
             --primary: #0284c7;
-            --danger: #dc2626;
-            --warning: #d97706;
-            --success: #059669;
-            --input-bg: #ffffff;
-            --table-hover: #f1f5f9;
+            --primary-light: #e0f2fe;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --input-bg: #f8fafc;
+            --table-hover: #f8fafc;
         }
 
         [data-theme="dark"] {
@@ -27,6 +28,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --primary: #38bdf8;
+            --primary-light: #0c4a6e;
             --danger: #f87171;
             --warning: #fbbf24;
             --success: #34d399;
@@ -39,30 +41,29 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
-            padding: 24px;
+            padding: 20px;
         }
 
-        /* HEADER PROFESSIONNEL ORGANISÉ AVEC SLOGAN EN BAS DE L'ENCADRÉ */
+        /* HEADER */
         header {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid #334155;
-            border-radius: 16px;
-            padding: 20px 28px 38px 28px;
-            margin-bottom: 24px;
+            border-radius: 12px;
+            padding: 20px 24px 34px 24px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            box-shadow: 0 6px 15px -3px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             position: relative;
             overflow: hidden;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
         }
 
         header::before {
@@ -71,22 +72,22 @@
             left: 0;
             top: 0;
             bottom: 0;
-            width: 6px;
+            width: 4px;
             background: var(--primary);
         }
 
         .header-content {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             flex: 1;
         }
 
         header h1 {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 800;
             color: #ffffff;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
@@ -98,130 +99,123 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            width: fit-content;
         }
 
         .datetime {
             color: #94a3b8;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
         }
 
-        /* BOUTON MODE SOMBRE DISCRET EN BAS DE LA DATE */
         .btn-theme-header {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #94a3b8;
-            padding: 3px 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e2e8f0;
+            padding: 4px 10px;
             border-radius: 6px;
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
+            gap: 6px;
             width: fit-content;
         }
 
         .btn-theme-header:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             color: #ffffff;
         }
 
-        /* SLOGAN DYNAMIQUE POSITIONNÉ SUR LA LIMITE DE L'ENCADRÉ EN BAS */
         .header-slogan {
             position: absolute;
-            bottom: 10px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 600;
             color: #38bdf8;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            animation: fadeInSlide 1.2s ease-out infinite alternate;
-            background: rgba(56, 189, 248, 0.08);
-            padding: 2px 10px;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 2px 12px;
             border-radius: 4px;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.3);
             white-space: nowrap;
         }
 
-        @keyframes fadeInSlide {
-            0% { opacity: 0.7; transform: translateX(-50%) translateY(1px); }
-            100% { opacity: 1; transform: translateX(-50%) translateY(-1px); }
-        }
-
         .header-logo {
-            max-height: 75px;
+            max-height: 60px;
             width: auto;
             object-fit: contain;
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 4px;
             background: #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
 
         /* FILTERS BAR */
         .filters-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .filter-group select, .filter-group input {
+        .filter-group select {
             width: 100%;
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             outline: none;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            cursor: pointer;
         }
 
-        .filter-group select:focus, .filter-group input:focus {
+        .filter-group select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
         }
 
         /* KPI CARDS */
         .kpi-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
         .kpi-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .kpi-card h3 {
-            font-size: 11px;
+            font-size: 10.5px;
             text-transform: uppercase;
             color: var(--text-muted);
             margin-bottom: 6px;
             font-weight: 700;
+            letter-spacing: 0.3px;
         }
 
         .kpi-card .value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 4px;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 2px;
             color: var(--text-main);
         }
 
         .kpi-card .subtitle {
-            font-size: 11px;
+            font-size: 10.5px;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -230,26 +224,19 @@
             background: var(--input-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             width: 100%;
-            margin-bottom: 4px;
-        }
-
-        .kpi-input:disabled {
-            background-color: rgba(0,0,0,0.06);
-            opacity: 0.8;
-            cursor: not-allowed;
         }
 
         /* GRID SECTIONS */
         .grid-2col {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
         @media (max-width: 1024px) {
@@ -259,18 +246,20 @@
         .card-section {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
         }
 
         .card-section h2 {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             color: var(--text-main);
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
         }
 
         /* TABLES */
@@ -279,7 +268,7 @@
             border-collapse: collapse;
             font-size: 11px;
             text-align: left;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         th {
@@ -290,7 +279,7 @@
         }
 
         td {
-            padding: 10px 6px;
+            padding: 8px 6px;
             border-bottom: 1px solid var(--border-color);
             color: var(--text-main);
             font-weight: 500;
@@ -300,10 +289,10 @@
             background-color: var(--table-hover);
         }
 
-        /* STATUS BADGES */
+        /* BADGES */
         .status-badge {
-            padding: 4px 6px;
-            border-radius: 6px;
+            padding: 3px 6px;
+            border-radius: 4px;
             font-size: 10px;
             font-weight: 700;
         }
@@ -313,20 +302,20 @@
 
         /* PROGRESS BARS */
         .progress-item {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
         .progress-info {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             color: var(--text-main);
         }
         .progress-bar-bg {
             background: var(--border-color);
             border-radius: 4px;
-            height: 8px;
+            height: 7px;
             overflow: hidden;
         }
         .progress-bar-fill {
@@ -335,22 +324,22 @@
             border-radius: 4px;
         }
 
-        /* CHART GLOBAL */
-        .chart-container-wrapper {
+        /* GRAPHIQUES - STYLE ÉPURÉ ET SANS DEBORDEMENT */
+        .chart-box {
             position: relative;
-            height: 220px;
-            margin-top: 15px;
+            width: 100%;
+            height: 200px;
+            margin-top: 10px;
             margin-bottom: 10px;
         }
 
         .chart-grid-line {
             position: absolute;
-            left: 45px;
+            left: 40px;
             right: 0;
             border-top: 1px dashed var(--border-color);
             z-index: 1;
             pointer-events: none;
-            opacity: 0.6;
         }
 
         .chart-grid-label {
@@ -360,14 +349,13 @@
             color: var(--text-muted);
             transform: translateY(-50%);
             font-weight: 600;
-            width: 40px;
+            width: 35px;
             text-align: right;
-            padding-right: 5px;
         }
 
-        .chart-container {
+        .chart-bars-area {
             position: absolute;
-            left: 45px;
+            left: 40px;
             right: 0;
             top: 0;
             bottom: 0;
@@ -375,11 +363,11 @@
             justify-content: space-between;
             align-items: flex-end;
             padding-top: 20px;
-            gap: 6px;
+            gap: 4px;
             z-index: 2;
         }
 
-        .chart-bar-group {
+        .bar-group {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -387,91 +375,31 @@
             height: 100%;
             justify-content: flex-end;
         }
-        .chart-value-label {
+
+        .bar-val {
             font-size: 8.5px;
             color: var(--primary);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             font-weight: 700;
-            white-space: nowrap;
             text-align: center;
         }
-        .chart-bar {
+
+        .bar-single {
             width: 100%;
+            max-width: 28px;
             background: linear-gradient(to top, #0284c7, #38bdf8);
-            border-radius: 4px 4px 0 0;
-            min-height: 4px;
+            border-radius: 3px 3px 0 0;
+            min-height: 2px;
         }
-        .chart-label {
-            font-size: 10px;
+
+        .bar-lbl {
+            font-size: 9.5px;
             color: var(--text-muted);
-            margin-top: 8px;
+            margin-top: 6px;
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE AJUSTÉ (HAUTEUR MAX 200) */
-        .sub-chart-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-top: 15px;
-            margin-bottom: 10px;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 12px;
-        }
-
-        .evo-wrapper {
-            position: relative;
-            height: 150px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .evo-grid-line {
-            position: absolute;
-            left: 35px;
-            right: 0;
-            border-top: 1px dashed var(--border-color);
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.6;
-        }
-
-        .evo-grid-label {
-            position: absolute;
-            left: 0;
-            font-size: 9px;
-            color: var(--text-muted);
-            transform: translateY(-50%);
-            font-weight: 600;
-            width: 30px;
-            text-align: right;
-            padding-right: 5px;
-        }
-
-        .evo-chart-container {
-            position: absolute;
-            left: 35px;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding-top: 15px;
-            gap: 6px;
-            border-bottom: 2px solid var(--border-color);
-            z-index: 2;
-        }
-        .evo-bar-group {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-end;
-            z-index: 2;
-        }
+        /* GRAPHIQUE ÉVOLUTION MULTI-BARRES */
         .evo-bars-flex {
             display: flex;
             align-items: flex-end;
@@ -480,51 +408,78 @@
             width: 100%;
             justify-content: center;
         }
+
         .evo-bar-item {
-            width: 6px;
+            width: 7px;
             border-radius: 2px 2px 0 0;
             min-height: 2px;
+            position: relative;
+            cursor: pointer;
         }
-        .evo-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 6px;
-            font-weight: 700;
-        }
-        .target-line {
+
+        /* TOOLTIP HOVER */
+        .evo-bar-item:hover::after {
+            content: attr(data-title);
             position: absolute;
-            left: 35px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            color: #fff;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .target-line-item {
+            position: absolute;
+            left: 40px;
             right: 0;
-            border-top: 2px dashed;
+            border-top: 1.5px dashed;
             z-index: 3;
             pointer-events: none;
         }
 
         .chart-legend {
             display: flex;
-            gap: 16px;
+            gap: 14px;
             justify-content: center;
             margin-top: 10px;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 600;
             color: var(--text-muted);
             flex-wrap: wrap;
         }
+
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
+
         .legend-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
         }
+
+        .sub-chart-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 10px;
+            margin-bottom: 8px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- HEADER AVEC SLOGAN EN BAS DE L'ENCADRÉ -->
+    <!-- HEADER -->
     <header>
         <div class="header-content">
             <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
@@ -542,7 +497,7 @@
         <img src="https://admvalue.com/app/uploads/2024/03/logo-tbh.jpg" alt="Logo ADM Value" class="header-logo">
     </header>
 
-    <!-- FILTERS BAR -->
+    <!-- FILTRES -->
     <div class="filters-bar">
         <div class="filter-group">
             <select id="filter-periode">
@@ -588,7 +543,7 @@
         </div>
     </div>
 
-    <!-- KPI & OBJECTIFS VOLUME CARDS -->
+    <!-- CARTE KPIS -->
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées</h3>
@@ -619,7 +574,7 @@
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES DÉTAILLÉES & PLAN D'ACTION -->
+    <!-- SUIVI PAR CATÉGRIE & PLAN D'ACTION -->
     <div class="grid-2col">
         <div class="card-section">
             <h2>Suivi par Catégorie & Retards de Production</h2>
@@ -644,7 +599,7 @@
                         <td id="mauv-vide" style="color: var(--danger); font-weight:700;">0</td>
                         <td>0,25%</td>
                         <td><strong id="taux-mauvaise">0,00 %</strong></td>
-                        <td id="rep-mauvaise" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
+                        <td id="rep-mauvaise" style="font-size: 10px; color: var(--text-muted);">Web 0 | Presse 0</td>
                         <td id="statut-mauvaise"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                     <tr>
@@ -654,7 +609,7 @@
                         <td id="loupe-vide" style="color: var(--danger); font-weight:700;">0</td>
                         <td>0,0095%</td>
                         <td><strong id="taux-loupe">0,00 %</strong></td>
-                        <td id="rep-loupe" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
+                        <td id="rep-loupe" style="font-size: 10px; color: var(--text-muted);">Web 0 | Presse 0</td>
                         <td id="statut-loupe"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                     <tr>
@@ -664,45 +619,45 @@
                         <td id="nc-vide" style="color: var(--danger); font-weight:700;">0</td>
                         <td>0,035%</td>
                         <td><strong id="taux-nc">0,00 %</strong></td>
-                        <td id="rep-nc" style="font-size: 10px; font-weight: 600; color: var(--text-muted);">Web 0 | Presse 0</td>
+                        <td id="rep-nc" style="font-size: 10px; color: var(--text-muted);">Web 0 | Presse 0</td>
                         <td id="statut-nc"><span class="status-badge status-tenu">Tenu</span></td>
                     </tr>
                     <tr style="border-top: 2px solid var(--border-color);">
                         <td><strong style="color: var(--warning);">LOUPÉ EN RETARD (XXX)</strong></td>
                         <td colspan="3" id="retard-xxx-val" style="font-weight: 700; color: var(--warning);">0 cas</td>
                         <td>—</td>
-                        <td colspan="3" style="font-size: 10px; color: var(--text-muted);">Volume des loupés rattachés au trigramme XXX (retard de prod)</td>
+                        <td colspan="3" style="font-size: 10px; color: var(--text-muted);">Volume des loupés rattachés au trigramme XXX</td>
                     </tr>
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE AJUSTÉ (MAX 200) -->
-            <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
-            <div class="evo-wrapper" id="evo-wrapper-container">
-                <!-- Grille, lignes d'objectifs et barres injectées dynamiquement -->
+            <!-- GRAPHIQUE ÉVOLUTION CATÉGORIES -->
+            <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs</div>
+            <div class="chart-box" id="evo-chart-box">
+                <!-- Généré dynamiquement -->
             </div>
             <div class="chart-legend">
                 <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
-                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #dc2626;"></div> Ligne Seuil Obj.</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #f59e0b;"></div> Loupé</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #ef4444;"></div> Non Conforme</div>
+                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #ef4444;"></div> Lignes d'Objectifs</div>
             </div>
         </div>
 
         <div class="card-section">
             <h2>Plan d'Action (3 Niveaux d'Alerte)</h2>
-            <div id="pa-container" style="font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
-                <div style="color: var(--text-muted);">Analyse des seuils en cours...</div>
+            <div id="pa-container" style="font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="color: var(--text-muted);">Analyse en cours...</div>
             </div>
         </div>
     </div>
 
-    <!-- GRAPHIQUE ÉVOLUTION GLOBALE & AVANCEMENT -->
+    <!-- GRAPHIQUE ÉVOLUTION GLOBALE & DÉBRIEFINGS -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Échelle fixe 0-800 & Repères 100 en 100)</h2>
-            <div class="chart-container-wrapper" id="chart-wrapper">
-                <!-- Grille de repères et barres injectées dynamiquement -->
+            <h2>Évolution NQ Global (Réel & Échelle dynamique)</h2>
+            <div class="chart-box" id="global-chart-box">
+                <!-- Généré dynamiquement -->
             </div>
         </div>
 
@@ -727,10 +682,10 @@
         </div>
     </div>
 
-    <!-- AGENTS À SUIVRE & NQ PAR ACTIVITÉ -->
+    <!-- AGENTS FLOP 5 & ACTIVITÉS -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Agents à suivre de très près (Flop 5 NQ du mois)</h2>
+            <h2>Agents à suivre de très près (Flop 5 NQ)</h2>
             <table>
                 <thead>
                     <tr>
@@ -741,9 +696,7 @@
                     </tr>
                 </thead>
                 <tbody id="agents-table-body">
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement...</td>
-                    </tr>
+                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -758,7 +711,7 @@
                 <div class="progress-info"><span>RUBIS</span><span id="stat-rubis">0 NQ</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-rubis" style="width: 0%;"></div></div>
             </div>
-            <div class="progress-item" style="margin-top:20px;">
+            <div class="progress-item" style="margin-top:16px;">
                 <div class="progress-info"><span>TANA (Production)</span><span>---</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 50%;"></div></div>
             </div>
@@ -769,13 +722,11 @@
         </div>
     </div>
 
-    <!-- SCRIPT COMPLET -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
         document.getElementById('current-datetime').innerText = new Date().toLocaleDateString('fr-FR') + ' — ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
 
-        // Gestion du Mode Sombre / Clair
         function toggleTheme() {
             const html = document.documentElement;
             const themeText = document.getElementById('theme-text');
@@ -830,7 +781,6 @@
                 let tousLesAgents = new Set();
                 
                 let volumesGlobalParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-                
                 let evoMauvaise = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 let evoLoupe = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 let evoNC = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
@@ -867,7 +817,6 @@
                             if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
                         }
 
-                        // Clôture automatique des vides de Janvier à Juin en OK
                         if ((moisLigne >= '01' && moisLigne <= '06') && (rawValidee === '' || rawValidee === '-')) {
                             rawValidee = 'OK';
                         }
@@ -957,7 +906,6 @@
                     }
                 }
 
-                // Recalcul des volumes globaux par mois pour le premier graphique
                 for (let mKey in evoMauvaise) {
                     volumesGlobalParMois[mKey] = evoMauvaise[mKey] + evoLoupe[mKey] + evoNC[mKey];
                 }
@@ -1005,7 +953,7 @@
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
                 document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // Avancement
+                // AVANCEMENT
                 const totalMauvGlobal = mauvOK + mauvCont + mauvVide;
                 const pctDebMauv = totalMauvGlobal > 0 ? Math.round(((mauvOK + mauvCont) / totalMauvGlobal) * 100) : 100;
                 const totalLoupeGlobal = loupeOK + loupeCont + loupeVide;
@@ -1025,18 +973,18 @@
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // Plan d'action
+                // PLAN D'ACTION
                 let htmlPA = '';
                 const definitionsPA = [
                     {
                         nom: 'Non Conforme', st: stNC,
-                        msgRouge: "Rappel urgent sur le process montage WEB et regles de découpe.",
-                        msgOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.",
+                        msgRouge: "Rappel urgent sur le process montage WEB et règles de découpe.",
+                        msgOrange: "Attention : Le taux frôle la limite. Vérifier les consignes WEB.",
                         msgVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB."
                     },
                     {
                         nom: 'Loupé', st: stLoupe,
-                        msgRouge: "Auditer le Flop 5 et planifier des debriefings et entretien individuel.",
+                        msgRouge: "Auditer le Flop 5 et planifier des débriefings individuels.",
                         msgOrange: "Attention : Surveillance requise sur les flux média en retard.",
                         msgVert: "Objectif tenu : Couverture des flux média maîtrisée."
                     },
@@ -1049,29 +997,29 @@
                 ];
 
                 definitionsPA.forEach(cat => {
-                    let borderColor = 'var(--success)', badgeBg = 'rgba(5, 150, 105, 0.15)', badgeColor = 'var(--success)', actionTexte = cat.msgVert;
-                    if (cat.st.niveau === 'rouge') { borderColor = 'var(--danger)'; badgeBg = 'rgba(220, 38, 38, 0.15)'; badgeColor = 'var(--danger)'; actionTexte = cat.msgRouge; }
-                    else if (cat.st.niveau === 'orange') { borderColor = 'var(--warning)'; badgeBg = 'rgba(217, 119, 6, 0.15)'; badgeColor = 'var(--warning)'; actionTexte = cat.msgOrange; }
+                    let borderColor = 'var(--success)', badgeBg = 'rgba(16, 185, 129, 0.15)', badgeColor = 'var(--success)', actionTexte = cat.msgVert;
+                    if (cat.st.niveau === 'rouge') { borderColor = 'var(--danger)'; badgeBg = 'rgba(239, 68, 68, 0.15)'; badgeColor = 'var(--danger)'; actionTexte = cat.msgRouge; }
+                    else if (cat.st.niveau === 'orange') { borderColor = 'var(--warning)'; badgeBg = 'rgba(245, 158, 11, 0.15)'; badgeColor = 'var(--warning)'; actionTexte = cat.msgOrange; }
 
                     htmlPA += `
-                        <div style="background: var(--bg-card); border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-left-width: 4px;">
+                        <div style="background: var(--bg-card); border-left: 3px solid ${borderColor}; padding: 8px 10px; border-radius: 6px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                                 <strong style="font-size: 11px; text-transform: uppercase; color: var(--text-main);">${cat.nom}</strong>
-                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${cat.st.texte}</span>
+                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 5px; border-radius: 4px; font-size: 9.5px; font-weight: 700;">${cat.st.texte}</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">${actionTexte}</div>
+                            <div style="color: var(--text-muted); font-size: 10.5px;">${actionTexte}</div>
                         </div>
                     `;
                 });
 
                 if (nonDebriefesMois > 0) {
                     htmlPA += `
-                        <div style="background: var(--bg-card); border-left: 4px solid var(--danger); padding: 10px; border-radius: 6px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-left-width: 4px;">
+                        <div style="background: var(--bg-card); border-left: 3px solid var(--danger); padding: 8px 10px; border-radius: 6px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                <strong style="font-size: 11px; text-transform: uppercase; color: var(--danger);">Lignes non débriefées</strong>
-                                <span style="background: rgba(220, 38, 38, 0.15); color: var(--danger); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
+                                <strong style="font-size: 11px; text-transform: uppercase; color: var(--danger);">Non Débriefées</strong>
+                                <span style="background: rgba(239, 68, 68, 0.15); color: var(--danger); padding: 2px 5px; border-radius: 4px; font-size: 9.5px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier une session de rattrapage des debrief en suspens.</div>
+                            <div style="color: var(--text-muted); font-size: 10.5px;">Planifier une session de rattrapage des débriefings.</div>
                         </div>
                     `;
                 }
@@ -1087,90 +1035,109 @@
                 document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
-                // =========================================================================
-                // GRAPHIQUE GLOBAL (Échelle fixe 0-800)
-                // =========================================================================
-                const wrapper = document.getElementById('chart-wrapper');
-                wrapper.innerHTML = '';
-                const fixedMaxScale = 800; 
+                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 
-                for (let v = 100; v <= fixedMaxScale; v += 100) {
-                    const pctFromBottom = (v / fixedMaxScale) * 100;
+                // =========================================================================
+                // 1. GRAPHIQUE GLOBAL (ÉCHELLE DYNAMIQUE ADAPTÉE AU VRAI MAX)
+                // =========================================================================
+                const globBox = document.getElementById('global-chart-box');
+                globBox.innerHTML = '';
+                
+                const realMaxGlob = Math.max(...Object.values(volumesGlobalParMois), 10);
+                const scaleGlob = Math.ceil(realMaxGlob / 100) * 100 || 800;
+
+                const stepGlob = scaleGlob / 4;
+                for (let v = stepGlob; v <= scaleGlob; v += stepGlob) {
+                    const pct = (v / scaleGlob) * 100;
+                    
                     const line = document.createElement('div');
                     line.className = 'chart-grid-line';
-                    line.style.bottom = pctFromBottom + '%';
-                    wrapper.appendChild(line);
+                    line.style.bottom = pct + '%';
+                    globBox.appendChild(line);
 
                     const lbl = document.createElement('div');
                     lbl.className = 'chart-grid-label';
-                    lbl.style.bottom = pctFromBottom + '%';
-                    lbl.innerText = v;
-                    wrapper.appendChild(lbl);
+                    lbl.style.bottom = pct + '%';
+                    lbl.innerText = Math.round(v);
+                    globBox.appendChild(lbl);
                 }
 
-                const chartContainer = document.createElement('div');
-                chartContainer.className = 'chart-container';
-                wrapper.appendChild(chartContainer);
-
-                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
-                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                const globBarsArea = document.createElement('div');
+                globBarsArea.className = 'chart-bars-area';
+                globBox.appendChild(globBarsArea);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
                     const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
-                    let hauteur = vol > 0 ? Math.round((vol / fixedMaxScale) * 100) : 0;
+                    const h = vol > 0 ? (vol / scaleGlob) * 100 : 0;
 
                     const grp = document.createElement('div');
-                    grp.className = 'chart-bar-group';
+                    grp.className = 'bar-group';
                     grp.innerHTML = `
-                        <div class="chart-value-label">${vol > 0 ? vol + ' NQ' : ''}</div>
-                        <div class="chart-bar" style="height: ${hauteur}%;" title="${vol} NQ"></div>
-                        <div class="chart-label">${nomsMois[idx]}</div>
+                        <div class="bar-val">${vol > 0 ? vol : ''}</div>
+                        <div class="bar-single" style="height: ${h}%;" title="${nomsMois[idx]}: ${vol} NQ"></div>
+                        <div class="bar-lbl">${nomsMois[idx]}</div>
                     `;
-                    chartContainer.appendChild(grp);
+                    globBarsArea.appendChild(grp);
                 });
 
                 // =========================================================================
-                // GRAPHIQUE ÉVOLUTION MENSUELLE (Échelle fixe compacte 0-200, repères 50 en 50)
+                // 2. GRAPHIQUE ÉVOLUTION PAR CATÉGORIES (ÉCHELLE DYNAMIQUE RÉALISTE)
                 // =========================================================================
-                const evoWrapper = document.getElementById('evo-wrapper-container');
-                evoWrapper.innerHTML = '';
-                const evoMaxScale = 200; // Hauteur maximale ramenée à 200 pour un rendu parfaitement proportionné
+                const evoBox = document.getElementById('evo-chart-box');
+                evoBox.innerHTML = '';
 
-                // Grille de repères de 50 en 50
-                for (let v = 50; v <= evoMaxScale; v += 50) {
-                    const pctFromBottom = (v / evoMaxScale) * 100;
+                // Trouver le max réel parmi toutes les catégories et les seuils d'objectifs
+                let maxCatValue = 0;
+                clesMois.forEach(cle => {
+                    const mN = parseInt(cle, 10);
+                    if (mN <= moisActuelMax) {
+                        maxCatValue = Math.max(maxCatValue, evoMauvaise[cle], evoLoupe[cle], evoNC[cle]);
+                    }
+                });
+
+                // Définir une échelle réaliste qui englobe les valeurs réelles tout en affichant proprement les seuils
+                const scaleEvo = Math.max(Math.ceil((maxCatValue + 20) / 50) * 50, 150);
+
+                // Lignes de grille régulières
+                const stepEvo = scaleEvo / 3;
+                for (let v = stepEvo; v <= scaleEvo; v += stepEvo) {
+                    const pct = (v / scaleEvo) * 100;
+                    
                     const line = document.createElement('div');
-                    line.className = 'evo-grid-line';
-                    line.style.bottom = pctFromBottom + '%';
-                    evoWrapper.appendChild(line);
+                    line.className = 'chart-grid-line';
+                    line.style.bottom = pct + '%';
+                    evoBox.appendChild(line);
 
                     const lbl = document.createElement('div');
-                    lbl.className = 'evo-grid-label';
-                    lbl.style.bottom = pctFromBottom + '%';
-                    lbl.innerText = v;
-                    evoWrapper.appendChild(lbl);
+                    lbl.className = 'chart-grid-label';
+                    lbl.style.bottom = pct + '%';
+                    lbl.innerText = Math.round(v);
+                    evoBox.appendChild(lbl);
                 }
 
-                // Lignes horizontales pour les objectifs fixes (Attention : 250 dépasse légèrement le haut du cadre à 200, ce qui montre bien le dépassement d'objectif)
+                // Lignes d'objectifs (Seuils)
                 const thresholds = [
-                    { val: objVolNC, color: '#dc2626' },
-                    { val: objVolLoupe, color: '#eab308' },
-                    { val: objVolMauv, color: '#64748b' } // Seuil 250 se positionnera au sommet ou au-delà
+                    { val: objVolNC, color: '#ef4444' },
+                    { val: objVolLoupe, color: '#f59e0b' },
+                    { val: objVolMauv, color: '#64748b' }
                 ];
 
                 thresholds.forEach(t => {
-                    const pctHeight = Math.min((t.val / evoMaxScale) * 100, 100);
-                    const line = document.createElement('div');
-                    line.className = 'target-line';
-                    line.style.bottom = pctHeight + '%';
-                    line.style.borderColor = t.color;
-                    evoWrapper.appendChild(line);
+                    if (t.val <= scaleEvo) {
+                        const pctHeight = (t.val / scaleEvo) * 100;
+                        const line = document.createElement('div');
+                        line.className = 'target-line-item';
+                        line.style.bottom = pctHeight + '%';
+                        line.style.borderColor = t.color;
+                        evoBox.appendChild(line);
+                    }
                 });
 
-                const evoContainer = document.createElement('div');
-                evoContainer.className = 'evo-chart-container';
-                evoWrapper.appendChild(evoContainer);
+                const evoBarsArea = document.createElement('div');
+                evoBarsArea.className = 'chart-bars-area';
+                evoBox.appendChild(evoBarsArea);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
@@ -1178,24 +1145,24 @@
                     const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
                     const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
 
-                    const hM = Math.min(Math.max(Math.round((mVal / evoMaxScale) * 100), 4), 100);
-                    const hL = Math.min(Math.max(Math.round((lVal / evoMaxScale) * 100), 4), 100);
-                    const hNC = Math.min(Math.max(Math.round((ncVal / evoMaxScale) * 100), 4), 100);
+                    const hM = (mVal / scaleEvo) * 100;
+                    const hL = (lVal / scaleEvo) * 100;
+                    const hNC = (ncVal / scaleEvo) * 100;
 
                     const group = document.createElement('div');
-                    group.className = 'evo-bar-group';
+                    group.className = 'bar-group';
                     group.innerHTML = `
                         <div class="evo-bars-flex">
-                            <div class="evo-bar-item" style="height: ${hM}%; background: #64748b;" title="Mauvaise: ${mVal}"></div>
-                            <div class="evo-bar-item" style="height: ${hL}%; background: #eab308;" title="Loupé: ${lVal}"></div>
-                            <div class="evo-bar-item" style="height: ${hNC}%; background: #dc2626;" title="Non Conforme: ${ncVal}"></div>
+                            <div class="evo-bar-item" style="height: ${hM}%; background: #64748b;" data-title="Mauvaise: ${mVal}"></div>
+                            <div class="evo-bar-item" style="height: ${hL}%; background: #f59e0b;" data-title="Loupé: ${lVal}"></div>
+                            <div class="evo-bar-item" style="height: ${hNC}%; background: #ef4444;" data-title="Non Conforme: ${ncVal}"></div>
                         </div>
-                        <div class="evo-label">${nomsMois[idx]}</div>
+                        <div class="bar-lbl">${nomsMois[idx]}</div>
                     `;
-                    evoContainer.appendChild(group);
+                    evoBarsArea.appendChild(group);
                 });
 
-                // Flop 5 Agents
+                // FLOP 5 AGENTS
                 const agentsTries = Object.keys(agentsCumul)
                     .map(t => ({ trigramme: t, total: agentsCumul[t] }))
                     .sort((a, b) => b.total - a.total)
