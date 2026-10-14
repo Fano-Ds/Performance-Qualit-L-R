@@ -48,7 +48,7 @@
             padding: 24px;
         }
 
-        /* HEADER PROFESSIONNEL ORGANISÉ AVEC SLOGAN EN BAS DE L'ENCADRÉ */
+        /* HEADER */
         header {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid #334155;
@@ -107,7 +107,6 @@
             font-weight: 600;
         }
 
-        /* BOUTON MODE SOMBRE DISCRET EN BAS DE LA DATE */
         .btn-theme-header {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -129,7 +128,6 @@
             color: #ffffff;
         }
 
-        /* SLOGAN DYNAMIQUE POSITIONNÉ SUR LA LIMITE DE L'ENCADRÉ EN BAS */
         .header-slogan {
             position: absolute;
             bottom: 10px;
@@ -300,7 +298,6 @@
             background-color: var(--table-hover);
         }
 
-        /* STATUS BADGES */
         .status-badge {
             padding: 4px 6px;
             border-radius: 6px;
@@ -408,7 +405,7 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE PROPORTIONNEL ET COMPACT */
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE PAR CATÉGORIES (CORRIGÉ & ÉLARGI) */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
@@ -419,15 +416,23 @@
             border-top: 1px dashed var(--border-color);
             padding-top: 12px;
         }
+        .evo-chart-box {
+            position: relative;
+            height: 160px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
         .evo-chart-container {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 20px; /* Espace réservé aux étiquettes des mois */
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 140px;
-            padding-top: 20px;
-            gap: 6px;
+            gap: 4px;
             border-bottom: 2px solid var(--border-color);
-            position: relative;
         }
         .evo-bar-group {
             flex: 1;
@@ -436,25 +441,28 @@
             align-items: center;
             height: 100%;
             justify-content: flex-end;
-            z-index: 2;
+            position: relative;
         }
         .evo-bars-flex {
             display: flex;
             align-items: flex-end;
-            gap: 2px;
-            height: 100px;
+            gap: 3px;
+            height: 100%;
             width: 100%;
             justify-content: center;
         }
+        /* BARRES ÉLARGIES À 12PX (au lieu de 6px) */
         .evo-bar-item {
-            width: 6px;
-            border-radius: 2px 2px 0 0;
+            width: 12px;
+            border-radius: 3px 3px 0 0;
             min-height: 2px;
+            transition: height 0.3s ease;
         }
         .evo-label {
+            position: absolute;
+            bottom: -20px;
             font-size: 10px;
             color: var(--text-muted);
-            margin-top: 6px;
             font-weight: 700;
         }
         .target-line {
@@ -462,7 +470,7 @@
             left: 0;
             right: 0;
             border-top: 2px dashed;
-            z-index: 1;
+            z-index: 3;
             pointer-events: none;
         }
 
@@ -470,7 +478,7 @@
             display: flex;
             gap: 16px;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: 20px;
             font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
@@ -490,7 +498,7 @@
 </head>
 <body>
 
-    <!-- HEADER AVEC SLOGAN EN BAS DE L'ENCADRÉ -->
+    <!-- HEADER -->
     <header>
         <div class="header-content">
             <h1>QUALITY PERFORMANCE CENTER <span>— LIRIS / RUBIS</span></h1>
@@ -554,7 +562,7 @@
         </div>
     </div>
 
-    <!-- KPI & OBJECTIFS VOLUME CARDS -->
+    <!-- KPI CARDS -->
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées</h3>
@@ -585,7 +593,7 @@
         </div>
     </div>
 
-    <!-- SECTION CATÉGORIES DÉTAILLÉES & PLAN D'ACTION -->
+    <!-- SECTION CATÉGORIES & PLAN D'ACTION -->
     <div class="grid-2col">
         <div class="card-section">
             <h2>Suivi par Catégorie & Retards de Production</h2>
@@ -642,16 +650,18 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE ORIGINEL CORRECTEMENT PROPORTIONNÉ -->
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
-            <div class="evo-chart-container" id="evo-chart-container">
-                <!-- Barres et lignes insérées dynamiquement -->
+            <div class="evo-chart-box">
+                <div class="evo-chart-container" id="evo-chart-container">
+                    <!-- Barres et lignes insérées dynamiquement -->
+                </div>
             </div>
             <div class="chart-legend">
-                <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
-                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #dc2626;"></div> Ligne Seuil Obj.</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise (Obj: 250)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé (Obj: 100)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme (Obj: 100)</div>
+                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #dc2626;"></div> Lignes Seuil Obj.</div>
             </div>
         </div>
 
@@ -741,7 +751,6 @@
 
         document.getElementById('current-datetime').innerText = new Date().toLocaleDateString('fr-FR') + ' — ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
 
-        // Gestion du Mode Sombre / Clair
         function toggleTheme() {
             const html = document.documentElement;
             const themeText = document.getElementById('theme-text');
@@ -833,7 +842,6 @@
                             if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
                         }
 
-                        // Clôture automatique des vides de Janvier à Juin en OK
                         if ((moisLigne >= '01' && moisLigne <= '06') && (rawValidee === '' || rawValidee === '-')) {
                             rawValidee = 'OK';
                         }
@@ -1096,30 +1104,23 @@
                 });
 
                 // =========================================================================
-                // GRAPHIQUE ÉVOLUTION MENSUELLE (Échelle proportionnelle logique et cohérente)
+                // GRAPHIQUE ÉVOLUTION MENSUELLE (ÉCHELLE & POSITIONNEMENT CORRIGÉS)
                 // =========================================================================
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
 
-                // Utilisation du maximum réel des données ou du seuil obj max (250) pour une échelle parfaitement proportionnée
-                let maxEvoVal = 250;
-                clesMois.forEach(cle => {
-                    const mN = parseInt(cle, 10);
-                    if (mN <= moisActuelMax) {
-                        maxEvoVal = Math.max(maxEvoVal, evoMauvaise[cle], evoLoupe[cle], evoNC[cle]);
-                    }
-                });
-                // Arrondi supérieur à la dizaine/centaine propre
-                maxEvoVal = Math.ceil(maxEvoVal / 50) * 50;
+                // Échelle fixe de 250 (correspondant au seuil max de la catégorie Mauvaise)
+                const scaleMaxEvo = 250;
 
+                // Lignes d'objectifs calculées rigoureusement sur l'échelle de 250
                 const thresholds = [
-                    { val: objVolNC, color: '#dc2626' },
-                    { val: objVolLoupe, color: '#eab308' },
-                    { val: objVolMauv, color: '#64748b' }
+                    { val: objVolNC, color: '#dc2626' },    // 100/250 = 40%
+                    { val: objVolLoupe, color: '#eab308' }, // 100/250 = 40%
+                    { val: objVolMauv, color: '#64748b' }   // 250/250 = 100%
                 ];
 
                 thresholds.forEach(t => {
-                    const pctHeight = Math.min(Math.round((t.val / maxEvoVal) * 100), 100);
+                    const pctHeight = (t.val / scaleMaxEvo) * 100;
                     const line = document.createElement('div');
                     line.className = 'target-line';
                     line.style.bottom = pctHeight + '%';
@@ -1133,9 +1134,10 @@
                     const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
                     const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
 
-                    const hM = Math.max(Math.round((mVal / maxEvoVal) * 100), 4);
-                    const hL = Math.max(Math.round((lVal / maxEvoVal) * 100), 4);
-                    const hNC = Math.max(Math.round((ncVal / maxEvoVal) * 100), 4);
+                    // Hauteurs relatives calculées exactement sur la même échelle (250)
+                    const hM = (mVal / scaleMaxEvo) * 100;
+                    const hL = (lVal / scaleMaxEvo) * 100;
+                    const hNC = (ncVal / scaleMaxEvo) * 100;
 
                     const group = document.createElement('div');
                     group.className = 'evo-bar-group';
