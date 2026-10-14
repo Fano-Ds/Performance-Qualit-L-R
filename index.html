@@ -790,7 +790,7 @@
                         const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
                         
-                        const rawValidee = cols[idxValidee] !== undefined ? cols[idxValidee].trim().toUpperCase() : '';
+                        let rawValidee = cols[idxValidee] !== undefined ? cols[idxValidee].trim().toUpperCase() : '';
                         
                         let moisLigne = '';
                         if (dateLecture.includes('/')) {
@@ -801,6 +801,11 @@
                             if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
                         }
 
+                        // Règle demandée : de Janvier ('01') à Juin ('06'), si la cellule est vide, on la considère automatiquement comme OK
+                        if ((moisLigne >= '01' && moisLigne <= '06') && (rawValidee === '' || rawValidee === '-')) {
+                            rawValidee = 'OK';
+                        }
+
                         if ((trigramme === 'XXX' || trigramme === '') && (categorie.includes('LOUPÉ') || categorie.includes('LOUPE'))) {
                             const matchP = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
                             if (matchP) retardXXXCount++;
@@ -808,12 +813,9 @@
 
                         if (trigramme === 'XXX' || trigramme === '' || trigramme === 'ANONYME') continue;
 
-                        // Vérification rigoureuse : si la ligne est clôturée (OK, Contestation ou KO), elle n'est JAMAIS vide
                         const estOK = rawValidee.includes('OK');
                         const estContestation = rawValidee.includes('CONTEST');
                         const estKO = rawValidee.includes('KO');
-                        
-                        // Une ligne est vraiment vide uniquement si elle n'a aucun statut valide et que la case est vierge
                         const estVide = (!estOK && !estContestation && !estKO && (rawValidee === '' || rawValidee === '-'));
 
                         if (trigramme.length >= 2 && trigramme.length <= 5 && moisLigne >= '01' && moisLigne <= '12') {
@@ -1015,21 +1017,24 @@
                 document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
-                // Graphique Global par mois : Proportionnalité stricte des hauteurs & Volume affiché sans pourcentage
+                // Graphique Global par mois : Hauteurs proportionnelles réelles et ajustées (ex: 524 vs 607 vs 544 vs 592 ont des tailles différentes)
                 const chartContainer = document.getElementById('chart-months-container');
                 chartContainer.innerHTML = '';
                 const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
                 const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
                 
-                // Recherche stricte du volume maximum pour une mise à l'échelle parfaite (ex: 600 NQ = 100% de hauteur, 500 NQ = proportionnel)
                 const maxVol = Math.max(...Object.values(volumesGlobalParMois), 1);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
                     const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
                     
-                    // Calcul proportionnel mathématique exact (hauteur min de 6% si le volume existe pour l'estimer visuellement)
-                    const hauteur = vol > 0 ? Math.max(Math.round((vol / maxVol) * 100), 6) : 0;
+                    // Formule de proportionnalité fluide : on applique un ratio entre 25% et 100% de la hauteur max pour bien marquer les différences (ex: 524 vs 607)
+                    let hauteur = 0;
+                    if (vol > 0) {
+                        const minHeightPct = 25; // Hauteur minimale pour que même les petits volumes se voient
+                        hauteur = minHeightPct + Math.round((vol / maxVol) * (100 - minHeightPct));
+                    }
 
                     const grp = document.createElement('div');
                     grp.className = 'chart-bar-group';
