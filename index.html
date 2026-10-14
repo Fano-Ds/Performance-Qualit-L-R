@@ -801,7 +801,7 @@
                             if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
                         }
 
-                        // Règle demandée : de Janvier ('01') à Juin ('06'), si la cellule est vide, on la considère automatiquement comme OK
+                        // Clôture automatique des vides de Janvier ('01') à Juin ('06') basculés en OK
                         if ((moisLigne >= '01' && moisLigne <= '06') && (rawValidee === '' || rawValidee === '-')) {
                             rawValidee = 'OK';
                         }
@@ -1017,23 +1017,29 @@
                 document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
-                // Graphique Global par mois : Hauteurs proportionnelles réelles et ajustées (ex: 524 vs 607 vs 544 vs 592 ont des tailles différentes)
+                // Graphique Global par mois : Échelle dynamique à contraste renforcé pour marquer les écarts (Jan-Mai compris)
                 const chartContainer = document.getElementById('chart-months-container');
                 chartContainer.innerHTML = '';
                 const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
                 const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
                 
                 const maxVol = Math.max(...Object.values(volumesGlobalParMois), 1);
+                const minVol = Math.min(...Object.values(volumesGlobalParMois).filter(v => v > 0), maxVol);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
                     const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
                     
-                    // Formule de proportionnalité fluide : on applique un ratio entre 25% et 100% de la hauteur max pour bien marquer les différences (ex: 524 vs 607)
+                    // Formule de contraste renforcée : force une plage de 15% à 100% de hauteur pour bien différencier visuellement les mois hauts (ex: 524, 607, 544, 592)
                     let hauteur = 0;
                     if (vol > 0) {
-                        const minHeightPct = 25; // Hauteur minimale pour que même les petits volumes se voient
-                        hauteur = minHeightPct + Math.round((vol / maxVol) * (100 - minHeightPct));
+                        if (maxVol === minVol) {
+                            hauteur = 80;
+                        } else {
+                            hauteur = 15 + Math.round(((vol - (minVol * 0.5)) / (maxVol - (minVol * 0.5))) * 85);
+                            if (hauteur > 100) hauteur = 100;
+                            if (hauteur < 15) hauteur = 15;
+                        }
                     }
 
                     const grp = document.createElement('div');
