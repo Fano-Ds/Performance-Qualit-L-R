@@ -335,10 +335,10 @@
             border-radius: 4px;
         }
 
-        /* CHART GLOBAL AVEC HARMONISATION HARMONIEUSE DE HAUTEUR */
+        /* CHART GLOBAL AVEC AXE FIXE DE 0 À 800 ET GRILLE DE REPRÉSANTS STABLE */
         .chart-container-wrapper {
             position: relative;
-            height: 210px;
+            height: 220px;
             margin-top: 15px;
             margin-bottom: 10px;
         }
@@ -669,7 +669,7 @@
     <!-- GRAPHIQUE ÉVOLUTION GLOBALE & AVANCEMENT -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Proportionnalité stricte & Repères)</h2>
+            <h2>Évolution NQ Global (Échelle fixe 0-800 & Repères 100 en 100)</h2>
             <div class="chart-container-wrapper" id="chart-wrapper">
                 <!-- Grille de repères et barres injectées dynamiquement -->
             </div>
@@ -1053,17 +1053,16 @@
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
                 // =========================================================================
-                // GRAPHIQUE GLOBAL AVEC HARMONISATION HARMONIEUSE DES HAUTEURS (Mars à sa vraie place)
+                // GRAPHIQUE GLOBAL AVEC AXE STABLE DE 0 À 800 (Respect absolu de la logique)
                 // =========================================================================
                 const wrapper = document.getElementById('chart-wrapper');
                 wrapper.innerHTML = '';
 
-                const maxVolReel = Math.max(...Object.values(volumesGlobalParMois), 100);
-                const topScale = Math.ceil(maxVolReel / 100) * 100;
+                const fixedMaxScale = 800; // Échelle fixe de 0 à 800 pour que 600 et 700 soient toujours aux mêmes hauteurs logiques
 
-                // Lignes de repères régulières
-                for (let v = 100; v <= topScale; v += 100) {
-                    const pctFromBottom = (v / topScale) * 100;
+                // Génération des lignes de repère tous les 100 de 0 à 800
+                for (let v = 100; v <= fixedMaxScale; v += 100) {
+                    const pctFromBottom = (v / fixedMaxScale) * 100;
                     
                     const line = document.createElement('div');
                     line.className = 'chart-grid-line';
@@ -1088,10 +1087,10 @@
                     const moisNum = parseInt(cle, 10);
                     const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
                     
-                    // Calcul exact et proportionnel pour que Mars (641 NQ) se place parfaitement entre 602 NQ et les sommets à 690+ NQ
+                    // Calcul proportionnel strict sur l'échelle fixe 0-800
                     let hauteur = 0;
                     if (vol > 0) {
-                        hauteur = Math.round((vol / topScale) * 100);
+                        hauteur = Math.round((vol / fixedMaxScale) * 100);
                     }
 
                     const grp = document.createElement('div');
