@@ -408,7 +408,7 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE AVEC ÉCHELLE FIXE (50 à 300) ET LIGNES OBJECTIFS */
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE AJUSTÉ (HAUTEUR MAX 200) */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
@@ -422,7 +422,7 @@
 
         .evo-wrapper {
             position: relative;
-            height: 180px;
+            height: 150px;
             margin-top: 10px;
             margin-bottom: 10px;
         }
@@ -676,7 +676,7 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE AVEC ÉCHELLE FIXE (50-300) -->
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE AJUSTÉ (MAX 200) -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
             <div class="evo-wrapper" id="evo-wrapper-container">
                 <!-- Grille, lignes d'objectifs et barres injectées dynamiquement -->
@@ -1131,11 +1131,11 @@
                 });
 
                 // =========================================================================
-                // GRAPHIQUE ÉVOLUTION MENSUELLE AVEC ÉCHELLE FIXE (50, 100, 150, 200, 250, 300)
+                // GRAPHIQUE ÉVOLUTION MENSUELLE (Échelle fixe compacte 0-200, repères 50 en 50)
                 // =========================================================================
                 const evoWrapper = document.getElementById('evo-wrapper-container');
                 evoWrapper.innerHTML = '';
-                const evoMaxScale = 300; // Échelle fixe de 50 en 50 jusqu'à 300
+                const evoMaxScale = 200; // Hauteur maximale ramenée à 200 pour un rendu parfaitement proportionné
 
                 // Grille de repères de 50 en 50
                 for (let v = 50; v <= evoMaxScale; v += 50) {
@@ -1152,11 +1152,11 @@
                     evoWrapper.appendChild(lbl);
                 }
 
-                // Lignes horizontales pour les objectifs fixes
+                // Lignes horizontales pour les objectifs fixes (Attention : 250 dépasse légèrement le haut du cadre à 200, ce qui montre bien le dépassement d'objectif)
                 const thresholds = [
-                    { val: objVolNC, color: '#dc2626', label: 'Obj NC (100)' },
-                    { val: objVolLoupe, color: '#eab308', label: 'Obj Loupé (100)' },
-                    { val: objVolMauv, color: '#64748b', label: 'Obj Mauvaise (250)' }
+                    { val: objVolNC, color: '#dc2626' },
+                    { val: objVolLoupe, color: '#eab308' },
+                    { val: objVolMauv, color: '#64748b' } // Seuil 250 se positionnera au sommet ou au-delà
                 ];
 
                 thresholds.forEach(t => {
@@ -1178,9 +1178,9 @@
                     const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
                     const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
 
-                    const hM = Math.max(Math.round((mVal / evoMaxScale) * 100), 4);
-                    const hL = Math.max(Math.round((lVal / evoMaxScale) * 100), 4);
-                    const hNC = Math.max(Math.round((ncVal / evoMaxScale) * 100), 4);
+                    const hM = Math.min(Math.max(Math.round((mVal / evoMaxScale) * 100), 4), 100);
+                    const hL = Math.min(Math.max(Math.round((lVal / evoMaxScale) * 100), 4), 100);
+                    const hNC = Math.min(Math.max(Math.round((ncVal / evoMaxScale) * 100), 4), 100);
 
                     const group = document.createElement('div');
                     group.className = 'evo-bar-group';
