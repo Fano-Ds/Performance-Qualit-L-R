@@ -405,7 +405,7 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT, PROPORTIONNEL & SANS DÉBORDEMENT */
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE OPTIMISÉ, COMPACT & SANS DÉBORDEMENT */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
@@ -418,9 +418,11 @@
         }
         .evo-chart-box {
             position: relative;
-            height: 110px; /* Hauteur réduite pour un rendu ultra propre et compact */
+            height: 100px; /* Hauteur très compacte pour s'intégrer parfaitement */
             margin-top: 5px;
             margin-bottom: 5px;
+            overflow: hidden; /* Bloque tout dépassement visuel externe */
+            border-radius: 6px;
         }
         .evo-chart-container {
             position: absolute;
@@ -452,7 +454,7 @@
             justify-content: center;
         }
         .evo-bar-item {
-            width: 9px; /* Largeur optimisée pour éviter l'effet "gros pâté" */
+            width: 8px; /* Finesse idéale pour la compacité */
             border-radius: 2px 2px 0 0;
             min-height: 2px;
         }
@@ -648,18 +650,18 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE OPTIMISÉ -->
-            <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT (LIGNE UNIQUE 100) -->
+            <div class="sub-chart-title">Évolution mensuelle par catégorie & Ligne d'objectif volume (100)</div>
             <div class="evo-chart-box">
                 <div class="evo-chart-container" id="evo-chart-container">
                     <!-- Barres et lignes insérées dynamiquement -->
                 </div>
             </div>
             <div class="chart-legend">
-                <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise (Obj: 250)</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé (Obj: 100)</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme (Obj: 100)</div>
-                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #dc2626;"></div> Lignes Seuil Obj.</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #eab308;"></div> Loupé</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div> Non Conforme</div>
+                <div class="legend-item"><div style="width: 12px; height: 2px; border-top: 2px dashed #eab308;"></div> Ligne Seuil Obj. (100)</div>
             </div>
         </div>
 
@@ -795,7 +797,6 @@
                 const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
                 const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
 
-                const objVolMauv = 250;
                 const objVolLoupe = 100;
                 const objVolNC = 100;
 
@@ -1102,37 +1103,23 @@
                 });
 
                 // =========================================================================
-                // GRAPHIQUE ÉVOLUTION MENSUELLE AVEC ÉCHELLE ADAPTATIVE INTELLIGENTE
+                // GRAPHIQUE ÉVOLUTION MENSUELLE ADAPTATIF PROPRE (MAX ÉCHELLE = 400 POUR TOUT CONTENIR)
                 // =========================================================================
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
 
-                // Échelle maximale intelligente : minimum 250 (objectif Mauvaise), mais s'ajuste si un mois dépasse (ex: 400) pour qu'aucune barre ne sorte jamais du bloc.
-                let maxEvoVal = 250;
-                clesMois.forEach(cle => {
-                    const mN = parseInt(cle, 10);
-                    if (mN <= moisActuelMax) {
-                        maxEvoVal = Math.max(maxEvoVal, evoMauvaise[cle], evoLoupe[cle], evoNC[cle]);
-                    }
-                });
-                maxEvoVal = Math.ceil(maxEvoVal / 50) * 50; // Arrondi à la cinquantaine supérieure
+                // Échelle max fixée à 400 pour que les pics les plus hauts (ex: 300-380) tiennent confortablement dans le bloc sans saturer
+                let maxEvoVal = 400;
 
-                const thresholds = [
-                    { val: objVolNC, color: '#dc2626' },    // 100
-                    { val: objVolLoupe, color: '#eab308' }, // 100
-                    { val: objVolMauv, color: '#64748b' }   // 250
-                ];
-
-                thresholds.forEach(t => {
-                    const pctHeight = (t.val / maxEvoVal) * 100;
-                    if (pctHeight <= 100) {
-                        const line = document.createElement('div');
-                        line.className = 'target-line';
-                        line.style.bottom = pctHeight + '%';
-                        line.style.borderColor = t.color;
-                        evoContainer.appendChild(line);
-                    }
-                });
+                // Ligne unique de l'objectif à 100 positionnée mathématiquement sur le nouveau max (100 / 400 = 25%)
+                const thresholdVal = 100;
+                const pctHeight = (thresholdVal / maxEvoVal) * 100;
+                
+                const line = document.createElement('div');
+                line.className = 'target-line';
+                line.style.bottom = pctHeight + '%';
+                line.style.borderColor = '#eab308'; // Couleur jaune/orange repère objectif
+                evoContainer.appendChild(line);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
@@ -1140,6 +1127,7 @@
                     const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
                     const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
 
+                    // Hauteurs relatives en pourcentage par rapport au max de 400 (plus de débordement possible)
                     const hM = Math.min((mVal / maxEvoVal) * 100, 100);
                     const hL = Math.min((lVal / maxEvoVal) * 100, 100);
                     const hNC = Math.min((ncVal / maxEvoVal) * 100, 100);
