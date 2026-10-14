@@ -277,7 +277,7 @@
             border-collapse: collapse;
             font-size: 11px;
             text-align: left;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         th {
@@ -405,20 +405,20 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT ET PROPORTIONNÉ */
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT, PROPORTIONNEL & SANS DÉBORDEMENT */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             color: var(--text-muted);
-            margin-top: 18px;
-            margin-bottom: 10px;
+            margin-top: 14px;
+            margin-bottom: 8px;
             border-top: 1px dashed var(--border-color);
-            padding-top: 12px;
+            padding-top: 10px;
         }
         .evo-chart-box {
             position: relative;
-            height: 130px; /* Hauteur réduite pour que tout tienne bien dans le bloc sans déborder */
+            height: 110px; /* Hauteur réduite pour un rendu ultra propre et compact */
             margin-top: 5px;
             margin-bottom: 5px;
         }
@@ -427,11 +427,11 @@
             left: 0;
             right: 0;
             top: 0;
-            bottom: 20px;
+            bottom: 18px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            gap: 4px;
+            gap: 3px;
             border-bottom: 2px solid var(--border-color);
         }
         .evo-bar-group {
@@ -452,14 +452,14 @@
             justify-content: center;
         }
         .evo-bar-item {
-            width: 10px; /* Largeur équilibrée */
+            width: 9px; /* Largeur optimisée pour éviter l'effet "gros pâté" */
             border-radius: 2px 2px 0 0;
             min-height: 2px;
         }
         .evo-label {
             position: absolute;
-            bottom: -20px;
-            font-size: 10px;
+            bottom: -18px;
+            font-size: 9.5px;
             color: var(--text-muted);
             font-weight: 700;
         }
@@ -476,7 +476,7 @@
             display: flex;
             gap: 16px;
             justify-content: center;
-            margin-top: 18px;
+            margin-top: 16px;
             font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
@@ -648,7 +648,7 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT -->
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE OPTIMISÉ -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
             <div class="evo-chart-box">
                 <div class="evo-chart-container" id="evo-chart-container">
@@ -1102,12 +1102,20 @@
                 });
 
                 // =========================================================================
-                // GRAPHIQUE ÉVOLUTION MENSUELLE (COMPACT, PROPORTIONNEL ET SANS DÉBORDEMENT)
+                // GRAPHIQUE ÉVOLUTION MENSUELLE AVEC ÉCHELLE ADAPTATIVE INTELLIGENTE
                 // =========================================================================
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
 
-                const scaleMaxEvo = 250;
+                // Échelle maximale intelligente : minimum 250 (objectif Mauvaise), mais s'ajuste si un mois dépasse (ex: 400) pour qu'aucune barre ne sorte jamais du bloc.
+                let maxEvoVal = 250;
+                clesMois.forEach(cle => {
+                    const mN = parseInt(cle, 10);
+                    if (mN <= moisActuelMax) {
+                        maxEvoVal = Math.max(maxEvoVal, evoMauvaise[cle], evoLoupe[cle], evoNC[cle]);
+                    }
+                });
+                maxEvoVal = Math.ceil(maxEvoVal / 50) * 50; // Arrondi à la cinquantaine supérieure
 
                 const thresholds = [
                     { val: objVolNC, color: '#dc2626' },    // 100
@@ -1116,12 +1124,14 @@
                 ];
 
                 thresholds.forEach(t => {
-                    const pctHeight = (t.val / scaleMaxEvo) * 100;
-                    const line = document.createElement('div');
-                    line.className = 'target-line';
-                    line.style.bottom = pctHeight + '%';
-                    line.style.borderColor = t.color;
-                    evoContainer.appendChild(line);
+                    const pctHeight = (t.val / maxEvoVal) * 100;
+                    if (pctHeight <= 100) {
+                        const line = document.createElement('div');
+                        line.className = 'target-line';
+                        line.style.bottom = pctHeight + '%';
+                        line.style.borderColor = t.color;
+                        evoContainer.appendChild(line);
+                    }
                 });
 
                 clesMois.forEach((cle, idx) => {
@@ -1130,9 +1140,9 @@
                     const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
                     const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
 
-                    const hM = (mVal / scaleMaxEvo) * 100;
-                    const hL = (lVal / scaleMaxEvo) * 100;
-                    const hNC = (ncVal / scaleMaxEvo) * 100;
+                    const hM = Math.min((mVal / maxEvoVal) * 100, 100);
+                    const hL = Math.min((lVal / maxEvoVal) * 100, 100);
+                    const hNC = Math.min((ncVal / maxEvoVal) * 100, 100);
 
                     const group = document.createElement('div');
                     group.className = 'evo-bar-group';
