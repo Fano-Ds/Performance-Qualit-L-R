@@ -335,15 +335,50 @@
             border-radius: 4px;
         }
 
-        /* CHART GLOBAL */
+        /* CHART GLOBAL AVEC GRILLE DE REPÈRES HORIZONTAUX */
+        .chart-container-wrapper {
+            position: relative;
+            height: 200px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .chart-grid-line {
+            position: absolute;
+            left: 45px;
+            right: 0;
+            border-top: 1px dashed var(--border-color);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .chart-grid-label {
+            position: absolute;
+            left: 0;
+            font-size: 9px;
+            color: var(--text-muted);
+            transform: translateY(-50%);
+            font-weight: 600;
+            width: 40px;
+            text-align: right;
+            padding-right: 5px;
+        }
+
         .chart-container {
+            position: absolute;
+            left: 45px;
+            right: 0;
+            top: 0;
+            bottom: 0;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 190px;
-            padding-top: 25px;
+            padding-top: 15px;
             gap: 6px;
+            z-index: 2;
         }
+
         .chart-bar-group {
             flex: 1;
             display: flex;
@@ -353,7 +388,7 @@
             justify-content: flex-end;
         }
         .chart-value-label {
-            font-size: 9px;
+            font-size: 8.5px;
             color: var(--primary);
             margin-bottom: 4px;
             font-weight: 700;
@@ -634,9 +669,9 @@
     <!-- GRAPHIQUE ÉVOLUTION GLOBALE & AVANCEMENT -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Volumes réels)</h2>
-            <div class="chart-container" id="chart-months-container">
-                <!-- Rempli dynamiquement -->
+            <h2>Évolution NQ Global (Volumes réels & Repères 100 en 100)</h2>
+            <div class="chart-container-wrapper" id="chart-wrapper">
+                <!-- Grille de repères horizontaux et barres injectées dynamiquement -->
             </div>
         </div>
 
@@ -801,7 +836,7 @@
                             if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
                         }
 
-                        // Clôture automatique des vides de Janvier ('01') à Juin ('06') basculés en OK
+                        // Clôture automatique des vides de Janvier à Juin en OK
                         if ((moisLigne >= '01' && moisLigne <= '06') && (rawValidee === '' || rawValidee === '-')) {
                             rawValidee = 'OK';
                         }
@@ -1017,30 +1052,46 @@
                 document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
-                // Graphique Global par mois : Échelle dynamique à contraste renforcé pour marquer les écarts (Jan-Mai compris)
-                const chartContainer = document.getElementById('chart-months-container');
-                chartContainer.innerHTML = '';
+                // ==========================================
+                // GRAPHIQUE GLOBAL AVEC LIGNES DE REPÈRE (100 en 100)
+                // ==========================================
+                const wrapper = document.getElementById('chart-wrapper');
+                wrapper.innerHTML = '';
+
+                const rawMaxVol = Math.max(...Object.values(volumesGlobalParMois), 100);
+                // On arrondit au centaine supérieur pour les repères (ex: max 693 -> échelle s'arrête à 700 ou 800)
+                const topScale = Math.ceil(rawMaxVol / 100) * 100; 
+
+                // Génération des lignes de repère de 100 en 100 jusqu'au topScale
+                for (let v = 100; v <= topScale; v += 100) {
+                    const pctFromBottom = (v / topScale) * 100;
+                    
+                    const line = document.createElement('div');
+                    line.className = 'chart-grid-line';
+                    line.style.bottom = pctFromBottom + '%';
+                    wrapper.appendChild(line);
+
+                    const lbl = document.createElement('div');
+                    lbl.className = 'chart-grid-label';
+                    lbl.style.bottom = pctFromBottom + '%';
+                    lbl.innerText = v;
+                    wrapper.appendChild(lbl);
+                }
+
+                // Conteneur des barres positionné par-dessus la grille
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'chart-container';
+                wrapper.appendChild(chartContainer);
+
                 const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
                 const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-                
-                const maxVol = Math.max(...Object.values(volumesGlobalParMois), 1);
-                const minVol = Math.min(...Object.values(volumesGlobalParMois).filter(v => v > 0), maxVol);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
                     const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
                     
-                    // Formule de contraste renforcée : force une plage de 15% à 100% de hauteur pour bien différencier visuellement les mois hauts (ex: 524, 607, 544, 592)
-                    let hauteur = 0;
-                    if (vol > 0) {
-                        if (maxVol === minVol) {
-                            hauteur = 80;
-                        } else {
-                            hauteur = 15 + Math.round(((vol - (minVol * 0.5)) / (maxVol - (minVol * 0.5))) * 85);
-                            if (hauteur > 100) hauteur = 100;
-                            if (hauteur < 15) hauteur = 15;
-                        }
-                    }
+                    // Hauteur strictement linéaire par rapport au topScale de référence
+                    const hauteur = vol > 0 ? Math.round((vol / topScale) * 100) : 0;
 
                     const grp = document.createElement('div');
                     grp.className = 'chart-bar-group';
