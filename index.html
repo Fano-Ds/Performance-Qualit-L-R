@@ -340,9 +340,9 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 180px;
-            padding-top: 25px;
-            gap: 6px;
+            height: 190px;
+            padding-top: 30px;
+            gap: 4px;
         }
         .chart-bar-group {
             flex: 1;
@@ -353,11 +353,13 @@
             justify-content: flex-end;
         }
         .chart-value-label {
-            font-size: 9px;
+            font-size: 8.5px;
             color: var(--primary);
             margin-bottom: 4px;
             font-weight: 700;
             white-space: nowrap;
+            text-align: center;
+            line-height: 1.1;
         }
         .chart-bar {
             width: 100%;
@@ -518,7 +520,7 @@
         </div>
     </div>
 
-    <!-- KPI & OBJECTIFS VOLUME CARDS (Figés selon les consignes) -->
+    <!-- KPI & OBJECTIFS VOLUME CARDS -->
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées</h3>
@@ -633,9 +635,9 @@
     <!-- GRAPHIQUE ÉVOLUTION GLOBALE & AVANCEMENT -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Par mois avec volumes & taux)</h2>
+            <h2>Évolution NQ Global (Tous les mois en continu - Volumes & Taux)</h2>
             <div class="chart-container" id="chart-months-container">
-                <!-- Rempli dynamiquement avec proportionnalité corrigée -->
+                <!-- Rempli dynamiquement (tous les mois affichés en permanence) -->
             </div>
         </div>
 
@@ -756,13 +758,16 @@
                 const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
                 const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
 
-                const objVolMauv = parseFloat(document.getElementById('obj-vol-mauvaise').value) || 250;
-                const objVolLoupe = parseFloat(document.getElementById('obj-vol-loupe').value) || 100;
-                const objVolNC = parseFloat(document.getElementById('obj-vol-nc').value) || 100;
+                const objVolMauv = 250;
+                const objVolLoupe = 100;
+                const objVolNC = 100;
 
                 let agentsCumul = {};
                 let tousLesAgents = new Set();
-                let volumesParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                
+                // Suivi global par mois (indépendant du filtre période pour l'évolution)
+                let volumesGlobalParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                let totalParMoisPourTaux = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 
                 let evoMauvaise = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 let evoLoupe = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
@@ -829,23 +834,26 @@
                             const matchActivite = (activiteLigne === activiteSelectionnee);
                             const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
 
+                            // Comptage global indépendant de la période pour le graphique d'évolution continue
                             if (matchActivite && matchMedia) {
+                                totalParMoisPlus = true; 
                                 if (estOK || estContestation) {
+                                    volumesGlobalParMois[moisLigne]++;
                                     if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
                                     else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
                                     else if (categorie.includes('CONFORME') || categorie.includes('NC')) evoNC[moisLigne]++;
                                 }
+                                totalParMoisPourTaux[moisLigne]++; // Total lignes lues du mois (OK + Cont + Vides)
                             }
 
                             const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
 
+                            // Comptage filtré pour les KPIs et tableaux du mois sélectionné
                             if (matchPeriode && matchActivite && matchMedia) {
                                 if (estVide) nonDebriefesMois++;
 
                                 if (estOK || estContestation) {
                                     totalMois++;
-                                    volumesParMois[moisLigne]++; // Comptabilise le volume global du mois pour ce filtre
-
                                     if (activiteLigne === 'liris') countLiris++;
                                     if (activiteLigne === 'rubis') countRubis++;
 
@@ -1004,25 +1012,26 @@
                 document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
-                // Graphique Global par mois (Correction de l'échelle des barres et affichage clair des volumes)
+                // Graphique Global par mois (Affichage permanent de tous les mois avec volume et taux global)
                 const chartContainer = document.getElementById('chart-months-container');
                 chartContainer.innerHTML = '';
                 const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
                 const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
                 
-                // Calcul précis du maximum global pour que les hauteurs de barres soient proportionnelles
-                const maxVol = Math.max(...Object.values(volumesParMois), 1);
+                const maxVol = Math.max(...Object.values(volumesGlobalParMois), 1);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
-                    const vol = moisNum > moisActuelMax ? 0 : volumesParMois[cle];
-                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 5); // Hauteur proportionnelle réelle
+                    const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
+                    const totalLignesMois = totalParMoisPourTaux[cle] || 1;
+                    const tauxGlobalMois = vol > 0 ? ((vol / totalLignesMois) * 100).toFixed(1) : '0.0';
+                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 5);
 
                     const grp = document.createElement('div');
                     grp.className = 'chart-bar-group';
                     grp.innerHTML = `
-                        <div class="chart-value-label">${vol > 0 ? vol + ' NQ' : ''}</div>
-                        <div class="chart-bar" style="height: ${hauteur}%;" title="${vol} NQ"></div>
+                        <div class="chart-value-label">${vol > 0 ? vol + ' NQ<br>(' + tauxGlobalMois + '%)' : ''}</div>
+                        <div class="chart-bar" style="height: ${hauteur}%;" title="${vol} NQ (${tauxGlobalMois}%)"></div>
                         <div class="chart-label">${nomsMois[idx]}</div>
                     `;
                     chartContainer.appendChild(grp);
