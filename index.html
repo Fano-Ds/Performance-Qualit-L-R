@@ -335,7 +335,7 @@
             border-radius: 4px;
         }
 
-        /* CHART GLOBAL AVEC AXE FIXE DE 0 À 800 ET GRILLE DE REPRÉSANTS STABLE */
+        /* CHART GLOBAL */
         .chart-container-wrapper {
             position: relative;
             height: 220px;
@@ -554,7 +554,7 @@
         </div>
     </div>
 
-    <!-- KPI & OBJECTIFS VOLUME CARDS -->
+    <!-- KPI & OBJECTIFS VOLUME CARDS (SANS LES TEXTES "FIGÉ À...") -->
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées</h3>
@@ -574,17 +574,14 @@
         <div class="kpi-card">
             <h3>Obj. Vol. Mauvaise</h3>
             <input type="number" id="obj-vol-mauvaise" class="kpi-input" value="250" style="color: var(--text-muted);" disabled>
-            <div class="subtitle">Figé à 250</div>
         </div>
         <div class="kpi-card">
             <h3>Obj. Vol. Loupé</h3>
             <input type="number" id="obj-vol-loupe" class="kpi-input" value="100" style="color: #eab308;" disabled>
-            <div class="subtitle">Figé à 100</div>
         </div>
         <div class="kpi-card">
             <h3>Obj. Vol. NC</h3>
             <input type="number" id="obj-vol-nc" class="kpi-input" value="100" style="color: #dc2626;" disabled>
-            <div class="subtitle">Figé à 100</div>
         </div>
     </div>
 
@@ -1053,12 +1050,12 @@
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
                 // =========================================================================
-                // GRAPHIQUE GLOBAL AVEC AXE STABLE DE 0 À 800 (Respect absolu de la logique)
+                // GRAPHIQUE GLOBAL AVEC AXE STABLE DE 0 À 800
                 // =========================================================================
                 const wrapper = document.getElementById('chart-wrapper');
                 wrapper.innerHTML = '';
 
-                const fixedMaxScale = 800; // Échelle fixe de 0 à 800 pour que 600 et 700 soient toujours aux mêmes hauteurs logiques
+                const fixedMaxScale = 800; 
 
                 // Génération des lignes de repère tous les 100 de 0 à 800
                 for (let v = 100; v <= fixedMaxScale; v += 100) {
@@ -1087,7 +1084,6 @@
                     const moisNum = parseInt(cle, 10);
                     const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
                     
-                    // Calcul proportionnel strict sur l'échelle fixe 0-800
                     let hauteur = 0;
                     if (vol > 0) {
                         hauteur = Math.round((vol / fixedMaxScale) * 100);
