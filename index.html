@@ -408,7 +408,7 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE AVEC ÉCHELLE FIXE COHÉRENTE (0-250) */
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE PROPORTIONNEL ET COMPACT */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
@@ -419,45 +419,15 @@
             border-top: 1px dashed var(--border-color);
             padding-top: 12px;
         }
-        .evo-chart-wrapper {
-            position: relative;
-            height: 160px;
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
-        .evo-grid-line {
-            position: absolute;
-            left: 45px;
-            right: 0;
-            border-top: 1px dashed var(--border-color);
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.6;
-        }
-        .evo-grid-label {
-            position: absolute;
-            left: 0;
-            font-size: 9px;
-            color: var(--text-muted);
-            transform: translateY(-50%);
-            font-weight: 600;
-            width: 40px;
-            text-align: right;
-            padding-right: 5px;
-        }
         .evo-chart-container {
-            position: absolute;
-            left: 45px;
-            right: 0;
-            top: 0;
-            bottom: 0;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            padding-top: 15px;
+            height: 140px;
+            padding-top: 20px;
             gap: 6px;
             border-bottom: 2px solid var(--border-color);
-            z-index: 2;
+            position: relative;
         }
         .evo-bar-group {
             flex: 1;
@@ -472,7 +442,7 @@
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 100%;
+            height: 100px;
             width: 100%;
             justify-content: center;
         }
@@ -489,10 +459,10 @@
         }
         .target-line {
             position: absolute;
-            left: 45px;
+            left: 0;
             right: 0;
             border-top: 2px dashed;
-            z-index: 3;
+            z-index: 1;
             pointer-events: none;
         }
 
@@ -672,10 +642,10 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE AVEC ÉCHELLE FIXE LOGIQUE (0-250) -->
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE ORIGINEL CORRECTEMENT PROPORTIONNÉ -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
-            <div class="evo-chart-wrapper" id="evo-wrapper">
-                <!-- Grille, lignes et barres injectées dynamiquement -->
+            <div class="evo-chart-container" id="evo-chart-container">
+                <!-- Barres et lignes insérées dynamiquement -->
             </div>
             <div class="chart-legend">
                 <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
@@ -1126,47 +1096,36 @@
                 });
 
                 // =========================================================================
-                // GRAPHIQUE ÉVOLUTION MENSUELLE AVEC ÉCHELLE FIXE LOGIQUE (0 à 250)
+                // GRAPHIQUE ÉVOLUTION MENSUELLE (Échelle proportionnelle logique et cohérente)
                 // =========================================================================
-                const evoWrapper = document.getElementById('evo-wrapper');
-                evoWrapper.innerHTML = '';
-                
-                const fixedEvoMax = 250; // Échelle fixe de 0 à 250 (le max des objectifs)
+                const evoContainer = document.getElementById('evo-chart-container');
+                evoContainer.innerHTML = '';
 
-                // Génération des lignes de repère (50, 100, 150, 200, 250)
-                for (let v = 50; v <= fixedEvoMax; v += 50) {
-                    const pctFromBottom = (v / fixedEvoMax) * 100;
-                    const line = document.createElement('div');
-                    line.className = 'evo-grid-line';
-                    line.style.bottom = pctFromBottom + '%';
-                    evoWrapper.appendChild(line);
+                // Utilisation du maximum réel des données ou du seuil obj max (250) pour une échelle parfaitement proportionnée
+                let maxEvoVal = 250;
+                clesMois.forEach(cle => {
+                    const mN = parseInt(cle, 10);
+                    if (mN <= moisActuelMax) {
+                        maxEvoVal = Math.max(maxEvoVal, evoMauvaise[cle], evoLoupe[cle], evoNC[cle]);
+                    }
+                });
+                // Arrondi supérieur à la dizaine/centaine propre
+                maxEvoVal = Math.ceil(maxEvoVal / 50) * 50;
 
-                    const lbl = document.createElement('div');
-                    evoWrapper.appendChild(lbl);
-                    lbl.className = 'evo-grid-label';
-                    lbl.style.bottom = pctFromBottom + '%';
-                    lbl.innerText = v;
-                }
-
-                // Lignes d'objectifs fixes positionnées mathématiquement sur le max de 250
                 const thresholds = [
-                    { val: objVolNC, color: '#dc2626' },    // 100
-                    { val: objVolLoupe, color: '#eab308' }, // 100
-                    { val: objVolMauv, color: '#64748b' }   // 250
+                    { val: objVolNC, color: '#dc2626' },
+                    { val: objVolLoupe, color: '#eab308' },
+                    { val: objVolMauv, color: '#64748b' }
                 ];
 
                 thresholds.forEach(t => {
-                    const pctHeight = (t.val / fixedEvoMax) * 100;
+                    const pctHeight = Math.min(Math.round((t.val / maxEvoVal) * 100), 100);
                     const line = document.createElement('div');
                     line.className = 'target-line';
                     line.style.bottom = pctHeight + '%';
                     line.style.borderColor = t.color;
-                    evoWrapper.appendChild(line);
+                    evoContainer.appendChild(line);
                 });
-
-                const evoContainer = document.createElement('div');
-                evoContainer.className = 'evo-chart-container';
-                evoWrapper.appendChild(evoContainer);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
@@ -1174,10 +1133,9 @@
                     const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
                     const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
 
-                    // Calcul de la hauteur basé sur l'échelle fixe 0-250
-                    const hM = Math.max(Math.round((mVal / fixedEvoMax) * 100), 2);
-                    const hL = Math.max(Math.round((lVal / fixedEvoMax) * 100), 2);
-                    const hNC = Math.max(Math.round((ncVal / fixedEvoMax) * 100), 2);
+                    const hM = Math.max(Math.round((mVal / maxEvoVal) * 100), 4);
+                    const hL = Math.max(Math.round((lVal / maxEvoVal) * 100), 4);
+                    const hNC = Math.max(Math.round((ncVal / maxEvoVal) * 100), 4);
 
                     const group = document.createElement('div');
                     group.className = 'evo-bar-group';
