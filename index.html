@@ -53,7 +53,7 @@
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid #334155;
             border-radius: 16px;
-            padding: 20px 28px 38px 28px; /* Plus d'espace en bas pour le slogan */
+            padding: 20px 28px 38px 28px;
             margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
@@ -238,6 +238,12 @@
             margin-bottom: 4px;
         }
 
+        .kpi-input:disabled {
+            background-color: rgba(0,0,0,0.06);
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
         /* GRID SECTIONS */
         .grid-2col {
             display: grid;
@@ -334,7 +340,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            height: 160px;
+            height: 180px;
             padding-top: 25px;
             gap: 6px;
         }
@@ -351,6 +357,7 @@
             color: var(--primary);
             margin-bottom: 4px;
             font-weight: 700;
+            white-space: nowrap;
         }
         .chart-bar {
             width: 100%;
@@ -511,7 +518,7 @@
         </div>
     </div>
 
-    <!-- KPI & OBJECTIFS VOLUME CARDS -->
+    <!-- KPI & OBJECTIFS VOLUME CARDS (Figés selon les consignes) -->
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées</h3>
@@ -530,18 +537,18 @@
         </div>
         <div class="kpi-card">
             <h3>Obj. Vol. Mauvaise</h3>
-            <input type="number" id="obj-vol-mauvaise" class="kpi-input" value="500" style="color: var(--text-muted);">
-            <div class="subtitle">Ligne repère grise</div>
+            <input type="number" id="obj-vol-mauvaise" class="kpi-input" value="250" style="color: var(--text-muted);" disabled>
+            <div class="subtitle">Figé à 250</div>
         </div>
         <div class="kpi-card">
             <h3>Obj. Vol. Loupé</h3>
-            <input type="number" id="obj-vol-loupe" class="kpi-input" value="90" style="color: #eab308;">
-            <div class="subtitle">Ligne repère jaune</div>
+            <input type="number" id="obj-vol-loupe" class="kpi-input" value="100" style="color: #eab308;" disabled>
+            <div class="subtitle">Figé à 100</div>
         </div>
         <div class="kpi-card">
             <h3>Obj. Vol. NC</h3>
-            <input type="number" id="obj-vol-nc" class="kpi-input" value="100" style="color: #dc2626;">
-            <div class="subtitle">Ligne repère rouge</div>
+            <input type="number" id="obj-vol-nc" class="kpi-input" value="100" style="color: #dc2626;" disabled>
+            <div class="subtitle">Figé à 100</div>
         </div>
     </div>
 
@@ -626,9 +633,9 @@
     <!-- GRAPHIQUE ÉVOLUTION GLOBALE & AVANCEMENT -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Par mois)</h2>
+            <h2>Évolution NQ Global (Par mois avec volumes & taux)</h2>
             <div class="chart-container" id="chart-months-container">
-                <!-- Rempli dynamiquement -->
+                <!-- Rempli dynamiquement avec proportionnalité corrigée -->
             </div>
         </div>
 
@@ -749,8 +756,8 @@
                 const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
                 const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
 
-                const objVolMauv = parseFloat(document.getElementById('obj-vol-mauvaise').value) || 500;
-                const objVolLoupe = parseFloat(document.getElementById('obj-vol-loupe').value) || 90;
+                const objVolMauv = parseFloat(document.getElementById('obj-vol-mauvaise').value) || 250;
+                const objVolLoupe = parseFloat(document.getElementById('obj-vol-loupe').value) || 100;
                 const objVolNC = parseFloat(document.getElementById('obj-vol-nc').value) || 100;
 
                 let agentsCumul = {};
@@ -823,8 +830,6 @@
                             const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
 
                             if (matchActivite && matchMedia) {
-                                volumesParMois[moisLigne]++;
-                                
                                 if (estOK || estContestation) {
                                     if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
                                     else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
@@ -839,6 +844,8 @@
 
                                 if (estOK || estContestation) {
                                     totalMois++;
+                                    volumesParMois[moisLigne]++; // Comptabilise le volume global du mois pour ce filtre
+
                                     if (activiteLigne === 'liris') countLiris++;
                                     if (activiteLigne === 'rubis') countRubis++;
 
@@ -997,23 +1004,25 @@
                 document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
-                // Graphique Global par mois
+                // Graphique Global par mois (Correction de l'échelle des barres et affichage clair des volumes)
                 const chartContainer = document.getElementById('chart-months-container');
                 chartContainer.innerHTML = '';
                 const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
                 const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                
+                // Calcul précis du maximum global pour que les hauteurs de barres soient proportionnelles
                 const maxVol = Math.max(...Object.values(volumesParMois), 1);
 
                 clesMois.forEach((cle, idx) => {
                     const moisNum = parseInt(cle, 10);
                     const vol = moisNum > moisActuelMax ? 0 : volumesParMois[cle];
-                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 4);
+                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 5); // Hauteur proportionnelle réelle
 
                     const grp = document.createElement('div');
                     grp.className = 'chart-bar-group';
                     grp.innerHTML = `
-                        <div class="chart-value-label">${vol > 0 ? vol : ''}</div>
-                        <div class="chart-bar" style="height: ${hauteur}%;"></div>
+                        <div class="chart-value-label">${vol > 0 ? vol + ' NQ' : ''}</div>
+                        <div class="chart-bar" style="height: ${hauteur}%;" title="${vol} NQ"></div>
                         <div class="chart-label">${nomsMois[idx]}</div>
                     `;
                     chartContainer.appendChild(grp);
@@ -1107,9 +1116,6 @@
         document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
         document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
         document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('obj-vol-mauvaise').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('obj-vol-loupe').addEventListener('input', rafraichirTableauDeBord);
-        document.getElementById('obj-vol-nc').addEventListener('input', rafraichirTableauDeBord);
 
         rafraichirTableauDeBord();
     </script>
