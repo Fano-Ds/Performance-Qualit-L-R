@@ -405,29 +405,29 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE PROPRE ET SANS DÉBORDEMENT */
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT ET PROPORTIONNÉ */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             color: var(--text-muted);
-            margin-top: 22px; /* Marge supérieure propre pour éviter le collage avec le tableau */
-            margin-bottom: 12px;
+            margin-top: 18px;
+            margin-bottom: 10px;
             border-top: 1px dashed var(--border-color);
-            padding-top: 15px;
+            padding-top: 12px;
         }
         .evo-chart-box {
             position: relative;
-            height: 190px; /* Hauteur augmentée pour contenir confortablement les barres de 250 */
-            margin-top: 10px;
-            margin-bottom: 10px;
+            height: 130px; /* Hauteur réduite pour que tout tienne bien dans le bloc sans déborder */
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
         .evo-chart-container {
             position: absolute;
             left: 0;
             right: 0;
             top: 0;
-            bottom: 22px;
+            bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
@@ -446,19 +446,19 @@
         .evo-bars-flex {
             display: flex;
             align-items: flex-end;
-            gap: 3px;
+            gap: 2px;
             height: 100%;
             width: 100%;
             justify-content: center;
         }
         .evo-bar-item {
-            width: 12px;
-            border-radius: 3px 3px 0 0;
+            width: 10px; /* Largeur équilibrée */
+            border-radius: 2px 2px 0 0;
             min-height: 2px;
         }
         .evo-label {
             position: absolute;
-            bottom: -22px;
+            bottom: -20px;
             font-size: 10px;
             color: var(--text-muted);
             font-weight: 700;
@@ -476,7 +476,7 @@
             display: flex;
             gap: 16px;
             justify-content: center;
-            margin-top: 22px;
+            margin-top: 18px;
             font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
@@ -648,7 +648,7 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE PROPRE -->
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Lignes d'objectifs volume</div>
             <div class="evo-chart-box">
                 <div class="evo-chart-container" id="evo-chart-container">
@@ -1102,7 +1102,7 @@
                 });
 
                 // =========================================================================
-                // GRAPHIQUE ÉVOLUTION MENSUELLE (HAUTEUR CORRIGÉE SANS AUCUN DÉBORDEMENT)
+                // GRAPHIQUE ÉVOLUTION MENSUELLE (COMPACT, PROPORTIONNEL ET SANS DÉBORDEMENT)
                 // =========================================================================
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
