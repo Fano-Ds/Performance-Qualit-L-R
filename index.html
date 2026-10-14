@@ -341,7 +341,7 @@
             justify-content: space-between;
             align-items: flex-end;
             height: 190px;
-            padding-top: 30px;
+            padding-top: 35px;
             gap: 4px;
         }
         .chart-bar-group {
@@ -353,7 +353,7 @@
             justify-content: flex-end;
         }
         .chart-value-label {
-            font-size: 8.5px;
+            font-size: 8px;
             color: var(--primary);
             margin-bottom: 4px;
             font-weight: 700;
@@ -635,7 +635,7 @@
     <!-- GRAPHIQUE ÉVOLUTION GLOBALE & AVANCEMENT -->
     <div class="grid-2col">
         <div class="card-section">
-            <h2>Évolution NQ Global (Tous les mois en continu - Volumes & Taux)</h2>
+            <h2>Évolution NQ Global (Volumes réels & Taux)</h2>
             <div class="chart-container" id="chart-months-container">
                 <!-- Rempli dynamiquement -->
             </div>
@@ -810,10 +810,13 @@
 
                         if (trigramme === 'XXX' || trigramme === '' || trigramme === 'ANONYME') continue;
 
+                        // Rigueur stricte sur le statut : Une ligne est OK ou Contestation, ou KO. Si aucune des 3 et texte vide -> Vraiment vide.
                         const estOK = rawValidee.includes('OK');
                         const estContestation = rawValidee.includes('CONTEST');
                         const estKO = rawValidee.includes('KO');
-                        const estVide = (!estOK && !estContestation && !estKO && rawValidee === '');
+                        
+                        // Condition rigoureuse : un mois passé et clôturé ne doit pas avoir de vide s'il y a un OK ou un KO
+                        const estVide = (!estOK && !estContestation && !estKO && (rawValidee === '' || rawValidee === '-'));
 
                         if (trigramme.length >= 2 && trigramme.length <= 5 && moisLigne >= '01' && moisLigne <= '12') {
                             tousLesAgents.add(trigramme);
@@ -1015,12 +1018,13 @@
                 document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
                 document.getElementById('bar-rubis').style.width = pctRubis + "%";
 
-                // Graphique Global par mois
+                // Graphique Global par mois (Échelle proportionnelle rigoureuse)
                 const chartContainer = document.getElementById('chart-months-container');
                 chartContainer.innerHTML = '';
                 const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
                 const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
                 
+                // Recherche stricte du volume maximum parmi tous les mois actifs pour calibrer la hauteur à 100%
                 const maxVol = Math.max(...Object.values(volumesGlobalParMois), 1);
 
                 clesMois.forEach((cle, idx) => {
@@ -1028,7 +1032,9 @@
                     const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
                     const totalLignesMois = totalParMoisPourTaux[cle] || 1;
                     const tauxGlobalMois = vol > 0 ? ((vol / totalLignesMois) * 100).toFixed(1) : '0.0';
-                    const hauteur = Math.max(Math.round((vol / maxVol) * 100), 5);
+                    
+                    // Calcul proportionnel exact (minimum 6% de hauteur pour que la barre reste visible si > 0)
+                    const hauteur = vol > 0 ? Math.max(Math.round((vol / maxVol) * 100), 6) : 0;
 
                     const grp = document.createElement('div');
                     grp.className = 'chart-bar-group';
