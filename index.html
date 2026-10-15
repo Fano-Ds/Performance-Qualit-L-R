@@ -418,10 +418,10 @@
         }
         .evo-chart-box {
             position: relative;
-            height: 100px; /* Hauteur très compacte pour s'intégrer parfaitement */
+            height: 100px;
             margin-top: 5px;
             margin-bottom: 5px;
-            overflow: hidden; /* Bloque tout dépassement visuel externe */
+            overflow: hidden;
             border-radius: 6px;
         }
         .evo-chart-container {
@@ -454,7 +454,7 @@
             justify-content: center;
         }
         .evo-bar-item {
-            width: 8px; /* Finesse idéale pour la compacité */
+            width: 8px;
             border-radius: 2px 2px 0 0;
             min-height: 2px;
         }
@@ -650,7 +650,7 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT (LIGNE UNIQUE 100) -->
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Ligne d'objectif volume (100)</div>
             <div class="evo-chart-box">
                 <div class="evo-chart-container" id="evo-chart-container">
@@ -997,25 +997,25 @@
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // Plan d'action
+                // Plan d'action (Textes métier corrigés orthographiquement)
                 let htmlPA = '';
                 const definitionsPA = [
                     {
                         nom: 'Non Conforme', st: stNC,
-                        msgRouge: "Rappel urgent sur le process montage WEB et regles de découpe.",
-                        msgOrange: "Attention : Le taux frôle la limite. Vérifier les consignes de montage WEB.",
+                        msgRouge: "Rappel urgent sur le process montage WEB et règles de découpe.",
+                        msgOrange: "Attention : Le taux frôle la limite. Il faut refaire la communication pour sécuriser cet indicateur.",
                         msgVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB."
                     },
                     {
                         nom: 'Loupé', st: stLoupe,
-                        msgRouge: "Auditer le Flop 5 et planifier des debriefings et entretien individuel.",
-                        msgOrange: "Attention : Surveillance requise sur les flux média en retard.",
-                        msgVert: "Objectif tenu : Couverture des flux média maîtrisée."
+                        msgRouge: "Auditer le Flop 5 et planifier des débriefings et entretiens individuels.",
+                        msgOrange: "Attention : Surveillance requise, débriefing et communication sur les vigilances à faire.",
+                        msgVert: "Objectif tenu : Indicateur maîtrisé, on continue sur cette voie."
                     },
                     {
                         nom: 'Mauvaise', st: stMauv,
-                        msgRouge: "Revoir les critères de pertinence (homonymies/passages significatifs).",
-                        msgOrange: "Attention : Risque de dépassement sur les critères de sélection.",
+                        msgRouge: "Analyse des erreurs - débriefing et recadrage (homonymies / passages significatifs).",
+                        msgOrange: "Attention : Risque de dépassement, rappel à marteler sur le process PAS À PAS et la démarche en cas d'incompréhension.",
                         msgVert: "Capitaliser sur les bonnes pratiques."
                     }
                 ];
@@ -1043,7 +1043,7 @@
                                 <strong style="font-size: 11px; text-transform: uppercase; color: var(--danger);">Lignes non débriefées</strong>
                                 <span style="background: rgba(220, 38, 38, 0.15); color: var(--danger); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier une session de rattrapage des debrief en suspens.</div>
+                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier une session de rattrapage des débriefings en suspens.</div>
                         </div>
                     `;
                 }
@@ -1103,22 +1103,20 @@
                 });
 
                 // =========================================================================
-                // GRAPHIQUE ÉVOLUTION MENSUELLE ADAPTATIF PROPRE (MAX ÉCHELLE = 400 POUR TOUT CONTENIR)
+                // GRAPHIQUE ÉVOLUTION MENSUELLE
                 // =========================================================================
                 const evoContainer = document.getElementById('evo-chart-container');
                 evoContainer.innerHTML = '';
 
-                // Échelle max fixée à 400 pour que les pics les plus hauts (ex: 300-380) tiennent confortablement dans le bloc sans saturer
                 let maxEvoVal = 400;
 
-                // Ligne unique de l'objectif à 100 positionnée mathématiquement sur le nouveau max (100 / 400 = 25%)
                 const thresholdVal = 100;
                 const pctHeight = (thresholdVal / maxEvoVal) * 100;
                 
                 const line = document.createElement('div');
                 line.className = 'target-line';
                 line.style.bottom = pctHeight + '%';
-                line.style.borderColor = '#eab308'; // Couleur jaune/orange repère objectif
+                line.style.borderColor = '#eab308';
                 evoContainer.appendChild(line);
 
                 clesMois.forEach((cle, idx) => {
@@ -1127,7 +1125,6 @@
                     const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
                     const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
 
-                    // Hauteurs relatives en pourcentage par rapport au max de 400 (plus de débordement possible)
                     const hM = Math.min((mVal / maxEvoVal) * 100, 100);
                     const hL = Math.min((lVal / maxEvoVal) * 100, 100);
                     const hNC = Math.min((ncVal / maxEvoVal) * 100, 100);
