@@ -530,9 +530,9 @@
                 <option value="07">Juillet</option>
                 <option value="08">Août</option>
                 <option value="09">Septembre</option>
-                <option value="10" selected>Octobre</option>
+                <option value="10">Octobre</option>
                 <option value="11">Novembre</option>
-                <option value="12">Décembre</option>
+                <option value="12" selected>Décembre</option>
             </select>
         </div>
         <div class="filter-group">
@@ -818,7 +818,7 @@
                 let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
 
                 let countLiris = 0, countRubis = 0;
-                const moisActuelMax = 10;
+                const moisActuelMax = 12; // Modifié à 12 pour inclure toute l'année jusqu'en décembre
 
                 for (let i = 1; i < lignes.length; i++) {
                     const rawLigne = lignes[i];
@@ -997,7 +997,7 @@
                 document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
                 document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                // Plan d'action (Textes métier corrigés orthographiquement)
+                // Plan d'action
                 let htmlPA = '';
                 const definitionsPA = [
                     {
