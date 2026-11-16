@@ -737,7 +737,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT COMPLET RESTAURÉ -->
+    <!-- SCRIPT COMPLET ROBUSTE POUR EXTRACTION DES MOIS -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -750,4 +750,180 @@
             if (html.getAttribute('data-theme') === 'dark') {
                 html.setAttribute('data-theme', 'light');
                 themeText.innerText = 'Mode Sombre';
-                btnTheme.innerHTML
+                btnTheme.innerHTML = '🌙 Mode Sombre';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeText.innerText = 'Mode Clair';
+                btnTheme.innerHTML = '☀️ Mode Clair';
+            }
+        }
+
+        // Fonction robuste pour extraire le mois peu importe le format de date (JJ/MM/AAAA ou AAAA-MM-JJ)
+        function extraireMois(dateStr) {
+            if (!dateStr) return '';
+            dateStr = dateStr.trim();
+            // Format JJ/MM/AAAA ou JJ-MM-AAAA
+            if (dateStr.includes('/')) {
+                const parts = dateStr.split('/');
+                if (parts.length >= 2) return parts[1].padStart(2, '0');
+            } else if (dateStr.includes('-')) {
+                const parts = dateStr.split('-');
+                if (parts.length >= 3) {
+                    if (parts[0].length === 4) { // AAAA-MM-JJ
+                        return parts[1].padStart(2, '0');
+                    } else { // JJ-MM-AAAA
+                        return parts[1].padStart(2, '0');
+                    }
+                } else if (parts.length === 2) { // AAAA-MM
+                    return parts[1].padStart(2, '0');
+                }
+            }
+            return '';
+        }
+
+        async function rafraichirTableauDeBord() {
+            try {
+                const response = await fetch(csvUrl);
+                const data = await response.text();
+                
+                const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                if (lignes.length <= 1) return;
+
+                const enTetes = lignes[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+                
+                let idxTrigramme = enTetes.findIndex(h => h.includes('trigramme'));
+                let idxDate = enTetes.findIndex(h => h.includes('date de lecture') || h.includes('date'));
+                let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
+                let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
+                let idxValidee = enTetes.findIndex(h => h.includes('validée') || h.includes('validee') || h.includes('statut') || h.includes('debrief'));
+                
+                if (idxValidee === -1) idxValidee = 8;
+                if (idxTrigramme === -1) idxTrigramme = 0;
+                if (idxDate === -1) idxDate = 1;
+                if (idxMedia === -1) idxMedia = 4;
+                if (idxCategorie === -1) idxCategorie = 6;
+
+                const moisSelectionne = document.getElementById('filter-periode').value;
+                const activiteSelectionnee = document.getElementById('filter-activite').value;
+                const mediaSelectionne = document.getElementById('filter-media').value;
+                const agentSelectionne = document.getElementById('filter-agent').value;
+
+                let agentsCumul = {};
+                let tousLesAgents = new Set();
+                
+                let totalMois = 0;
+                let nonDebriefesMois = 0;
+                let retardXXXCount = 0;
+                
+                let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
+                let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
+                let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
+
+                for (let i = 1; i < lignes.length; i++) {
+                    const cols = lignes[i].split(',').map(c => c.replace(/"/g, '').trim());
+                    if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
+                        const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
+                        const dateLecture = cols[idxDate] || '';
+                        const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
+                        const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
+                        let rawValidee = cols[idxValidee] !== undefined ? cols[idxValidee].trim().toUpperCase() : '';
+                        
+                        const moisLigne = extraireMois(dateLecture);
+
+                        if (!moisLigne || moisLigne < '01' || moisLigne > '12') continue;
+
+                        tousLesAgents.add(trigramme);
+
+                        if ((trigramme === 'XXX' || trigramme === '') && (categorie.includes('LOUPÉ') || categorie.includes('LOUPE'))) {
+                            if (moisSelectionne === 'toutes' || moisLigne === moisSelectionne) retardXXXCount++;
+                        }
+
+                        if (trigramme === 'XXX' || trigramme === '' || trigramme === 'ANONYME') continue;
+
+                        const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
+                        const matchMedia = (mediaSelectionne === 'tous' || mediaLigneCol.includes(mediaSelectionne.toUpperCase()));
+                        const matchAgent = (agentSelectionne === 'tous' || trigramme === agentSelectionne);
+
+                        if (matchPeriode && matchMedia && matchAgent) {
+                            totalMois++;
+
+                            if (rawValidee === '' || rawValidee === '-' || rawValidee.includes('KO')) {
+                                nonDebriefesMois++;
+                            }
+
+                            if (categorie.includes('MAUVAISE')) {
+                                mauvCont++;
+                                if (rawValidee.includes('OK')) mauvOK++;
+                                else mauvVide++;
+                                if (mediaLigneCol.includes('WEB')) mauvWeb++; else mauvPresse++;
+                            } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
+                                loupeCont++;
+                                if (rawValidee.includes('OK')) loupeOK++;
+                                else loupeVide++;
+                                if (mediaLigneCol.includes('WEB')) loupeWeb++; else loupePresse++;
+                            } else if (categorie.includes('CONFORME')) {
+                                ncCont++;
+                                if (rawValidee.includes('OK')) ncOK++;
+                                else ncVide++;
+                                if (mediaLigneCol.includes('WEB')) ncWeb++; else ncPresse++;
+                            }
+
+                            agentsCumul[trigramme] = (agentsCumul[trigramme] || 0) + 1;
+                        }
+                    }
+                }
+
+                // Alimentation de la liste des agents
+                const selectAgent = document.getElementById('filter-agent');
+                if (selectAgent.options.length <= 1) {
+                    Array.from(tousLesAgents).sort().forEach(ag => {
+                        if (ag && ag !== 'XXX') {
+                            const opt = document.createElement('option');
+                            opt.value = ag;
+                            opt.innerText = ag;
+                            selectAgent.appendChild(opt);
+                        }
+                    });
+                }
+
+                // Injection des données dans les cartes KPI et tableaux
+                document.getElementById('kpi-nq').innerText = totalMois + ' NQ';
+                document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + ' ligne(s)';
+                document.getElementById('retard-xxx-val').innerText = retardXXXCount + ' cas';
+
+                document.getElementById('mauv-ok').innerText = mauvOK;
+                document.getElementById('mauv-cont').innerText = mauvCont;
+                document.getElementById('mauv-vide').innerText = mauvVide;
+                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
+
+                document.getElementById('loupe-ok').innerText = loupeOK;
+                document.getElementById('loupe-cont').innerText = loupeCont;
+                document.getElementById('loupe-vide').innerText = loupeVide;
+                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
+
+                document.getElementById('nc-ok').innerText = ncOK;
+                document.getElementById('nc-cont').innerText = ncCont;
+                document.getElementById('nc-vide').innerText = ncVide;
+                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
+
+                // Tableau Flop 5
+                const agentsTries = Object.entries(agentsCumul).sort((a,b) => b[1] - a[1]).slice(0, 5);
+                let htmlAgents = '';
+                if (agentsTries.length === 0) {
+                    htmlAgents = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Aucune donnée pour ce filtre</td></tr>`;
+                } else {
+                    agentsTries.forEach(([ag, cnt]) => {
+                        htmlAgents += `<tr><td><strong>${ag}</strong></td><td>${cnt}</td><td><span class="status-badge status-surveiller">À suivre</span></td><td>Debrief requis</td></tr>`;
+                    });
+                }
+                document.getElementById('agents-table-body').innerHTML = htmlAgents;
+
+            } catch (e) {
+                console.error("Erreur chargement :", e);
+            }
+        }
+
+        rafraichirTableauDeBord();
+    </script>
+</body>
+</html>
