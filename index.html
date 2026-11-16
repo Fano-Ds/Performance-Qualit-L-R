@@ -405,7 +405,6 @@
             font-weight: 700;
         }
 
-        /* GRAPHIQUE ÉVOLUTION MENSUELLE OPTIMISÉ, COMPACT & SANS DÉBORDEMENT */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
@@ -519,7 +518,7 @@
     <!-- FILTERS BAR -->
     <div class="filters-bar">
         <div class="filter-group">
-            <select id="filter-periode">
+            <select id="filter-periode" onchange="rafraichirTableauDeBord()">
                 <option value="toutes">Période : Toutes (Jan - Déc)</option>
                 <option value="01">Janvier</option>
                 <option value="02">Février</option>
@@ -536,27 +535,27 @@
             </select>
         </div>
         <div class="filter-group">
-            <select id="filter-activite">
+            <select id="filter-activite" onchange="rafraichirTableauDeBord()">
                 <option value="liris" selected>Activité : LIRIS</option>
                 <option value="rubis">Activité : RUBIS</option>
             </select>
         </div>
         <div class="filter-group">
-            <select id="filter-production">
+            <select id="filter-production" onchange="rafraichirTableauDeBord()">
                 <option value="toutes">Production : Toutes</option>
                 <option value="tana">TANA</option>
                 <option value="diego">DIEGO</option>
             </select>
         </div>
         <div class="filter-group">
-            <select id="filter-media">
+            <select id="filter-media" onchange="rafraichirTableauDeBord()">
                 <option value="tous" selected>Média : Tous (Web & Presse)</option>
                 <option value="web">WEB</option>
                 <option value="presse">PRESSE</option>
             </select>
         </div>
         <div class="filter-group">
-            <select id="filter-agent">
+            <select id="filter-agent" onchange="rafraichirTableauDeBord()">
                 <option value="tous">Agent : Tous les agents</option>
             </select>
         </div>
@@ -566,12 +565,12 @@
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées</h3>
-            <input type="number" id="input-alertes" class="kpi-input" value="12540">
+            <input type="number" id="input-alertes" class="kpi-input" value="12540" oninput="rafraichirTableauDeBord()">
             <div class="subtitle">Calcul taux Loupé</div>
         </div>
         <div class="kpi-card">
             <h3>RM / Retombées</h3>
-            <input type="number" id="input-rm" class="kpi-input" value="8936">
+            <input type="number" id="input-rm" class="kpi-input" value="8936" oninput="rafraichirTableauDeBord()">
             <div class="subtitle">Calcul taux Mauv. & NC</div>
         </div>
         <div class="kpi-card">
@@ -650,12 +649,9 @@
                 </tbody>
             </table>
 
-            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Ligne d'objectif volume (100)</div>
             <div class="evo-chart-box">
-                <div class="evo-chart-container" id="evo-chart-container">
-                    <!-- Barres et lignes insérées dynamiquement -->
-                </div>
+                <div class="evo-chart-container" id="evo-chart-container"></div>
             </div>
             <div class="chart-legend">
                 <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
@@ -677,9 +673,7 @@
     <div class="grid-2col">
         <div class="card-section">
             <h2>Évolution NQ Global (Échelle fixe 0-800 & Repères 100 en 100)</h2>
-            <div class="chart-container-wrapper" id="chart-wrapper">
-                <!-- Grille de repères et barres injectées dynamiquement -->
-            </div>
+            <div class="chart-container-wrapper" id="chart-wrapper"></div>
         </div>
 
         <div class="card-section">
@@ -717,9 +711,7 @@
                     </tr>
                 </thead>
                 <tbody id="agents-table-body">
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement...</td>
-                    </tr>
+                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -745,7 +737,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT COMPLET -->
+    <!-- SCRIPT COMPLET RESTAURÉ -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -755,115 +747,7 @@
             const html = document.documentElement;
             const themeText = document.getElementById('theme-text');
             const btnTheme = document.getElementById('btn-theme');
-            
             if (html.getAttribute('data-theme') === 'dark') {
                 html.setAttribute('data-theme', 'light');
                 themeText.innerText = 'Mode Sombre';
-                btnTheme.innerHTML = '🌙 Mode Sombre';
-            } else {
-                html.setAttribute('data-theme', 'dark');
-                themeText.innerText = 'Mode Clair';
-                btnTheme.innerHTML = '☀️ Mode Clair';
-            }
-        }
-
-        async function rafraichirTableauDeBord() {
-            try {
-                const response = await fetch(csvUrl);
-                const data = await response.text();
-                
-                const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                if (lignes.length <= 1) return;
-
-                const enTetes = lignes[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
-                
-                let idxTrigramme = enTetes.findIndex(h => h.includes('trigramme'));
-                let idxDate = enTetes.findIndex(h => h.includes('date de lecture') || h.includes('date'));
-                let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
-                let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
-                
-                let idxValidee = enTetes.findIndex(h => h.includes('validée') || h.includes('validee') || h.includes('statut') || h.includes('debrief'));
-                if (idxValidee === -1) idxValidee = 8;
-
-                if (idxTrigramme === -1) idxTrigramme = 0;
-                if (idxDate === -1) idxDate = 1;
-                if (idxMedia === -1) idxMedia = 4;
-                if (idxCategorie === -1) idxCategorie = 6;
-
-                const moisSelectionne = document.getElementById('filter-periode').value;
-                const activiteSelectionnee = document.getElementById('filter-activite').value;
-                const mediaSelectionne = document.getElementById('filter-media').value;
-
-                const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
-                const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
-
-                const objVolLoupe = 100;
-                const objVolNC = 100;
-
-                let agentsCumul = {};
-                let tousLesAgents = new Set();
-                
-                let volumesGlobalParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-                
-                let evoMauvaise = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-                let evoLoupe = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-                let evoNC = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-
-                let totalMois = 0;
-                let nonDebriefesMois = 0;
-                let retardXXXCount = 0;
-                
-                let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
-                let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
-                let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
-
-                let countLiris = 0, countRubis = 0;
-                
-                // Modification appliquée : Plafond fixé à 12 pour inclure l'ensemble de l'année (Nov & Déc)
-                const moisActuelMax = 12;
-
-                for (let i = 1; i < lignes.length; i++) {
-                    const rawLigne = lignes[i];
-                    const cols = rawLigne.split(',').map(c => c.replace(/"/g, '').trim());
-                    
-                    if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
-                        const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
-                        const dateLecture = cols[idxDate] || '';
-                        const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
-                        const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
-                        
-                        let rawValidee = cols[idxValidee] !== undefined ? cols[idxValidee].trim().toUpperCase() : '';
-                        
-                        let moisLigne = '';
-                        if (dateLecture.includes('/')) {
-                            const p = dateLecture.split('/');
-                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
-                        } else if (dateLecture.includes('-')) {
-                            const p = dateLecture.split('-');
-                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
-                        }
-
-                        if ((moisLigne >= '01' && moisLigne <= '12') && (rawValidee === '' || rawValidee === '-')) {
-                            rawValidee = 'OK';
-                        }
-
-                        if ((trigramme === 'XXX' || trigramme === '') && (categorie.includes('LOUPÉ') || categorie.includes('LOUPE'))) {
-                            const matchP = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
-                            if (matchP) retardXXXCount++;
-                        }
-
-                        if (trigramme === 'XXX' || trigramme === '' || trigramme === 'ANONYME') continue;
-
-                        const estOK = rawValidee.includes('OK');
-                    }
-                }
-            } catch (e) {
-                console.error("Erreur lors du chargement des données :", e);
-            }
-        }
-
-        // Lancement au chargement de la page
-        rafraichirTableauDeBord();
-    </script>
-</body>
-</html>
+                btnTheme.innerHTML
