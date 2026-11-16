@@ -737,7 +737,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT COMPLET ROBUSTE POUR EXTRACTION DES MOIS -->
+    <!-- SCRIPT COMPLET AVEC CALCULS & GRAPHIQUES -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -758,23 +758,35 @@
             }
         }
 
-        // Fonction robuste pour extraire le mois peu importe le format de date (JJ/MM/AAAA ou AAAA-MM-JJ)
+        // Fonction sécurisée pour parser le CSV
+        function parseCSVLine(text) {
+            let result = [];
+            let entry = "";
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(entry.trim());
+                    entry = "";
+                } else {
+                    entry += char;
+                }
+            }
+            result.push(entry.trim());
+            return result;
+        }
+
         function extraireMois(dateStr) {
             if (!dateStr) return '';
             dateStr = dateStr.trim();
-            // Format JJ/MM/AAAA ou JJ-MM-AAAA
             if (dateStr.includes('/')) {
                 const parts = dateStr.split('/');
                 if (parts.length >= 2) return parts[1].padStart(2, '0');
             } else if (dateStr.includes('-')) {
                 const parts = dateStr.split('-');
-                if (parts.length >= 3) {
-                    if (parts[0].length === 4) { // AAAA-MM-JJ
-                        return parts[1].padStart(2, '0');
-                    } else { // JJ-MM-AAAA
-                        return parts[1].padStart(2, '0');
-                    }
-                } else if (parts.length === 2) { // AAAA-MM
+                if (parts.length >= 2) {
                     return parts[1].padStart(2, '0');
                 }
             }
@@ -789,7 +801,7 @@
                 const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 if (lignes.length <= 1) return;
 
-                const enTetes = lignes[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+                const enTetes = parseCSVLine(lignes[0]).map(h => h.replace(/^"|"$/g, '').trim().toLowerCase());
                 
                 let idxTrigramme = enTetes.findIndex(h => h.includes('trigramme'));
                 let idxDate = enTetes.findIndex(h => h.includes('date de lecture') || h.includes('date'));
@@ -808,9 +820,17 @@
                 const mediaSelectionne = document.getElementById('filter-media').value;
                 const agentSelectionne = document.getElementById('filter-agent').value;
 
+                const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
+                const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
+
                 let agentsCumul = {};
                 let tousLesAgents = new Set();
                 
+                let evoMauvaise = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                let evoLoupe = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                let evoNC = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+                let volumesGlobalParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
+
                 let totalMois = 0;
                 let nonDebriefesMois = 0;
                 let retardXXXCount = 0;
@@ -818,21 +838,27 @@
                 let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
                 let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
                 let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
+                let countLiris = 0, countRubis = 0;
 
                 for (let i = 1; i < lignes.length; i++) {
-                    const cols = lignes[i].split(',').map(c => c.replace(/"/g, '').trim());
+                    const cols = parseCSVLine(lignes[i]).map(c => c.replace(/^"|"$/g, '').trim());
                     if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
                         const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
                         const dateLecture = cols[idxDate] || '';
                         const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
-                        let rawValidee = cols[idxValidee] !== undefined ? cols[idxValidee].trim().toUpperCase() : '';
+                        let rawValidee = cols[idxValidee] !== undefined ? cols[idxValidee].toUpperCase() : '';
                         
                         const moisLigne = extraireMois(dateLecture);
-
                         if (!moisLigne || moisLigne < '01' || moisLigne > '12') continue;
 
                         tousLesAgents.add(trigramme);
+
+                        // Alimentation des évolutions globales mensuelles
+                        volumesGlobalParMois[moisLigne]++;
+                        if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
+                        if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
+                        if (categorie.includes('CONFORME')) evoNC[moisLigne]++;
 
                         if ((trigramme === 'XXX' || trigramme === '') && (categorie.includes('LOUPÉ') || categorie.includes('LOUPE'))) {
                             if (moisSelectionne === 'toutes' || moisLigne === moisSelectionne) retardXXXCount++;
@@ -846,6 +872,7 @@
 
                         if (matchPeriode && matchMedia && matchAgent) {
                             totalMois++;
+                            countLiris++; // Par défaut Liris
 
                             if (rawValidee === '' || rawValidee === '-' || rawValidee.includes('KO')) {
                                 nonDebriefesMois++;
@@ -873,7 +900,104 @@
                     }
                 }
 
-                // Alimentation de la liste des agents
+                // Calculs des taux réels
+                const tauxMauvaise = (mauvCont / totalRM) * 100;
+                const tauxLoupe = (loupeCont / alertesTraitees) * 100;
+                const tauxNC = (ncCont / totalRM) * 100;
+
+                // Injection des valeurs KPI et Tableaux
+                document.getElementById('kpi-nq').innerText = totalMois + ' NQ';
+                document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + ' ligne(s)';
+                document.getElementById('retard-xxx-val').innerText = retardXXXCount + ' cas';
+
+                document.getElementById('mauv-ok').innerText = mauvOK;
+                document.getElementById('mauv-cont').innerText = mauvCont;
+                document.getElementById('mauv-vide').innerText = mauvVide;
+                document.getElementById('taux-mauvaise').innerText = tauxMauvaise.toFixed(2) + ' %';
+                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
+
+                document.getElementById('loupe-ok').innerText = loupeOK;
+                document.getElementById('loupe-cont').innerText = loupeCont;
+                document.getElementById('loupe-vide').innerText = loupeVide;
+                document.getElementById('taux-loupe').innerText = tauxLoupe.toFixed(4) + ' %';
+                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
+
+                document.getElementById('nc-ok').innerText = ncOK;
+                document.getElementById('nc-cont').innerText = ncCont;
+                document.getElementById('nc-vide').innerText = ncVide;
+                document.getElementById('taux-nc').innerText = tauxNC.toFixed(3) + ' %';
+                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
+
+                // Avancement des débriefings
+                const totalMauvGlobal = mauvOK + mauvVide;
+                const totalLoupeGlobal = loupeOK + loupeVide;
+                const totalNCGlobal = ncOK + ncVide;
+
+                const pctMauv = totalMauvGlobal > 0 ? Math.round((mauvOK / totalMauvGlobal) * 100) : 100;
+                const pctLoupe = totalLoupeGlobal > 0 ? Math.round((loupeOK / totalLoupeGlobal) * 100) : 100;
+                const pctNC = totalNCGlobal > 0 ? Math.round((ncOK / totalNCGlobal) * 100) : 100;
+                const pctGlobal = totalMois > 0 ? Math.round(((mauvOK + loupeOK + ncOK) / totalMois) * 100) : 100;
+
+                document.getElementById('pct-deb-mauvaise').innerText = pctMauv + ' %';
+                document.getElementById('bar-deb-mauvaise').style.width = pctMauv + '%';
+                document.getElementById('pct-deb-loupe').innerText = pctLoupe + ' %';
+                document.getElementById('bar-deb-loupe').style.width = pctLoupe + '%';
+                document.getElementById('pct-deb-nc').innerText = pctNC + ' %';
+                document.getElementById('bar-deb-nc').style.width = pctNC + '%';
+                document.getElementById('pct-deb-global').innerText = pctGlobal + ' %';
+                document.getElementById('bar-deb-global').style.width = pctGlobal + '%';
+
+                // Génération du graphique Global NQ (Échelle 0-800)
+                const chartWrapper = document.getElementById('chart-wrapper');
+                let chartHTML = '';
+                for (let v = 800; v >= 0; v -= 100) {
+                    let topPct = ((800 - v) / 800) * 100;
+                    chartHTML += `<div class="chart-grid-label" style="top: ${topPct}%;">${v}</div>`;
+                    if (v < 800) chartHTML += `<div class="chart-grid-line" style="top: ${topPct}%;"></div>`;
+                }
+                chartHTML += `<div class="chart-container">`;
+                const moisNoms = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+                for (let m = 1; m <= 12; m++) {
+                    let mStr = String(m).padStart(2, '0');
+                    let val = volumesGlobalParMois[mStr] || 0;
+                    let heightPct = Math.min(100, (val / 800) * 100);
+                    chartHTML += `
+                        <div class="chart-bar-group">
+                            <div class="chart-value-label">${val}</div>
+                            <div class="chart-bar" style="height: ${heightPct}%;"></div>
+                            <div class="chart-label">${moisNoms[m-1]}</div>
+                        </div>`;
+                }
+                chartHTML += `</div>`;
+                chartWrapper.innerHTML = chartHTML;
+
+                // Génération du graphique Évolution Mensuelle par Catégorie
+                const evoContainer = document.getElementById('evo-chart-container');
+                let evoHTML = '';
+                for (let m = 1; m <= 12; m++) {
+                    let mStr = String(m).padStart(2, '0');
+                    let mV = evoMauvaise[mStr] || 0;
+                    let lV = evoLoupe[mStr] || 0;
+                    let nV = evoNC[mStr] || 0;
+                    let maxM = Math.max(250, mV, lV, nV); // Échelle max repère 100-250
+
+                    let hM = Math.min(100, (mV / maxM) * 100);
+                    let hL = Math.min(100, (lV / maxM) * 100);
+                    let hN = Math.min(100, (nV / maxM) * 100);
+
+                    evoHTML += `
+                        <div class="evo-bar-group">
+                            <div class="evo-bars-flex">
+                                <div class="evo-bar-item" style="background: #64748b; height: ${hM}%;" title="Mauvaise: ${mV}"></div>
+                                <div class="evo-bar-item" style="background: #eab308; height: ${hL}%;" title="Loupé: ${lV}"></div>
+                                <div class="evo-bar-item" style="background: #dc2626; height: ${hN}%;" title="NC: ${nV}"></div>
+                            </div>
+                            <div class="evo-label">${moisNoms[m-1]}</div>
+                        </div>`;
+                }
+                evoContainer.innerHTML = evoHTML;
+
+                // Tableau Flop 5 Agents
                 const selectAgent = document.getElementById('filter-agent');
                 if (selectAgent.options.length <= 1) {
                     Array.from(tousLesAgents).sort().forEach(ag => {
@@ -886,27 +1010,6 @@
                     });
                 }
 
-                // Injection des données dans les cartes KPI et tableaux
-                document.getElementById('kpi-nq').innerText = totalMois + ' NQ';
-                document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + ' ligne(s)';
-                document.getElementById('retard-xxx-val').innerText = retardXXXCount + ' cas';
-
-                document.getElementById('mauv-ok').innerText = mauvOK;
-                document.getElementById('mauv-cont').innerText = mauvCont;
-                document.getElementById('mauv-vide').innerText = mauvVide;
-                document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
-
-                document.getElementById('loupe-ok').innerText = loupeOK;
-                document.getElementById('loupe-cont').innerText = loupeCont;
-                document.getElementById('loupe-vide').innerText = loupeVide;
-                document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
-
-                document.getElementById('nc-ok').innerText = ncOK;
-                document.getElementById('nc-cont').innerText = ncCont;
-                document.getElementById('nc-vide').innerText = ncVide;
-                document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
-
-                // Tableau Flop 5
                 const agentsTries = Object.entries(agentsCumul).sort((a,b) => b[1] - a[1]).slice(0, 5);
                 let htmlAgents = '';
                 if (agentsTries.length === 0) {
@@ -917,6 +1020,19 @@
                     });
                 }
                 document.getElementById('agents-table-body').innerHTML = htmlAgents;
+
+                // Plan d'Action Dynamique
+                let paHTML = `
+                    <div style="background: rgba(5, 150, 105, 0.1); border-left: 4px solid var(--success); padding: 10px; border-radius: 4px;">
+                        <strong>Niveau 1 — Suivi Nominal :</strong> ${totalMois} NQ traitées pour la période sélectionnée. Continuer les débriefings réguliers.
+                    </div>
+                    <div style="background: rgba(217, 119, 6, 0.1); border-left: 4px solid var(--warning); padding: 10px; border-radius: 4px;">
+                        <strong>Niveau 2 — Vigilance Anomalies :</strong> ${nonDebriefesMois} ligne(s) en attente de débriefing ou KO à traiter en priorité.
+                    </div>
+                    <div style="background: rgba(220, 38, 38, 0.1); border-left: 4px solid var(--danger); padding: 10px; border-radius: 4px;">
+                        <strong>Niveau 3 — Retard & Volume :</strong> ${retardXXXCount} cas rattachés au retard de production (Trigramme XXX). Plan de rattrapage requis.
+                    </div>`;
+                document.getElementById('pa-container').innerHTML = paHTML;
 
             } catch (e) {
                 console.error("Erreur chargement :", e);
