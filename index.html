@@ -405,6 +405,7 @@
             font-weight: 700;
         }
 
+        /* GRAPHIQUE ÉVOLUTION MENSUELLE OPTIMISÉ, COMPACT & SANS DÉBORDEMENT */
         .sub-chart-title {
             font-size: 12px;
             font-weight: 700;
@@ -518,7 +519,7 @@
     <!-- FILTERS BAR -->
     <div class="filters-bar">
         <div class="filter-group">
-            <select id="filter-periode" onchange="rafraichirTableauDeBord()">
+            <select id="filter-periode">
                 <option value="toutes">Période : Toutes (Jan - Déc)</option>
                 <option value="01">Janvier</option>
                 <option value="02">Février</option>
@@ -529,33 +530,33 @@
                 <option value="07">Juillet</option>
                 <option value="08">Août</option>
                 <option value="09">Septembre</option>
-                <option value="10">Octobre</option>
-                <option value="11" selected>Novembre</option>
+                <option value="10" selected>Octobre</option>
+                <option value="11">Novembre</option>
                 <option value="12">Décembre</option>
             </select>
         </div>
         <div class="filter-group">
-            <select id="filter-activite" onchange="rafraichirTableauDeBord()">
+            <select id="filter-activite">
                 <option value="liris" selected>Activité : LIRIS</option>
                 <option value="rubis">Activité : RUBIS</option>
             </select>
         </div>
         <div class="filter-group">
-            <select id="filter-production" onchange="rafraichirTableauDeBord()">
+            <select id="filter-production">
                 <option value="toutes">Production : Toutes</option>
                 <option value="tana">TANA</option>
                 <option value="diego">DIEGO</option>
             </select>
         </div>
         <div class="filter-group">
-            <select id="filter-media" onchange="rafraichirTableauDeBord()">
+            <select id="filter-media">
                 <option value="tous" selected>Média : Tous (Web & Presse)</option>
                 <option value="web">WEB</option>
                 <option value="presse">PRESSE</option>
             </select>
         </div>
         <div class="filter-group">
-            <select id="filter-agent" onchange="rafraichirTableauDeBord()">
+            <select id="filter-agent">
                 <option value="tous">Agent : Tous les agents</option>
             </select>
         </div>
@@ -565,12 +566,12 @@
     <div class="kpi-container">
         <div class="kpi-card">
             <h3>Alertes traitées</h3>
-            <input type="number" id="input-alertes" class="kpi-input" value="12540" oninput="rafraichirTableauDeBord()">
+            <input type="number" id="input-alertes" class="kpi-input" value="12540">
             <div class="subtitle">Calcul taux Loupé</div>
         </div>
         <div class="kpi-card">
             <h3>RM / Retombées</h3>
-            <input type="number" id="input-rm" class="kpi-input" value="8936" oninput="rafraichirTableauDeBord()">
+            <input type="number" id="input-rm" class="kpi-input" value="8936">
             <div class="subtitle">Calcul taux Mauv. & NC</div>
         </div>
         <div class="kpi-card">
@@ -649,9 +650,12 @@
                 </tbody>
             </table>
 
+            <!-- GRAPHIQUE ÉVOLUTION MENSUELLE COMPACT -->
             <div class="sub-chart-title">Évolution mensuelle par catégorie & Ligne d'objectif volume (100)</div>
             <div class="evo-chart-box">
-                <div class="evo-chart-container" id="evo-chart-container"></div>
+                <div class="evo-chart-container" id="evo-chart-container">
+                    <!-- Barres et lignes insérées dynamiquement -->
+                </div>
             </div>
             <div class="chart-legend">
                 <div class="legend-item"><div class="legend-dot" style="background: #64748b;"></div> Mauvaise</div>
@@ -673,7 +677,9 @@
     <div class="grid-2col">
         <div class="card-section">
             <h2>Évolution NQ Global (Échelle fixe 0-800 & Repères 100 en 100)</h2>
-            <div class="chart-container-wrapper" id="chart-wrapper"></div>
+            <div class="chart-container-wrapper" id="chart-wrapper">
+                <!-- Grille de repères et barres injectées dynamiquement -->
+            </div>
         </div>
 
         <div class="card-section">
@@ -711,7 +717,9 @@
                     </tr>
                 </thead>
                 <tbody id="agents-table-body">
-                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement...</td></tr>
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Chargement...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -737,7 +745,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT COMPLET AVEC CALCULS & GRAPHIQUES -->
+    <!-- SCRIPT COMPLET -->
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Ai6FUZXPo0SEiVAjsYp24U5ckLgoDrd33W0umjC7AxY/export?format=csv&gid=0';
 
@@ -747,6 +755,7 @@
             const html = document.documentElement;
             const themeText = document.getElementById('theme-text');
             const btnTheme = document.getElementById('btn-theme');
+            
             if (html.getAttribute('data-theme') === 'dark') {
                 html.setAttribute('data-theme', 'light');
                 themeText.innerText = 'Mode Sombre';
@@ -758,41 +767,6 @@
             }
         }
 
-        // Fonction sécurisée pour parser le CSV
-        function parseCSVLine(text) {
-            let result = [];
-            let entry = "";
-            let inQuotes = false;
-            for (let i = 0; i < text.length; i++) {
-                let char = text[i];
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    result.push(entry.trim());
-                    entry = "";
-                } else {
-                    entry += char;
-                }
-            }
-            result.push(entry.trim());
-            return result;
-        }
-
-        function extraireMois(dateStr) {
-            if (!dateStr) return '';
-            dateStr = dateStr.trim();
-            if (dateStr.includes('/')) {
-                const parts = dateStr.split('/');
-                if (parts.length >= 2) return parts[1].padStart(2, '0');
-            } else if (dateStr.includes('-')) {
-                const parts = dateStr.split('-');
-                if (parts.length >= 2) {
-                    return parts[1].padStart(2, '0');
-                }
-            }
-            return '';
-        }
-
         async function rafraichirTableauDeBord() {
             try {
                 const response = await fetch(csvUrl);
@@ -801,15 +775,16 @@
                 const lignes = data.split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 if (lignes.length <= 1) return;
 
-                const enTetes = parseCSVLine(lignes[0]).map(h => h.replace(/^"|"$/g, '').trim().toLowerCase());
+                const enTetes = lignes[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
                 
                 let idxTrigramme = enTetes.findIndex(h => h.includes('trigramme'));
                 let idxDate = enTetes.findIndex(h => h.includes('date de lecture') || h.includes('date'));
                 let idxMedia = enTetes.findIndex(h => h.includes('média') || h.includes('media'));
                 let idxCategorie = enTetes.findIndex(h => h.includes('catégorie') || h.includes('categorie'));
-                let idxValidee = enTetes.findIndex(h => h.includes('validée') || h.includes('validee') || h.includes('statut') || h.includes('debrief'));
                 
+                let idxValidee = enTetes.findIndex(h => h.includes('validée') || h.includes('validee') || h.includes('statut') || h.includes('debrief'));
                 if (idxValidee === -1) idxValidee = 8;
+
                 if (idxTrigramme === -1) idxTrigramme = 0;
                 if (idxDate === -1) idxDate = 1;
                 if (idxMedia === -1) idxMedia = 4;
@@ -818,18 +793,21 @@
                 const moisSelectionne = document.getElementById('filter-periode').value;
                 const activiteSelectionnee = document.getElementById('filter-activite').value;
                 const mediaSelectionne = document.getElementById('filter-media').value;
-                const agentSelectionne = document.getElementById('filter-agent').value;
 
                 const alertesTraitees = parseFloat(document.getElementById('input-alertes').value) || 1;
                 const totalRM = parseFloat(document.getElementById('input-rm').value) || 1;
 
+                const objVolLoupe = 100;
+                const objVolNC = 100;
+
                 let agentsCumul = {};
                 let tousLesAgents = new Set();
+                
+                let volumesGlobalParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 
                 let evoMauvaise = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 let evoLoupe = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
                 let evoNC = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
-                let volumesGlobalParMois = { '01':0, '02':0, '03':0, '04':0, '05':0, '06':0, '07':0, '08':0, '09':0, '10':0, '11':0, '12':0 };
 
                 let totalMois = 0;
                 let nonDebriefesMois = 0;
@@ -838,208 +816,380 @@
                 let mauvOK = 0, mauvCont = 0, mauvVide = 0, mauvWeb = 0, mauvPresse = 0;
                 let loupeOK = 0, loupeCont = 0, loupeVide = 0, loupeWeb = 0, loupePresse = 0;
                 let ncOK = 0, ncCont = 0, ncVide = 0, ncWeb = 0, ncPresse = 0;
+
                 let countLiris = 0, countRubis = 0;
+                const moisActuelMax = 10;
 
                 for (let i = 1; i < lignes.length; i++) {
-                    const cols = parseCSVLine(lignes[i]).map(c => c.replace(/^"|"$/g, '').trim());
+                    const rawLigne = lignes[i];
+                    const cols = rawLigne.split(',').map(c => c.replace(/"/g, '').trim());
+                    
                     if (cols.length > Math.max(idxTrigramme, idxDate, idxMedia, idxCategorie)) {
                         const trigramme = cols[idxTrigramme] ? cols[idxTrigramme].toUpperCase() : '';
                         const dateLecture = cols[idxDate] || '';
                         const mediaLigneCol = cols[idxMedia] ? cols[idxMedia].toUpperCase() : '';
                         const categorie = cols[idxCategorie] ? cols[idxCategorie].toUpperCase() : '';
-                        let rawValidee = cols[idxValidee] !== undefined ? cols[idxValidee].toUpperCase() : '';
                         
-                        const moisLigne = extraireMois(dateLecture);
-                        if (!moisLigne || moisLigne < '01' || moisLigne > '12') continue;
+                        let rawValidee = cols[idxValidee] !== undefined ? cols[idxValidee].trim().toUpperCase() : '';
+                        
+                        let moisLigne = '';
+                        if (dateLecture.includes('/')) {
+                            const p = dateLecture.split('/');
+                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
+                        } else if (dateLecture.includes('-')) {
+                            const p = dateLecture.split('-');
+                            if (p.length >= 2) moisLigne = p[1].padStart(2, '0');
+                        }
 
-                        tousLesAgents.add(trigramme);
-
-                        // Alimentation des évolutions globales mensuelles
-                        volumesGlobalParMois[moisLigne]++;
-                        if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
-                        if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
-                        if (categorie.includes('CONFORME')) evoNC[moisLigne]++;
+                        if ((moisLigne >= '01' && moisLigne <= '06') && (rawValidee === '' || rawValidee === '-')) {
+                            rawValidee = 'OK';
+                        }
 
                         if ((trigramme === 'XXX' || trigramme === '') && (categorie.includes('LOUPÉ') || categorie.includes('LOUPE'))) {
-                            if (moisSelectionne === 'toutes' || moisLigne === moisSelectionne) retardXXXCount++;
+                            const matchP = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
+                            if (matchP) retardXXXCount++;
                         }
 
                         if (trigramme === 'XXX' || trigramme === '' || trigramme === 'ANONYME') continue;
 
-                        const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
-                        const matchMedia = (mediaSelectionne === 'tous' || mediaLigneCol.includes(mediaSelectionne.toUpperCase()));
-                        const matchAgent = (agentSelectionne === 'tous' || trigramme === agentSelectionne);
+                        const estOK = rawValidee.includes('OK');
+                        const estContestation = rawValidee.includes('CONTEST');
+                        const estKO = rawValidee.includes('KO');
+                        const estVide = (!estOK && !estContestation && !estKO && (rawValidee === '' || rawValidee === '-'));
 
-                        if (matchPeriode && matchMedia && matchAgent) {
-                            totalMois++;
-                            countLiris++; // Par défaut Liris
+                        if (trigramme.length >= 2 && trigramme.length <= 5 && moisLigne >= '01' && moisLigne <= '12') {
+                            tousLesAgents.add(trigramme);
+                            if (parseInt(moisLigne, 10) > moisActuelMax) continue;
 
-                            if (rawValidee === '' || rawValidee === '-' || rawValidee.includes('KO')) {
-                                nonDebriefesMois++;
+                            const ligneTexte = cols.join(' ').toLowerCase();
+                            let activiteLigne = 'autre';
+                            if (ligneTexte.includes('liris')) activiteLigne = 'liris';
+                            if (ligneTexte.includes('rubis')) activiteLigne = 'rubis';
+
+                            let mediaLigne = 'autre';
+                            if (mediaLigneCol.includes('web') || ligneTexte.includes('web')) mediaLigne = 'web';
+                            if (mediaLigneCol.includes('presse') || ligneTexte.includes('presse')) mediaLigne = 'presse';
+
+                            const matchActivite = (activiteLigne === activiteSelectionnee);
+                            const matchMedia = (mediaSelectionne === 'tous' || mediaLigne === mediaSelectionne);
+
+                            if (matchActivite && matchMedia) {
+                                if (estOK || estContestation) {
+                                    if (categorie.includes('MAUVAISE')) evoMauvaise[moisLigne]++;
+                                    else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) evoLoupe[moisLigne]++;
+                                    else if (categorie.includes('CONFORME') || categorie.includes('NC')) evoNC[moisLigne]++;
+                                }
                             }
 
-                            if (categorie.includes('MAUVAISE')) {
-                                mauvCont++;
-                                if (rawValidee.includes('OK')) mauvOK++;
-                                else mauvVide++;
-                                if (mediaLigneCol.includes('WEB')) mauvWeb++; else mauvPresse++;
-                            } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
-                                loupeCont++;
-                                if (rawValidee.includes('OK')) loupeOK++;
-                                else loupeVide++;
-                                if (mediaLigneCol.includes('WEB')) loupeWeb++; else loupePresse++;
-                            } else if (categorie.includes('CONFORME')) {
-                                ncCont++;
-                                if (rawValidee.includes('OK')) ncOK++;
-                                else ncVide++;
-                                if (mediaLigneCol.includes('WEB')) ncWeb++; else ncPresse++;
-                            }
+                            const matchPeriode = (moisSelectionne === 'toutes' || moisLigne === moisSelectionne);
 
-                            agentsCumul[trigramme] = (agentsCumul[trigramme] || 0) + 1;
+                            if (matchPeriode && matchActivite && matchMedia) {
+                                if (estVide) nonDebriefesMois++;
+
+                                if (estOK || estContestation) {
+                                    totalMois++;
+                                    if (activiteLigne === 'liris') countLiris++;
+                                    if (activiteLigne === 'rubis') countRubis++;
+
+                                    if (categorie.includes('MAUVAISE') || categorie.includes('LOUPÉ') || categorie.includes('LOUPE') || categorie.includes('CONFORME') || categorie.includes('NC')) {
+                                        if (!agentsCumul[trigramme]) agentsCumul[trigramme] = 0;
+                                        agentsCumul[trigramme]++;
+                                    }
+                                }
+
+                                if (categorie.includes('MAUVAISE')) {
+                                    if (estOK) mauvOK++;
+                                    else if (estContestation) mauvCont++;
+                                    else if (estVide) mauvVide++;
+                                    
+                                    if (estOK || estContestation) {
+                                        if (mediaLigne === 'web') mauvWeb++;
+                                        if (mediaLigne === 'presse') mauvPresse++;
+                                    }
+                                } else if (categorie.includes('LOUPÉ') || categorie.includes('LOUPE')) {
+                                    if (estOK) loupeOK++;
+                                    else if (estContestation) loupeCont++;
+                                    else if (estVide) loupeVide++;
+                                    
+                                    if (estOK || estContestation) {
+                                        if (mediaLigne === 'web') loupeWeb++;
+                                        if (mediaLigne === 'presse') loupePresse++;
+                                    }
+                                } else if (categorie.includes('CONFORME') || categorie.includes('NC')) {
+                                    if (estOK) ncOK++;
+                                    else if (estContestation) ncCont++;
+                                    else if (estVide) ncVide++;
+                                    
+                                    if (estOK || estContestation) {
+                                        if (mediaLigne === 'web') ncWeb++;
+                                        if (mediaLigne === 'presse') ncPresse++;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
 
-                // Calculs des taux réels
-                const tauxMauvaise = (mauvCont / totalRM) * 100;
-                const tauxLoupe = (loupeCont / alertesTraitees) * 100;
-                const tauxNC = (ncCont / totalRM) * 100;
+                for (let mKey in evoMauvaise) {
+                    volumesGlobalParMois[mKey] = evoMauvaise[mKey] + evoLoupe[mKey] + evoNC[mKey];
+                }
 
-                // Injection des valeurs KPI et Tableaux
-                document.getElementById('kpi-nq').innerText = totalMois + ' NQ';
-                document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + ' ligne(s)';
-                document.getElementById('retard-xxx-val').innerText = retardXXXCount + ' cas';
+                document.getElementById('kpi-nq').innerText = totalMois + " NQ";
+                document.getElementById('kpi-non-debriefes').innerText = nonDebriefesMois + " ligne(s)";
+                document.getElementById('retard-xxx-val').innerText = retardXXXCount + " cas (Trigramme XXX)";
+
+                const objMauvaise = 0.25;
+                const objLoupe = 0.0095;
+                const objNC = 0.035;
+
+                const valTauxMauv = (mauvOK / totalRM) * 100;
+                const valTauxLoupe = (loupeOK / alertesTraitees) * 100;
+                const valTauxNC = (ncOK / totalRM) * 100;
+
+                function getStatutInfo(val, obj) {
+                    if (val <= obj) return { classe: 'status-tenu', texte: 'Tenu', niveau: 'vert' };
+                    if (val <= obj * 1.15) return { classe: 'status-surveiller', texte: 'À surveiller', niveau: 'orange' };
+                    return { classe: 'status-depasse', texte: 'Dépassé', niveau: 'rouge' };
+                }
+
+                const stMauv = getStatutInfo(valTauxMauv, objMauvaise);
+                const stLoupe = getStatutInfo(valTauxLoupe, objLoupe);
+                const stNC = getStatutInfo(valTauxNC, objNC);
 
                 document.getElementById('mauv-ok').innerText = mauvOK;
                 document.getElementById('mauv-cont').innerText = mauvCont;
                 document.getElementById('mauv-vide').innerText = mauvVide;
-                document.getElementById('taux-mauvaise').innerText = tauxMauvaise.toFixed(2) + ' %';
+                document.getElementById('taux-mauvaise').innerText = valTauxMauv.toFixed(3) + " %";
                 document.getElementById('rep-mauvaise').innerText = `Web ${mauvWeb} | Presse ${mauvPresse}`;
+                document.getElementById('statut-mauvaise').innerHTML = `<span class="status-badge ${stMauv.classe}">${stMauv.texte}</span>`;
 
                 document.getElementById('loupe-ok').innerText = loupeOK;
                 document.getElementById('loupe-cont').innerText = loupeCont;
                 document.getElementById('loupe-vide').innerText = loupeVide;
-                document.getElementById('taux-loupe').innerText = tauxLoupe.toFixed(4) + ' %';
+                document.getElementById('taux-loupe').innerText = valTauxLoupe.toFixed(4) + " %";
                 document.getElementById('rep-loupe').innerText = `Web ${loupeWeb} | Presse ${loupePresse}`;
+                document.getElementById('statut-loupe').innerHTML = `<span class="status-badge ${stLoupe.classe}">${stLoupe.texte}</span>`;
 
                 document.getElementById('nc-ok').innerText = ncOK;
                 document.getElementById('nc-cont').innerText = ncCont;
                 document.getElementById('nc-vide').innerText = ncVide;
-                document.getElementById('taux-nc').innerText = tauxNC.toFixed(3) + ' %';
+                document.getElementById('taux-nc').innerText = valTauxNC.toFixed(3) + " %";
                 document.getElementById('rep-nc').innerText = `Web ${ncWeb} | Presse ${ncPresse}`;
+                document.getElementById('statut-nc').innerHTML = `<span class="status-badge ${stNC.classe}">${stNC.texte}</span>`;
 
-                // Avancement des débriefings
-                const totalMauvGlobal = mauvOK + mauvVide;
-                const totalLoupeGlobal = loupeOK + loupeVide;
-                const totalNCGlobal = ncOK + ncVide;
+                // Avancement
+                const totalMauvGlobal = mauvOK + mauvCont + mauvVide;
+                const pctDebMauv = totalMauvGlobal > 0 ? Math.round(((mauvOK + mauvCont) / totalMauvGlobal) * 100) : 100;
+                const totalLoupeGlobal = loupeOK + loupeCont + loupeVide;
+                const pctDebLoupe = totalLoupeGlobal > 0 ? Math.round(((loupeOK + loupeCont) / totalLoupeGlobal) * 100) : 100;
+                const totalNCGlobal = ncOK + ncCont + ncVide;
+                const pctDebNC = totalNCGlobal > 0 ? Math.round(((ncOK + ncCont) / totalNCGlobal) * 100) : 100;
+                const totalGlobalNQ = totalMauvGlobal + totalLoupeGlobal + totalNCGlobal;
+                const totalGlobalValid = (mauvOK + mauvCont) + (loupeOK + loupeCont) + (ncOK + ncCont);
+                const pctDebGlobal = totalGlobalNQ > 0 ? Math.round((totalGlobalValid / totalGlobalNQ) * 100) : 100;
 
-                const pctMauv = totalMauvGlobal > 0 ? Math.round((mauvOK / totalMauvGlobal) * 100) : 100;
-                const pctLoupe = totalLoupeGlobal > 0 ? Math.round((loupeOK / totalLoupeGlobal) * 100) : 100;
-                const pctNC = totalNCGlobal > 0 ? Math.round((ncOK / totalNCGlobal) * 100) : 100;
-                const pctGlobal = totalMois > 0 ? Math.round(((mauvOK + loupeOK + ncOK) / totalMois) * 100) : 100;
+                document.getElementById('pct-deb-mauvaise').innerText = pctDebMauv + " %";
+                document.getElementById('bar-deb-mauvaise').style.width = pctDebMauv + "%";
+                document.getElementById('pct-deb-loupe').innerText = pctDebLoupe + " %";
+                document.getElementById('bar-deb-loupe').style.width = pctDebLoupe + "%";
+                document.getElementById('pct-deb-nc').innerText = pctDebNC + " %";
+                document.getElementById('bar-deb-nc').style.width = pctDebNC + "%";
+                document.getElementById('pct-deb-global').innerText = pctDebGlobal + " %";
+                document.getElementById('bar-deb-global').style.width = pctDebGlobal + "%";
 
-                document.getElementById('pct-deb-mauvaise').innerText = pctMauv + ' %';
-                document.getElementById('bar-deb-mauvaise').style.width = pctMauv + '%';
-                document.getElementById('pct-deb-loupe').innerText = pctLoupe + ' %';
-                document.getElementById('bar-deb-loupe').style.width = pctLoupe + '%';
-                document.getElementById('pct-deb-nc').innerText = pctNC + ' %';
-                document.getElementById('bar-deb-nc').style.width = pctNC + '%';
-                document.getElementById('pct-deb-global').innerText = pctGlobal + ' %';
-                document.getElementById('bar-deb-global').style.width = pctGlobal + '%';
+                // Plan d'action (Textes métier corrigés orthographiquement)
+                let htmlPA = '';
+                const definitionsPA = [
+                    {
+                        nom: 'Non Conforme', st: stNC,
+                        msgRouge: "Rappel urgent sur le process montage WEB et règles de découpe.",
+                        msgOrange: "Attention : Le taux frôle la limite. Il faut refaire la communication pour sécuriser cet indicateur.",
+                        msgVert: "Objectif tenu : Maintenir la rigueur sur les consignes WEB."
+                    },
+                    {
+                        nom: 'Loupé', st: stLoupe,
+                        msgRouge: "Auditer le Flop 5 et planifier des débriefings et entretiens individuels.",
+                        msgOrange: "Attention : Surveillance requise, débriefing et communication sur les vigilances à faire.",
+                        msgVert: "Objectif tenu : Indicateur maîtrisé, on continue sur cette voie."
+                    },
+                    {
+                        nom: 'Mauvaise', st: stMauv,
+                        msgRouge: "Analyse des erreurs - débriefing et recadrage (homonymies / passages significatifs).",
+                        msgOrange: "Attention : Risque de dépassement, rappel à marteler sur le process PAS À PAS et la démarche en cas d'incompréhension.",
+                        msgVert: "Capitaliser sur les bonnes pratiques."
+                    }
+                ];
 
-                // Génération du graphique Global NQ (Échelle 0-800)
-                const chartWrapper = document.getElementById('chart-wrapper');
-                let chartHTML = '';
-                for (let v = 800; v >= 0; v -= 100) {
-                    let topPct = ((800 - v) / 800) * 100;
-                    chartHTML += `<div class="chart-grid-label" style="top: ${topPct}%;">${v}</div>`;
-                    if (v < 800) chartHTML += `<div class="chart-grid-line" style="top: ${topPct}%;"></div>`;
-                }
-                chartHTML += `<div class="chart-container">`;
-                const moisNoms = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-                for (let m = 1; m <= 12; m++) {
-                    let mStr = String(m).padStart(2, '0');
-                    let val = volumesGlobalParMois[mStr] || 0;
-                    let heightPct = Math.min(100, (val / 800) * 100);
-                    chartHTML += `
-                        <div class="chart-bar-group">
-                            <div class="chart-value-label">${val}</div>
-                            <div class="chart-bar" style="height: ${heightPct}%;"></div>
-                            <div class="chart-label">${moisNoms[m-1]}</div>
-                        </div>`;
-                }
-                chartHTML += `</div>`;
-                chartWrapper.innerHTML = chartHTML;
+                definitionsPA.forEach(cat => {
+                    let borderColor = 'var(--success)', badgeBg = 'rgba(5, 150, 105, 0.15)', badgeColor = 'var(--success)', actionTexte = cat.msgVert;
+                    if (cat.st.niveau === 'rouge') { borderColor = 'var(--danger)'; badgeBg = 'rgba(220, 38, 38, 0.15)'; badgeColor = 'var(--danger)'; actionTexte = cat.msgRouge; }
+                    else if (cat.st.niveau === 'orange') { borderColor = 'var(--warning)'; badgeBg = 'rgba(217, 119, 6, 0.15)'; badgeColor = 'var(--warning)'; actionTexte = cat.msgOrange; }
 
-                // Génération du graphique Évolution Mensuelle par Catégorie
-                const evoContainer = document.getElementById('evo-chart-container');
-                let evoHTML = '';
-                for (let m = 1; m <= 12; m++) {
-                    let mStr = String(m).padStart(2, '0');
-                    let mV = evoMauvaise[mStr] || 0;
-                    let lV = evoLoupe[mStr] || 0;
-                    let nV = evoNC[mStr] || 0;
-                    let maxM = Math.max(250, mV, lV, nV); // Échelle max repère 100-250
-
-                    let hM = Math.min(100, (mV / maxM) * 100);
-                    let hL = Math.min(100, (lV / maxM) * 100);
-                    let hN = Math.min(100, (nV / maxM) * 100);
-
-                    evoHTML += `
-                        <div class="evo-bar-group">
-                            <div class="evo-bars-flex">
-                                <div class="evo-bar-item" style="background: #64748b; height: ${hM}%;" title="Mauvaise: ${mV}"></div>
-                                <div class="evo-bar-item" style="background: #eab308; height: ${hL}%;" title="Loupé: ${lV}"></div>
-                                <div class="evo-bar-item" style="background: #dc2626; height: ${hN}%;" title="NC: ${nV}"></div>
+                    htmlPA += `
+                        <div style="background: var(--bg-card); border-left: 4px solid ${borderColor}; padding: 10px; border-radius: 6px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-left-width: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                <strong style="font-size: 11px; text-transform: uppercase; color: var(--text-main);">${cat.nom}</strong>
+                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${cat.st.texte}</span>
                             </div>
-                            <div class="evo-label">${moisNoms[m-1]}</div>
-                        </div>`;
-                }
-                evoContainer.innerHTML = evoHTML;
+                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">${actionTexte}</div>
+                        </div>
+                    `;
+                });
 
-                // Tableau Flop 5 Agents
-                const selectAgent = document.getElementById('filter-agent');
-                if (selectAgent.options.length <= 1) {
-                    Array.from(tousLesAgents).sort().forEach(ag => {
-                        if (ag && ag !== 'XXX') {
-                            const opt = document.createElement('option');
-                            opt.value = ag;
-                            opt.innerText = ag;
-                            selectAgent.appendChild(opt);
-                        }
-                    });
+                if (nonDebriefesMois > 0) {
+                    htmlPA += `
+                        <div style="background: var(--bg-card); border-left: 4px solid var(--danger); padding: 10px; border-radius: 6px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-left-width: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                <strong style="font-size: 11px; text-transform: uppercase; color: var(--danger);">Lignes non débriefées</strong>
+                                <span style="background: rgba(220, 38, 38, 0.15); color: var(--danger); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${nonDebriefesMois} à traiter</span>
+                            </div>
+                            <div style="color: var(--text-muted); font-size: 11px; font-weight: 500;">Planifier une session de rattrapage des débriefings en suspens.</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('pa-container').innerHTML = htmlPA;
+
+                const totalAct = (countLiris + countRubis) || 1;
+                const pctLiris = Math.round((countLiris / totalAct) * 100);
+                const pctRubis = Math.round((countRubis / totalAct) * 100);
+
+                document.getElementById('stat-liris').innerText = countLiris + " NQ (" + pctLiris + "%)";
+                document.getElementById('bar-liris').style.width = pctLiris + "%";
+
+                document.getElementById('stat-rubis').innerText = countRubis + " NQ (" + pctRubis + "%)";
+                document.getElementById('bar-rubis').style.width = pctRubis + "%";
+
+                // =========================================================================
+                // GRAPHIQUE GLOBAL (Échelle fixe 0-800)
+                // =========================================================================
+                const wrapper = document.getElementById('chart-wrapper');
+                wrapper.innerHTML = '';
+                const fixedMaxScale = 800; 
+
+                for (let v = 100; v <= fixedMaxScale; v += 100) {
+                    const pctFromBottom = (v / fixedMaxScale) * 100;
+                    const line = document.createElement('div');
+                    line.className = 'chart-grid-line';
+                    line.style.bottom = pctFromBottom + '%';
+                    wrapper.appendChild(line);
+
+                    const lbl = document.createElement('div');
+                    lbl.className = 'chart-grid-label';
+                    lbl.style.bottom = pctFromBottom + '%';
+                    lbl.innerText = v;
+                    wrapper.appendChild(lbl);
                 }
 
-                const agentsTries = Object.entries(agentsCumul).sort((a,b) => b[1] - a[1]).slice(0, 5);
-                let htmlAgents = '';
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'chart-container';
+                wrapper.appendChild(chartContainer);
+
+                const nomsMois = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+                const clesMois = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+
+                clesMois.forEach((cle, idx) => {
+                    const moisNum = parseInt(cle, 10);
+                    const vol = moisNum > moisActuelMax ? 0 : volumesGlobalParMois[cle];
+                    let hauteur = vol > 0 ? Math.round((vol / fixedMaxScale) * 100) : 0;
+
+                    const grp = document.createElement('div');
+                    grp.className = 'chart-bar-group';
+                    grp.innerHTML = `
+                        <div class="chart-value-label">${vol > 0 ? vol + ' NQ' : ''}</div>
+                        <div class="chart-bar" style="height: ${hauteur}%;" title="${vol} NQ"></div>
+                        <div class="chart-label">${nomsMois[idx]}</div>
+                    `;
+                    chartContainer.appendChild(grp);
+                });
+
+                // =========================================================================
+                // GRAPHIQUE ÉVOLUTION MENSUELLE
+                // =========================================================================
+                const evoContainer = document.getElementById('evo-chart-container');
+                evoContainer.innerHTML = '';
+
+                let maxEvoVal = 400;
+
+                const thresholdVal = 100;
+                const pctHeight = (thresholdVal / maxEvoVal) * 100;
+                
+                const line = document.createElement('div');
+                line.className = 'target-line';
+                line.style.bottom = pctHeight + '%';
+                line.style.borderColor = '#eab308';
+                evoContainer.appendChild(line);
+
+                clesMois.forEach((cle, idx) => {
+                    const moisNum = parseInt(cle, 10);
+                    const mVal = moisNum > moisActuelMax ? 0 : evoMauvaise[cle];
+                    const lVal = moisNum > moisActuelMax ? 0 : evoLoupe[cle];
+                    const ncVal = moisNum > moisActuelMax ? 0 : evoNC[cle];
+
+                    const hM = Math.min((mVal / maxEvoVal) * 100, 100);
+                    const hL = Math.min((lVal / maxEvoVal) * 100, 100);
+                    const hNC = Math.min((ncVal / maxEvoVal) * 100, 100);
+
+                    const group = document.createElement('div');
+                    group.className = 'evo-bar-group';
+                    group.innerHTML = `
+                        <div class="evo-bars-flex">
+                            <div class="evo-bar-item" style="height: ${hM}%; background: #64748b;" title="Mauvaise: ${mVal}"></div>
+                            <div class="evo-bar-item" style="height: ${hL}%; background: #eab308;" title="Loupé: ${lVal}"></div>
+                            <div class="evo-bar-item" style="height: ${hNC}%; background: #dc2626;" title="Non Conforme: ${ncVal}"></div>
+                        </div>
+                        <div class="evo-label">${nomsMois[idx]}</div>
+                    `;
+                    evoContainer.appendChild(group);
+                });
+
+                // Flop 5 Agents
+                const agentsTries = Object.keys(agentsCumul)
+                    .map(t => ({ trigramme: t, total: agentsCumul[t] }))
+                    .sort((a, b) => b.total - a.total)
+                    .slice(0, 5);
+
+                const tbody = document.getElementById('agents-table-body');
+                tbody.innerHTML = '';
+
                 if (agentsTries.length === 0) {
-                    htmlAgents = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Aucune donnée pour ce filtre</td></tr>`;
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Aucune erreur enregistrée pour cette sélection</td></tr>';
                 } else {
-                    agentsTries.forEach(([ag, cnt]) => {
-                        htmlAgents += `<tr><td><strong>${ag}</strong></td><td>${cnt}</td><td><span class="status-badge status-surveiller">À suivre</span></td><td>Debrief requis</td></tr>`;
+                    agentsTries.forEach((item, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><strong>${item.trigramme}</strong></td>
+                            <td>${item.total} erreur(s) NQ</td>
+                            <td><span class="status-badge status-depasse">Flop #${index + 1}</span></td>
+                            <td>À débriefer</td>
+                        `;
+                        tbody.appendChild(tr);
                     });
                 }
-                document.getElementById('agents-table-body').innerHTML = htmlAgents;
 
-                // Plan d'Action Dynamique
-                let paHTML = `
-                    <div style="background: rgba(5, 150, 105, 0.1); border-left: 4px solid var(--success); padding: 10px; border-radius: 4px;">
-                        <strong>Niveau 1 — Suivi Nominal :</strong> ${totalMois} NQ traitées pour la période sélectionnée. Continuer les débriefings réguliers.
-                    </div>
-                    <div style="background: rgba(217, 119, 6, 0.1); border-left: 4px solid var(--warning); padding: 10px; border-radius: 4px;">
-                        <strong>Niveau 2 — Vigilance Anomalies :</strong> ${nonDebriefesMois} ligne(s) en attente de débriefing ou KO à traiter en priorité.
-                    </div>
-                    <div style="background: rgba(220, 38, 38, 0.1); border-left: 4px solid var(--danger); padding: 10px; border-radius: 4px;">
-                        <strong>Niveau 3 — Retard & Volume :</strong> ${retardXXXCount} cas rattachés au retard de production (Trigramme XXX). Plan de rattrapage requis.
-                    </div>`;
-                document.getElementById('pa-container').innerHTML = paHTML;
+                const selectAgent = document.getElementById('filter-agent');
+                const valSelectionnee = selectAgent.value;
+                selectAgent.innerHTML = '<option value="tous">Agent : Tous les agents</option>';
+                Array.from(tousLesAgents).sort().forEach(agent => {
+                    const opt = document.createElement('option');
+                    opt.value = agent.toLowerCase();
+                    opt.textContent = agent;
+                    selectAgent.appendChild(opt);
+                });
+                selectAgent.value = valSelectionnee;
 
-            } catch (e) {
-                console.error("Erreur chargement :", e);
+            } catch (err) {
+                console.error("Erreur d'affichage :", err);
             }
         }
 
+        document.getElementById('filter-periode').addEventListener('change', rafraichirTableauDeBord);
+        document.getElementById('filter-activite').addEventListener('change', rafraichirTableauDeBord);
+        document.getElementById('filter-media').addEventListener('change', rafraichirTableauDeBord);
+        document.getElementById('input-alertes').addEventListener('input', rafraichirTableauDeBord);
+        document.getElementById('input-rm').addEventListener('input', rafraichirTableauDeBord);
+
         rafraichirTableauDeBord();
     </script>
+
 </body>
 </html>
